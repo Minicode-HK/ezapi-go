@@ -37,7 +37,7 @@ func main() {
 
 	route.Router(router, &UserDB)
 	route.Router(router, &MessageDB)
-	route.NewMessageRouter(router, &MessageDB)
+	route.NewmessageRouter(router, &MessageDB)
 
 	router.Static("/public", "./public")
 	router.Run(":8080")

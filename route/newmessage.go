@@ -11,8 +11,9 @@ type NewMessageContent struct {
 	Unread int `json:"unread"`
 }	
 
-func NewMessageGet(db *[]Message) gin.HandlerFunc {
-  	return func(c *gin.Context) {
+
+func NewmessageRouter(router *gin.Engine, db *[]Message) {
+	router.GET("/newmessage", func(c *gin.Context) {
 		var newMessageContent []NewMessageContent
 		for _, message := range *db {
 		newMessageContent = append(newMessageContent, NewMessageContent{
@@ -23,10 +24,5 @@ func NewMessageGet(db *[]Message) gin.HandlerFunc {
 		})
 		}
 		c.JSON(200, newMessageContent)
-	}
-}
-
-
-func NewMessageRouter(router *gin.Engine, db *[]Message) {
-	router.GET("/newmessage", NewMessageGet(db))
+	})
 }
