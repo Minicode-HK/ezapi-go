@@ -60,7 +60,9 @@ func Put[T any](inMemoryDB *[]T) gin.HandlerFunc {
 }
 
 func Router[T any](router *gin.Engine, inMemoryDB *[]T) *gin.Engine {
-	var moduleName string = reflect.TypeOf(*inMemoryDB).Elem().Name()
+	r := []rune(reflect.TypeOf(*inMemoryDB).Elem().Name())
+	r[0] = r[0] + 32
+	var moduleName string = string(r)
 	router.GET("/" + moduleName, Get(inMemoryDB))
 	router.POST("/" + moduleName, Post(inMemoryDB))
 	router.DELETE("/" + moduleName + "/:id", Delete(inMemoryDB))
