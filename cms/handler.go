@@ -23,6 +23,7 @@ func RegisterCMSRoutes(router *gin.Engine) {
     contentHandler := handlers.NewContentHandler()
     schemaHandler := handlers.NewSchemaHandler()
     snapshotHandler := handlers.NewSnapshotHandler(cfg.SnapshotDir)
+    playgroundHandler := handlers.NewPlaygroundHandler() 
     
     // CMS routes group
     cms := router.Group("/cms")
@@ -31,7 +32,35 @@ func RegisterCMSRoutes(router *gin.Engine) {
     protected := cms.Group("")
     protected.Use(auth.Middleware(authService))
     {
-        protected.GET("/system_routes", func(c *gin.Context) {
+       
+        // Auth
+        protected.POST("/logout", authHandler.Logout)
+        protected.GET("/api/me", authHandler.Me)
+        
+        // Content pages
+        protected.GET("/admin", contentHandler.ServeLayout)
+        protected.GET("/api/content/dashboard", contentHandler.ServeDashboard)
+        protected.GET("/api/content/snapshot", contentHandler.ServeSnapshot)
+        protected.GET("/api/content/module/:name", contentHandler.ServeModule)
+        protected.GET("/api/content/system_routes", contentHandler.ServeSystemRoutes)
+        
+        // Schema
+        protected.GET("/api/schemas", func(c *gin.Context) {
+            schemaHandler.GetSchemas(c.Writer, c.Request)
+        })
+        
+        // Snapshots
+        protected.GET("/api/snapshots/modules", snapshotHandler.GetModules)
+        protected.GET("/api/snapshots", snapshotHandler.List)
+        protected.POST("/api/snapshots/save", snapshotHandler.Save)
+        protected.POST("/api/snapshots/load", snapshotHandler.Load)
+        protected.DELETE("/api/snapshots/:filename", snapshotHandler.Delete)
+
+        // API Playground
+        protected.GET("/api/content/playground", playgroundHandler.ServePlayground)
+        protected.POST("/api/playground/execute", playgroundHandler.ExecuteRequest)
+
+         protected.GET("/system_routes", func(c *gin.Context) {
             // Get all registered routes from Gin
             routes := router.Routes()
             var routeList []map[string]interface{}
@@ -114,29 +143,6 @@ func RegisterCMSRoutes(router *gin.Engine) {
             })
         })
             
-        // Auth
-        protected.POST("/logout", authHandler.Logout)
-        protected.GET("/api/me", authHandler.Me)
-        
-        // Content pages
-        protected.GET("/admin", contentHandler.ServeLayout)
-        protected.GET("/api/content/dashboard", contentHandler.ServeDashboard)
-        protected.GET("/api/content/snapshot", contentHandler.ServeSnapshot)
-        protected.GET("/api/content/module/:name", contentHandler.ServeModule)
-        protected.GET("/api/content/system_routes", contentHandler.ServeSystemRoutes)
-        
-        // Schema
-        protected.GET("/api/schemas", func(c *gin.Context) {
-            schemaHandler.GetSchemas(c.Writer, c.Request)
-        })
-        
-        // Snapshots
-        protected.GET("/api/snapshots/modules", snapshotHandler.GetModules)
-        protected.GET("/api/snapshots", snapshotHandler.List)
-        protected.POST("/api/snapshots/save", snapshotHandler.Save)
-        protected.POST("/api/snapshots/load", snapshotHandler.Load)
-        protected.DELETE("/api/snapshots/:filename", snapshotHandler.Delete)
-
     }
 
     // Public routes
