@@ -1,5 +1,11 @@
 package route
 
+import (
+    "strings"
+    
+    "github.com/gin-gonic/gin"
+)
+
 type Product struct {
     Id          string  `json:"id"`
     Name        string  `json:"name" binding:"required"`
@@ -7,8 +13,12 @@ type Product struct {
     Category    string  `json:"category"`
 }
 
-var ProductDB []Product = []Product{
+var ProductDB []Product = ResetableDatabase([]Product{
     {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
+});
+
+func GetProductDB() *[]Product {
+    return &ProductDB
 }
 
 func init() {

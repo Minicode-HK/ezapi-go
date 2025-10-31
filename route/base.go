@@ -141,10 +141,30 @@ func SendErrorWithDetails(c *gin.Context, code int, message string, details inte
     })
 }
 
+
+var _resetableDBInitialData = []any{}
+var _resetableDBs = []any{}
+
+func ResetableDatabase[T any](initialData []T) []T {
+    db := make([]T, len(initialData))
+    copy(db, initialData)
+    _resetableDBInitialData = append(_resetableDBInitialData, initialData)
+    _resetableDBs = append(_resetableDBs, &db)
+    return db
+}
+
+
+
 var routerRegistry []func(*gin.Engine)
 
 // Register a router setup function
-func RegisterRouter(setup func(*gin.Engine)) {
+func RegisterRouter[T any](inMemoryDB *[]T, basePath string) {
+	routerRegistry = append(routerRegistry, func(router *gin.Engine) {
+		Router(router, inMemoryDB, basePath)
+	})
+}
+
+func RegisterRouterWith(setup func(*gin.Engine)) {
     routerRegistry = append(routerRegistry, setup)
 }
 
@@ -153,4 +173,13 @@ func SetupAllRouters(router *gin.Engine) {
     for _, setup := range routerRegistry {
         setup(router)
     }
+
+    // add /api/reset endpoint to reset all resetableDBs
+    router.POST("/api/reset", func(c *gin.Context) {
+        for i, dbPtr := range _resetableDBs {
+            initialData := _resetableDBInitialData[i]
+            reflect.ValueOf(dbPtr).Elem().Set(reflect.ValueOf(initialData))
+        }
+        SendSuccess(c, gin.H{"message": "All databases have been reset"})
+    })
 }
