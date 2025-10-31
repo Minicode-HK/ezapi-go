@@ -1,24 +1,28 @@
-<div class="p-4 md:p-8">
+<div class="p-3 sm:p-4 md:p-8">
     <!-- Header -->
-    <div class="mb-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                    API Playground
-                </h2>
-                <p class="text-sm md:text-base text-gray-600">Test your API endpoints directly from the browser</p>
+    <div class="mb-4 sm:mb-6">
+        <div class="flex flex-row gap-3 sm:gap-4 md:gap-6 items-center justify-between">
+            <!-- Title Row -->
+            <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
+                        <span class="truncate">API Playground</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm md:text-base text-gray-600 truncate mt-1">Test your API endpoints</p>
+                </div>
             </div>
 
-            <!-- Mock Mode Toggle -->
-            <div class="flex items-center gap-3 bg-white rounded-lg shadow px-4 py-3">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-shield-alt text-gray-600"></i>
-                    <span class="text-sm font-medium text-gray-700">Mock Mode</span>
+            <!-- Mock Mode Toggle Row -->
+            <div
+                class="flex items-center gap-2 sm:gap-3 bg-white rounded-lg shadow px-3 sm:px-4 py-2 sm:py-3 self-start">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <i class="fas fa-shield-alt text-gray-600 text-sm sm:text-base"></i>
+                    <span class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Mock Mode</span>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="mock-mode-toggle" class="sr-only peer" checked>
                     <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600">
+                        class="w-9 sm:w-11 h-5 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 sm:after:h-5 after:w-4 sm:after:w-5 after:transition-all peer-checked:bg-indigo-600">
                     </div>
                 </label>
             </div>
@@ -26,10 +30,11 @@
     </div>
 
     <!-- Info Banner -->
-    <div id="mock-mode-info" class="mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex items-start gap-3">
-        <i class="fas fa-info-circle text-indigo-600 mt-0.5"></i>
-        <div class="flex-1">
-            <h4 class="text-sm font-semibold text-indigo-900">Mock Mode is ON</h4>
+    <div id="mock-mode-info"
+        class="mb-4 sm:mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
+        <i class="fas fa-info-circle text-indigo-600 mt-0.5 text-sm sm:text-base flex-shrink-0"></i>
+        <div class="flex-1 min-w-0">
+            <h4 class="text-xs sm:text-sm font-semibold text-indigo-900">Mock Mode is ON</h4>
             <p class="text-xs text-indigo-700 mt-1">
                 Your API calls will execute normally but all data changes will be automatically rolled back.
                 Perfect for testing without affecting your data!
@@ -38,192 +43,207 @@
     </div>
 
     <div id="live-mode-info"
-        class="mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-start gap-3 hidden">
-        <i class="fas fa-exclamation-triangle text-orange-600 mt-0.5"></i>
-        <div class="flex-1">
-            <h4 class="text-sm font-semibold text-orange-900">Live Mode is ON</h4>
+        class="mb-4 sm:mb-6 bg-orange-50 border border-orange-200 rounded-lg p-3 sm:p-4 flex items-start gap-2 sm:gap-3 hidden">
+        <i class="fas fa-exclamation-triangle text-orange-600 mt-0.5 text-sm sm:text-base flex-shrink-0"></i>
+        <div class="flex-1 min-w-0">
+            <h4 class="text-xs sm:text-sm font-semibold text-orange-900">Live Mode is ON</h4>
             <p class="text-xs text-orange-700 mt-1">
                 Your API calls will modify the actual data on the server. Use with caution!
             </p>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <!-- Request Panel -->
-        <div class="space-y-4">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <i class="fas fa-arrow-up mr-2 text-blue-600"></i>
-                    Request
-                </h3>
+        <div class="space-y-3 sm:space-y-4">
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+                <!-- Request Header with Send Button -->
+                <div class="flex items-center justify-between mb-3 sm:mb-4">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-arrow-up mr-2 text-blue-600 text-sm sm:text-base"></i>
+                        Request
+                    </h3>
+                    <button onclick="window.playgroundPage.executeRequest()"
+                        class="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center text-sm whitespace-nowrap">
+                        <i class="fas fa-paper-plane mr-1.5 text-sm"></i>
+                        <span class="hidden sm:inline">Send</span>
+                    </button>
+                </div>
 
                 <!-- Method & URL -->
-                <div class="space-y-4">
-                    <div class="flex gap-2">
-                        <select id="method"
-                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            <option value="GET">GET</option>
-                            <option value="POST">POST</option>
-                            <option value="PUT">PUT</option>
-                            <option value="DELETE">DELETE</option>
-                            <option value="PATCH">PATCH</option>
-                        </select>
+                <div class="space-y-3 sm:space-y-4">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex gap-2">
+                            <select id="method"
+                                class="w-24 sm:w-28 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                                <option value="PATCH">PATCH</option>
+                            </select>
 
-                        <input type="text" id="url" placeholder="http://localhost:8080/api/products"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-
-                        <button onclick="window.playgroundPage.executeRequest()"
-                            class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center">
-                            <i class="fas fa-paper-plane mr-2"></i>
-                            Send
-                        </button>
+                            <input type="text" id="url" placeholder="http://localhost:8080/api/products"
+                                class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        </div>
                     </div>
 
                     <!-- Quick Routes -->
-                    <div class="flex flex-wrap gap-2">
-                        <span class="text-xs text-gray-500">Quick:</span>
+                    <div class="flex flex-wrap gap-1.5 sm:gap-2">
+                        <span class="text-xs text-gray-500 self-center">Quick:</span>
                         <button onclick="window.playgroundPage.loadRoute('GET', '/api/products')"
-                            class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                            class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 whitespace-nowrap">
                             GET Products
                         </button>
                         <button onclick="window.playgroundPage.loadRoute('POST', '/api/products')"
-                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200">
+                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 whitespace-nowrap">
                             POST Product
                         </button>
                         <button onclick="window.playgroundPage.loadRoute('PUT', '/api/products/1')"
-                            class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
+                            class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 whitespace-nowrap">
                             PUT Product
                         </button>
                         <button onclick="window.playgroundPage.loadRoute('DELETE', '/api/products/1')"
-                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">
+                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 whitespace-nowrap">
                             DELETE Product
                         </button>
                     </div>
                 </div>
 
                 <!-- Headers -->
-                <div class="mt-6">
+                <div class="mt-4 sm:mt-6">
                     <div class="flex items-center justify-between mb-2">
-                        <label class="text-sm font-medium text-gray-700">Headers</label>
+                        <label class="text-xs sm:text-sm font-medium text-gray-700">Headers</label>
                         <button onclick="window.playgroundPage.addHeader()"
-                            class="text-xs text-indigo-600 hover:text-indigo-800">
-                            <i class="fas fa-plus mr-1"></i>Add Header
+                            class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                            <i class="fas fa-plus text-xs"></i>
+                            <span class="hidden sm:inline">Add</span>
                         </button>
                     </div>
                     <div id="headers-container" class="space-y-2">
                         <!-- Default headers -->
-                        <div class="flex gap-2 header-row">
-                            <input type="text" value="Content-Type" placeholder="Header name"
-                                class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                            <input type="text" value="application/json" placeholder="Header value"
-                                class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                            <button onclick="this.parentElement.remove()"
-                                class="px-3 py-2 text-red-600 hover:text-red-800">
-                                <i class="fas fa-times"></i>
-                            </button>
+                        <div class="flex flex-col sm:flex-row gap-2 header-row">
+                            <input type="text" value="Content-Type" placeholder="Name"
+                                class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                            <div class="flex gap-2">
+                                <input type="text" value="application/json" placeholder="Value"
+                                    class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                                <button onclick="this.closest('.header-row').remove()"
+                                    class="px-2 py-2 text-red-600 hover:text-red-800 flex-shrink-0">
+                                    <i class="fas fa-times text-sm"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Body -->
-                <div class="mt-6">
+                <div class="mt-4 sm:mt-6">
                     <div class="flex items-center justify-between mb-2">
-                        <label class="text-sm font-medium text-gray-700">Body</label>
+                        <label class="text-xs sm:text-sm font-medium text-gray-700">Body</label>
                         <button onclick="window.playgroundPage.formatJSON()"
-                            class="text-xs text-indigo-600 hover:text-indigo-800">
-                            <i class="fas fa-magic mr-1"></i>Format JSON
+                            class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                            <i class="fas fa-magic text-xs"></i>
+                            <span class="hidden sm:inline">Format</span>
                         </button>
                     </div>
-                    <textarea id="request-body" rows="10" placeholder='{"name": "Product Name", "price": 99.99}'
-                        class="w-full px-3 py-2 text-sm font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"></textarea>
+                    <textarea id="request-body" rows="8" placeholder='{"name": "Product Name", "price": 99.99}'
+                        class="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"></textarea>
                 </div>
             </div>
         </div>
 
         <!-- Response Panel -->
-        <div class="space-y-4">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center justify-between">
-                    <span>
-                        <i class="fas fa-arrow-down mr-2 text-green-600"></i>
+        <div class="space-y-3 sm:space-y-4">
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+                <h3
+                    class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <span class="flex items-center">
+                        <i class="fas fa-arrow-down mr-2 text-green-600 text-sm sm:text-base"></i>
                         Response
                     </span>
-                    <div id="response-meta" class="text-sm text-gray-500 hidden">
+                    <div id="response-meta"
+                        class="text-xs sm:text-sm text-gray-500 hidden flex flex-wrap gap-1 items-center">
                         <span id="response-status" class="font-semibold"></span>
-                        <span class="mx-2">•</span>
+                        <span class="hidden sm:inline">•</span>
                         <span id="response-time"></span>
-                        <span class="mx-2">•</span>
+                        <span class="hidden sm:inline">•</span>
                         <span id="response-size"></span>
                         <span id="mock-mode-badge"
-                            class="hidden ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded">
+                            class="hidden px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded whitespace-nowrap">
                             <i class="fas fa-undo mr-1"></i>ROLLED BACK
                         </span>
                     </div>
                 </h3>
 
                 <!-- Loading State -->
-                <div id="loading-state" class="hidden text-center py-12">
-                    <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
-                    <p class="text-gray-600">Sending request...</p>
+                <div id="loading-state" class="hidden text-center py-8 sm:py-12">
+                    <i class="fas fa-spinner fa-spin text-3xl sm:text-4xl text-indigo-600 mb-3 sm:mb-4"></i>
+                    <p class="text-sm sm:text-base text-gray-600">Sending request...</p>
                 </div>
 
                 <!-- Empty State -->
-                <div id="empty-state" class="text-center py-12 text-gray-400">
-                    <i class="fas fa-paper-plane text-6xl mb-4 opacity-20"></i>
-                    <p>Send a request to see the response</p>
+                <div id="empty-state" class="text-center py-8 sm:py-12 text-gray-400">
+                    <i class="fas fa-paper-plane text-4xl sm:text-6xl mb-3 sm:mb-4 opacity-20"></i>
+                    <p class="text-sm sm:text-base">Send a request to see the response</p>
                 </div>
 
                 <!-- Error State -->
                 <div id="error-state" class="hidden">
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-circle text-red-600 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-red-800">Request Failed</h4>
-                                <p id="error-message" class="text-sm text-red-600 mt-1"></p>
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
+                        <div class="flex items-start gap-2 sm:gap-3">
+                            <i
+                                class="fas fa-exclamation-circle text-red-600 mt-0.5 sm:mt-1 text-sm sm:text-base flex-shrink-0"></i>
+                            <div class="min-w-0">
+                                <h4 class="font-semibold text-red-800 text-sm sm:text-base">Request Failed</h4>
+                                <p id="error-message" class="text-xs sm:text-sm text-red-600 mt-1 break-words"></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Response Headers -->
-                <div id="response-headers-container" class="hidden mb-4">
+                <div id="response-headers-container" class="hidden mb-3 sm:mb-4">
                     <div class="flex items-center justify-between mb-2">
-                        <label class="text-sm font-medium text-gray-700">Response Headers</label>
+                        <label class="text-xs sm:text-sm font-medium text-gray-700">Response Headers</label>
                         <button onclick="document.getElementById('response-headers').classList.toggle('hidden')"
-                            class="text-xs text-gray-600 hover:text-gray-800">
-                            <i class="fas fa-chevron-down mr-1"></i>Toggle
+                            class="text-xs text-gray-600 hover:text-gray-800 flex items-center gap-1">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                            <span class="hidden sm:inline">Toggle</span>
                         </button>
                     </div>
                     <div id="response-headers"
-                        class="bg-gray-50 rounded p-3 text-xs font-mono text-gray-700 max-h-40 overflow-y-auto hidden">
+                        class="bg-gray-50 rounded p-2 sm:p-3 text-xs font-mono text-gray-700 max-h-32 sm:max-h-40 overflow-y-auto hidden">
                     </div>
                 </div>
 
                 <!-- Response Body -->
                 <div id="response-body-container" class="hidden">
-                    <label class="text-sm font-medium text-gray-700 mb-2 block">Response Body</label>
-                    <div class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                        <pre id="response-body" class="text-xs font-mono text-gray-800 whitespace-pre-wrap"></pre>
+                    <label class="text-xs sm:text-sm font-medium text-gray-700 mb-2 block">Response Body</label>
+                    <div class="bg-gray-50 rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-96 overflow-y-auto">
+                        <pre id="response-body"
+                            class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words"></pre>
                     </div>
                 </div>
             </div>
 
             <!-- Saved Requests -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
-                        <i class="fas fa-bookmark mr-2 text-yellow-600"></i>
-                        Saved Requests
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-3 sm:mb-4">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-bookmark mr-2 text-yellow-600 text-sm sm:text-base"></i>
+                        <span class="hidden sm:inline">Saved Requests</span>
+                        <span class="sm:hidden">Saved</span>
                     </h3>
                     <button onclick="window.playgroundPage.saveRequest()"
-                        class="text-sm px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                        <i class="fas fa-save mr-1"></i>Save Current
+                        class="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 flex items-center gap-1 whitespace-nowrap">
+                        <i class="fas fa-save text-xs"></i>
+                        <span class="hidden sm:inline">Save</span>
                     </button>
                 </div>
                 <div id="saved-requests" class="space-y-2">
                     <!-- Saved requests will be listed here -->
-                    <p class="text-sm text-gray-400 text-center py-4">No saved requests yet</p>
+                    <p class="text-xs sm:text-sm text-gray-400 text-center py-3 sm:py-4">No saved requests yet</p>
                 </div>
             </div>
         </div>
@@ -246,7 +266,6 @@
             const toggle = document.getElementById('mock-mode-toggle');
             state.mockMode = toggle.checked;
 
-            // Update UI
             const mockInfo = document.getElementById('mock-mode-info');
             const liveInfo = document.getElementById('live-mode-info');
 
@@ -264,7 +283,6 @@
             const baseUrl = window.location.origin;
             document.getElementById('url').value = baseUrl + path;
 
-            // Load sample body for POST/PUT
             if (method === 'POST') {
                 if (path.includes('/products')) {
                     document.getElementById('request-body').value = JSON.stringify({
@@ -289,16 +307,18 @@
         function addHeader () {
             const container = document.getElementById('headers-container');
             const row = document.createElement('div');
-            row.className = 'flex gap-2 header-row';
+            row.className = 'flex flex-col sm:flex-row gap-2 header-row';
             row.innerHTML = `
-                <input type="text" placeholder="Header name"
-                    class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                <input type="text" placeholder="Header value"
-                    class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                <button onclick="this.parentElement.remove()" 
-                    class="px-3 py-2 text-red-600 hover:text-red-800">
-                    <i class="fas fa-times"></i>
-                </button>
+                <input type="text" placeholder="Name"
+                    class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Value"
+                        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                    <button onclick="this.closest('.header-row').remove()" 
+                        class="px-2 py-2 text-red-600 hover:text-red-800 flex-shrink-0">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
             `;
             container.appendChild(row);
         }
@@ -318,7 +338,6 @@
             const url = document.getElementById('url').value;
             const body = document.getElementById('request-body').value;
 
-            // Collect headers
             const headers = {};
             document.querySelectorAll('.header-row').forEach(row => {
                 const inputs = row.querySelectorAll('input');
@@ -327,7 +346,6 @@
                 }
             });
 
-            // Show loading
             document.getElementById('empty-state').classList.add('hidden');
             document.getElementById('error-state').classList.add('hidden');
             document.getElementById('response-body-container').classList.add('hidden');
@@ -351,12 +369,9 @@
                 });
 
                 const result = await response.json();
-
-                // Hide loading
                 document.getElementById('loading-state').classList.add('hidden');
 
                 if (!result.success) {
-                    // Show error
                     document.getElementById('error-message').textContent = result.error;
                     document.getElementById('error-state').classList.remove('hidden');
                     return;
@@ -364,7 +379,6 @@
 
                 const data = result.data;
 
-                // Show response meta
                 document.getElementById('response-meta').classList.remove('hidden');
                 const statusEl = document.getElementById('response-status');
                 statusEl.textContent = data.status;
@@ -374,7 +388,6 @@
                 document.getElementById('response-time').textContent = data.time + 'ms';
                 document.getElementById('response-size').textContent = formatBytes(data.size);
 
-                // Show mock mode badge if it was rolled back
                 const mockBadge = document.getElementById('mock-mode-badge');
                 if (data.mockMode) {
                     mockBadge.classList.remove('hidden');
@@ -382,14 +395,12 @@
                     mockBadge.classList.add('hidden');
                 }
 
-                // Show response headers
                 document.getElementById('response-headers-container').classList.remove('hidden');
                 const headersHtml = Object.entries(data.headers)
-                    .map(([key, value]) => `<div><span class="text-blue-600">${key}:</span> ${value}</div>`)
+                    .map(([key, value]) => `<div class="break-words"><span class="text-blue-600">${key}:</span> ${value}</div>`)
                     .join('');
                 document.getElementById('response-headers').innerHTML = headersHtml;
 
-                // Show response body
                 document.getElementById('response-body-container').classList.remove('hidden');
                 const bodyEl = document.getElementById('response-body');
                 if (typeof data.body === 'object') {
@@ -452,21 +463,22 @@
             document.getElementById('url').value = request.url;
             document.getElementById('request-body').value = request.body;
 
-            // Clear and reload headers
             const container = document.getElementById('headers-container');
             container.innerHTML = '';
             Object.entries(request.headers).forEach(([key, value]) => {
                 const row = document.createElement('div');
-                row.className = 'flex gap-2 header-row';
+                row.className = 'flex flex-col sm:flex-row gap-2 header-row';
                 row.innerHTML = `
-                    <input type="text" value="${key}" placeholder="Header name"
-                        class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                    <input type="text" value="${value}" placeholder="Header value"
-                        class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                    <button onclick="this.parentElement.remove()" 
-                        class="px-3 py-2 text-red-600 hover:text-red-800">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <input type="text" value="${key}" placeholder="Name"
+                        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                    <div class="flex gap-2">
+                        <input type="text" value="${value}" placeholder="Value"
+                            class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                        <button onclick="this.closest('.header-row').remove()" 
+                            class="px-2 py-2 text-red-600 hover:text-red-800 flex-shrink-0">
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
+                    </div>
                 `;
                 container.appendChild(row);
             });
@@ -484,24 +496,24 @@
             const container = document.getElementById('saved-requests');
 
             if (state.savedRequests.length === 0) {
-                container.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">No saved requests yet</p>';
+                container.innerHTML = '<p class="text-xs sm:text-sm text-gray-400 text-center py-3 sm:py-4">No saved requests yet</p>';
                 return;
             }
 
             container.innerHTML = state.savedRequests.map(req => `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
-                    <div class="flex-1 cursor-pointer" onclick="window.playgroundPage.loadSavedRequest(${req.id})">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 text-xs font-semibold rounded ${getMethodBadgeClass(req.method)}">
+                <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors gap-2">
+                    <div class="flex-1 cursor-pointer min-w-0" onclick="window.playgroundPage.loadSavedRequest(${req.id})">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded ${getMethodBadgeClass(req.method)} whitespace-nowrap">
                                 ${req.method}
                             </span>
-                            <span class="text-sm font-medium text-gray-800">${req.name}</span>
+                            <span class="text-xs sm:text-sm font-medium text-gray-800 truncate">${req.name}</span>
                         </div>
                         <div class="text-xs text-gray-500 mt-1 truncate">${req.url}</div>
                     </div>
-                    <button onclick="window.playgroundPage.deleteSavedRequest(${req.id})" 
-                        class="ml-2 text-red-600 hover:text-red-800">
-                        <i class="fas fa-trash text-sm"></i>
+                    <button onclick="event.stopPropagation(); window.playgroundPage.deleteSavedRequest(${req.id})" 
+                        class="text-red-600 hover:text-red-800 flex-shrink-0 p-1">
+                        <i class="fas fa-trash text-xs sm:text-sm"></i>
                     </button>
                 </div>
             `).join('');
@@ -521,15 +533,12 @@
         function init () {
             renderSavedRequests();
 
-            // Set default URL
             const baseUrl = window.location.origin;
             document.getElementById('url').value = baseUrl + '/api/products';
 
-            // Setup toggle listener
             const toggle = document.getElementById('mock-mode-toggle');
             toggle.addEventListener('change', toggleMockMode);
 
-            // Initialize UI state
             toggleMockMode();
         }
 
