@@ -411,3 +411,112 @@ func (h *PlaygroundHandler) isSafeHeader(header string) bool {
 func isModifyingMethod(method string) bool {
     return method == "POST" || method == "PUT" || method == "DELETE" || method == "PATCH"
 }
+
+// GetConfig returns current playground configuration
+func (h *PlaygroundHandler) GetConfig(c *gin.Context) {
+    c.JSON(http.StatusOK, gin.H{
+        "success": true,
+        "data": gin.H{
+            "allowOnlyLocalhost":  h.config.AllowOnlyLocalhost,
+            "blockPrivateIPs":     h.config.BlockPrivateIPs,
+            "maxBodySize":         h.config.MaxBodySize,
+            "timeout":             h.config.Timeout.Seconds(),
+            "maxRequestsPerMin":   h.config.MaxRequestsPerMin,
+            "enableMockMode":      h.config.EnableMockMode,
+            "enableExternalHosts": h.config.EnableExternalHosts,
+            "requireHTTPS":        h.config.RequireHTTPS,
+            "allowedHosts":        h.config.AllowedHosts,
+        },
+    })
+}
+
+// UpdateConfig updates playground configuration
+func (h *PlaygroundHandler) UpdateConfig(c *gin.Context) {
+    var req struct {
+        AllowOnlyLocalhost  *bool    `json:"allowOnlyLocalhost"`
+        BlockPrivateIPs     *bool    `json:"blockPrivateIPs"`
+        MaxBodySize         *int64   `json:"maxBodySize"`
+        Timeout             *float64 `json:"timeout"`
+        MaxRequestsPerMin   *int     `json:"maxRequestsPerMin"`
+        EnableMockMode      *bool    `json:"enableMockMode"`
+        EnableExternalHosts *bool    `json:"enableExternalHosts"`
+        RequireHTTPS        *bool    `json:"requireHTTPS"`
+        AllowedHosts        []string `json:"allowedHosts"`
+    }
+
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "success": false,
+            "error":   err.Error(),
+        })
+        return
+    }
+
+    // Update config (only non-nil values)
+    if req.AllowOnlyLocalhost != nil {
+        h.config.AllowOnlyLocalhost = *req.AllowOnlyLocalhost
+    }
+    if req.BlockPrivateIPs != nil {
+        h.config.BlockPrivateIPs = *req.BlockPrivateIPs
+    }
+    if req.MaxBodySize != nil {
+        if *req.MaxBodySize < 1024 || *req.MaxBodySize > 10*1024*1024 {
+            c.JSON(http.StatusBadRequest, gin.H{
+                "success": false,
+                "error":   "maxBodySize must be between 1KB and 10MB",
+            })
+            return
+        }
+        h.config.MaxBodySize = *req.MaxBodySize
+    }
+    if req.Timeout != nil {
+        if *req.Timeout < 1 || *req.Timeout > 60 {
+            c.JSON(http.StatusBadRequest, gin.H{
+                "success": false,
+                "error":   "timeout must be between 1 and 60 seconds",
+            })
+            return
+        }
+        h.config.Timeout = time.Duration(*req.Timeout) * time.Second
+    }
+    if req.MaxRequestsPerMin != nil {
+        if *req.MaxRequestsPerMin < 1 || *req.MaxRequestsPerMin > 1000 {
+            c.JSON(http.StatusBadRequest, gin.H{
+                "success": false,
+                "error":   "maxRequestsPerMin must be between 1 and 1000",
+            })
+            return
+        }
+        h.config.MaxRequestsPerMin = *req.MaxRequestsPerMin
+        // Update rate limiter
+        h.rateLimiter = rate.NewLimiter(rate.Limit(*req.MaxRequestsPerMin)/60, *req.MaxRequestsPerMin)
+    }
+    if req.EnableMockMode != nil {
+        h.config.EnableMockMode = *req.EnableMockMode
+    }
+    if req.EnableExternalHosts != nil {
+        h.config.EnableExternalHosts = *req.EnableExternalHosts
+    }
+    if req.RequireHTTPS != nil {
+        h.config.RequireHTTPS = *req.RequireHTTPS
+    }
+    if req.AllowedHosts != nil {
+        h.config.AllowedHosts = req.AllowedHosts
+    }
+
+    c.JSON(http.StatusOK, gin.H{
+        "success": true,
+        "message": "Configuration updated successfully",
+        "data": gin.H{
+            "allowOnlyLocalhost":  h.config.AllowOnlyLocalhost,
+            "blockPrivateIPs":     h.config.BlockPrivateIPs,
+            "maxBodySize":         h.config.MaxBodySize,
+            "timeout":             h.config.Timeout.Seconds(),
+            "maxRequestsPerMin":   h.config.MaxRequestsPerMin,
+            "enableMockMode":      h.config.EnableMockMode,
+            "enableExternalHosts": h.config.EnableExternalHosts,
+            "requireHTTPS":        h.config.RequireHTTPS,
+            "allowedHosts":        h.config.AllowedHosts,
+        },
+    })
+}

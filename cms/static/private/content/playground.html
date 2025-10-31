@@ -1,558 +1,779 @@
-<div class="p-3 sm:p-4 md:p-8">
-    <!-- Header -->
-    <div class="mb-4 sm:mb-6">
-        <div class="flex flex-row gap-3 sm:gap-4 md:gap-6 items-center justify-between">
-            <!-- Title Row -->
-            <div class="flex items-center justify-between">
-                <div class="flex-1 min-w-0">
-                    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
-                        <span class="truncate">API Playground</span>
-                    </h2>
-                    <p class="text-xs sm:text-sm md:text-base text-gray-600 truncate mt-1">Test your API endpoints</p>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>API Playground - CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            tab-size: 2;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <header class="bg-white shadow-sm px-8 py-4">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <h2 class="text-2xl font-bold text-gray-800">API Playground</h2>
+                <button onclick="openSettingsDialog()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm flex items-center gap-2">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
             </div>
-
-            <!-- Mock Mode Toggle Row -->
-            <div
-                class="flex items-center gap-2 sm:gap-3 bg-white rounded-lg shadow px-3 sm:px-4 py-2 sm:py-3 self-start">
-                <div class="flex items-center gap-1.5 sm:gap-2">
-                    <i class="fas fa-shield-alt text-gray-600 text-sm sm:text-base"></i>
-                    <span class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Mock Mode</span>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="mock-mode-toggle" class="sr-only peer" checked>
-                    <div
-                        class="w-9 sm:w-11 h-5 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 sm:after:h-5 after:w-4 sm:after:w-5 after:transition-all peer-checked:bg-indigo-600">
-                    </div>
-                </label>
-            </div>
-        </div>
-    </div>
-
-    <!-- Info Banner -->
-    <div id="mock-mode-info"
-        class="mb-4 sm:mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
-        <i class="fas fa-info-circle text-indigo-600 mt-0.5 text-sm sm:text-base flex-shrink-0"></i>
-        <div class="flex-1 min-w-0">
-            <h4 class="text-xs sm:text-sm font-semibold text-indigo-900">Mock Mode is ON</h4>
-            <p class="text-xs text-indigo-700 mt-1">
-                Your API calls will execute normally but all data changes will be automatically rolled back.
-                Perfect for testing without affecting your data!
-            </p>
-        </div>
-    </div>
-
-    <div id="live-mode-info"
-        class="mb-4 sm:mb-6 bg-orange-50 border border-orange-200 rounded-lg p-3 sm:p-4 flex items-start gap-2 sm:gap-3 hidden">
-        <i class="fas fa-exclamation-triangle text-orange-600 mt-0.5 text-sm sm:text-base flex-shrink-0"></i>
-        <div class="flex-1 min-w-0">
-            <h4 class="text-xs sm:text-sm font-semibold text-orange-900">Live Mode is ON</h4>
-            <p class="text-xs text-orange-700 mt-1">
-                Your API calls will modify the actual data on the server. Use with caution!
-            </p>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <!-- Request Panel -->
-        <div class="space-y-3 sm:space-y-4">
-            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
-                <!-- Request Header with Send Button -->
-                <div class="flex items-center justify-between mb-3 sm:mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 flex items-center">
-                        <i class="fas fa-arrow-up mr-2 text-blue-600 text-sm sm:text-base"></i>
-                        Request
-                    </h3>
-                    <button onclick="window.playgroundPage.executeRequest()"
-                        class="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center text-sm whitespace-nowrap">
-                        <i class="fas fa-paper-plane mr-1.5 text-sm"></i>
-                        <span class="hidden sm:inline">Send</span>
-                    </button>
-                </div>
-
-                <!-- Method & URL -->
-                <div class="space-y-3 sm:space-y-4">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex gap-2">
-                            <select id="method"
-                                class="w-24 sm:w-28 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                                <option value="GET">GET</option>
-                                <option value="POST">POST</option>
-                                <option value="PUT">PUT</option>
-                                <option value="DELETE">DELETE</option>
-                                <option value="PATCH">PATCH</option>
-                            </select>
-
-                            <input type="text" id="url" placeholder="http://localhost:8080/api/products"
-                                class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                        </div>
-                    </div>
-
-                    <!-- Quick Routes -->
-                    <div class="flex flex-wrap gap-1.5 sm:gap-2">
-                        <span class="text-xs text-gray-500 self-center">Quick:</span>
-                        <button onclick="window.playgroundPage.loadRoute('GET', '/api/products')"
-                            class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 whitespace-nowrap">
-                            GET Products
-                        </button>
-                        <button onclick="window.playgroundPage.loadRoute('POST', '/api/products')"
-                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 whitespace-nowrap">
-                            POST Product
-                        </button>
-                        <button onclick="window.playgroundPage.loadRoute('PUT', '/api/products/1')"
-                            class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 whitespace-nowrap">
-                            PUT Product
-                        </button>
-                        <button onclick="window.playgroundPage.loadRoute('DELETE', '/api/products/1')"
-                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 whitespace-nowrap">
-                            DELETE Product
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Headers -->
-                <div class="mt-4 sm:mt-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-xs sm:text-sm font-medium text-gray-700">Headers</label>
-                        <button onclick="window.playgroundPage.addHeader()"
-                            class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                            <i class="fas fa-plus text-xs"></i>
-                            <span class="hidden sm:inline">Add</span>
-                        </button>
-                    </div>
-                    <div id="headers-container" class="space-y-2">
-                        <!-- Default headers -->
-                        <div class="flex flex-col sm:flex-row gap-2 header-row">
-                            <input type="text" value="Content-Type" placeholder="Name"
-                                class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                            <div class="flex gap-2">
-                                <input type="text" value="application/json" placeholder="Value"
-                                    class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                                <button onclick="this.closest('.header-row').remove()"
-                                    class="px-2 py-2 text-red-600 hover:text-red-800 flex-shrink-0">
-                                    <i class="fas fa-times text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Body -->
-                <div class="mt-4 sm:mt-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-xs sm:text-sm font-medium text-gray-700">Body</label>
-                        <button onclick="window.playgroundPage.formatJSON()"
-                            class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                            <i class="fas fa-magic text-xs"></i>
-                            <span class="hidden sm:inline">Format</span>
-                        </button>
-                    </div>
-                    <textarea id="request-body" rows="8" placeholder='{"name": "Product Name", "price": 99.99}'
-                        class="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"></textarea>
-                </div>
+            <div class="text-sm text-gray-600">
+                <span>Test your API endpoints safely</span>
             </div>
         </div>
+    </header>
 
-        <!-- Response Panel -->
-        <div class="space-y-3 sm:space-y-4">
-            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
-                <h3
-                    class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <span class="flex items-center">
-                        <i class="fas fa-arrow-down mr-2 text-green-600 text-sm sm:text-base"></i>
-                        Response
-                    </span>
-                    <div id="response-meta"
-                        class="text-xs sm:text-sm text-gray-500 hidden flex flex-wrap gap-1 items-center">
-                        <span id="response-status" class="font-semibold"></span>
-                        <span class="hidden sm:inline">•</span>
-                        <span id="response-time"></span>
-                        <span class="hidden sm:inline">•</span>
-                        <span id="response-size"></span>
-                        <span id="mock-mode-badge"
-                            class="hidden px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded whitespace-nowrap">
-                            <i class="fas fa-undo mr-1"></i>ROLLED BACK
-                        </span>
-                    </div>
+    <div class="p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Request Panel -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-paper-plane text-indigo-600"></i>
+                    Request
                 </h3>
 
-                <!-- Loading State -->
-                <div id="loading-state" class="hidden text-center py-8 sm:py-12">
-                    <i class="fas fa-spinner fa-spin text-3xl sm:text-4xl text-indigo-600 mb-3 sm:mb-4"></i>
-                    <p class="text-sm sm:text-base text-gray-600">Sending request...</p>
+                <div class="space-y-4">
+                    <!-- Method & URL -->
+                    <div class="flex gap-3">
+                        <select id="method"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white font-medium">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+
+                        <input type="text" id="url" placeholder="http://localhost:8080/api/..."
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            value="http://localhost:8080/api/users">
+                    </div>
+
+                    <!-- Headers -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-list mr-2"></i>Headers
+                        </label>
+                        <div id="headers-container" class="space-y-2 mb-2">
+                            <!-- Dynamic header inputs -->
+                        </div>
+                        <button onclick="addHeader()"
+                            class="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Header</span>
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-code mr-2"></i>Request Body (JSON)
+                        </label>
+                        <textarea id="body" rows="10"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 code-editor font-mono text-sm"
+                            placeholder='{\n  "name": "John Doe",\n  "email": "john@example.com"\n}'></textarea>
+                    </div>
+
+                    <!-- Mock Mode -->
+                    <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="flex items-center gap-3">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="mockMode" class="mr-2 h-5 w-5 text-indigo-600 rounded">
+                                <span class="font-medium text-gray-900">Mock Mode (Safe Testing)</span>
+                            </label>
+                            <button onclick="showMockModeInfo()" class="text-blue-600 hover:text-blue-700">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="sendRequest()" style="cursor: pointer;"
+                            class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2">
+                            <i class="fas fa-play"></i>
+                            <span>Send Request</span>
+                        </button>
+
+                        <button onclick="clearRequest()" style="cursor: pointer;"
+                            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Panel -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-reply text-green-600"></i>
+                    Response
+                </h3>
+
+                <div id="response-container" class="text-center py-12 text-gray-400">
+                    <i class="fas fa-inbox text-6xl mb-4"></i>
+                    <p>Send a request to see the response</p>
                 </div>
 
-                <!-- Empty State -->
-                <div id="empty-state" class="text-center py-8 sm:py-12 text-gray-400">
-                    <i class="fas fa-paper-plane text-4xl sm:text-6xl mb-3 sm:mb-4 opacity-20"></i>
-                    <p class="text-sm sm:text-base">Send a request to see the response</p>
-                </div>
+                <div id="response-content" class="hidden space-y-4">
+                    <!-- Status -->
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-600">Status</span>
+                        <span id="response-status" class="font-semibold"></span>
+                    </div>
 
-                <!-- Error State -->
-                <div id="error-state" class="hidden">
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
-                        <div class="flex items-start gap-2 sm:gap-3">
-                            <i
-                                class="fas fa-exclamation-circle text-red-600 mt-0.5 sm:mt-1 text-sm sm:text-base flex-shrink-0"></i>
-                            <div class="min-w-0">
-                                <h4 class="font-semibold text-red-800 text-sm sm:text-base">Request Failed</h4>
-                                <p id="error-message" class="text-xs sm:text-sm text-red-600 mt-1 break-words"></p>
+                    <!-- Time & Size -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="text-xs text-gray-600 mb-1">Time</div>
+                            <div id="response-time" class="font-semibold text-gray-900"></div>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="text-xs text-gray-600 mb-1">Size</div>
+                            <div id="response-size" class="font-semibold text-gray-900"></div>
+                        </div>
+                    </div>
+
+                    <!-- Mock Mode Badge -->
+                    <div id="mock-badge" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-center gap-2 text-blue-700">
+                            <i class="fas fa-shield-alt"></i>
+                            <span class="text-sm font-medium">Mock Mode: Changes were rolled back</span>
+                        </div>
+                    </div>
+
+                    <!-- Headers -->
+                    <div>
+                        <button onclick="toggleResponseHeaders()"
+                            class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <span class="text-sm font-medium text-gray-700">
+                                <i class="fas fa-list mr-2"></i>Response Headers
+                            </span>
+                            <i id="headers-toggle-icon" class="fas fa-chevron-down text-gray-400"></i>
+                        </button>
+                        <div id="response-headers" class="hidden mt-2 p-4 bg-gray-50 rounded-lg">
+                            <pre id="response-headers-content" class="text-xs font-mono text-gray-700"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-file-code mr-2"></i>Response Body
+                        </label>
+                        <div class="relative">
+                            <pre id="response-body"
+                                class="p-4 bg-gray-900 text-green-400 rounded-lg overflow-x-auto text-sm font-mono max-h-96"></pre>
+                            <button onclick="copyResponse()"
+                                class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 text-xs">
+                                <i class="fas fa-copy mr-1"></i>Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Examples -->
+        <div class="mt-6 bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i class="fas fa-lightbulb text-yellow-500"></i>
+                Quick Examples
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                <button onclick="loadExample('get')"
+                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1">GET Request</div>
+                    <div class="text-xs text-gray-500">Fetch all users</div>
+                </button>
+
+                <button onclick="loadExample('post')"
+                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1">POST Request</div>
+                    <div class="text-xs text-gray-500">Create new user</div>
+                </button>
+
+                <button onclick="loadExample('put')"
+                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1">PUT Request</div>
+                    <div class="text-xs text-gray-500">Update user</div>
+                </button>
+
+                <button onclick="loadExample('delete')"
+                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1">DELETE Request</div>
+                    <div class="text-xs text-gray-500">Delete user</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Dialog -->
+    <div id="settings-dialog" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-black opacity-50 z-[10]" onclick="closeSettingsDialog()"></div>
+        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col z-[99]">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <h3 class="text-xl font-semibold flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-indigo-600"></i>
+                    Security Settings
+                </h3>
+                <button onclick="closeSettingsDialog()"
+                    class="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-200 rounded transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="space-y-6">
+                    <!-- Security Section -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-lock text-red-600"></i>
+                            Security Controls
+                        </h4>
+
+                        <div class="space-y-3 bg-red-50 border border-red-200 rounded-lg p-4">
+                            <label
+                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-900">Allow Only Localhost</span>
+                                    <p class="text-xs text-gray-600">Only accept requests to localhost/127.0.0.1</p>
+                                </div>
+                                <input type="checkbox" id="config-allowOnlyLocalhost"
+                                    class="h-5 w-5 text-indigo-600 rounded">
+                            </label>
+
+                            <label
+                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-900">Block Private IPs</span>
+                                    <p class="text-xs text-gray-600">Block requests to private IP ranges (10.x,
+                                        192.168.x, etc.)</p>
+                                </div>
+                                <input type="checkbox" id="config-blockPrivateIPs"
+                                    class="h-5 w-5 text-indigo-600 rounded">
+                            </label>
+
+                            <label
+                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-900">Enable External Hosts</span>
+                                    <p class="text-xs text-red-600 font-semibold">⚠️ WARNING: Allows SSRF attacks!</p>
+                                </div>
+                                <input type="checkbox" id="config-enableExternalHosts"
+                                    class="h-5 w-5 text-red-600 rounded">
+                            </label>
+
+                            <label
+                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-900">Require HTTPS</span>
+                                    <p class="text-xs text-gray-600">Force HTTPS for external requests</p>
+                                </div>
+                                <input type="checkbox" id="config-requireHTTPS" class="h-5 w-5 text-indigo-600 rounded">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Features Section -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-toggle-on text-indigo-600"></i>
+                            Features
+                        </h4>
+
+                        <div class="space-y-3">
+                            <label
+                                class="flex items-center justify-between cursor-pointer p-3 bg-gray-50 hover:bg-gray-100 rounded-lg">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-900">Enable Mock Mode</span>
+                                    <p class="text-xs text-gray-600">Allow transactions to be rolled back automatically
+                                    </p>
+                                </div>
+                                <input type="checkbox" id="config-enableMockMode"
+                                    class="h-5 w-5 text-indigo-600 rounded">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Performance Section -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-tachometer-alt text-indigo-600"></i>
+                            Performance Limits
+                        </h4>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Max Body Size (bytes)
+                                </label>
+                                <input type="number" id="config-maxBodySize" min="1024" max="10485760" step="1024"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="text-xs text-gray-500 mt-1">1KB - 10MB (current: <span
+                                        id="current-maxBodySize">-</span>)</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Request Timeout (seconds)
+                                </label>
+                                <input type="number" id="config-timeout" min="1" max="60" step="1"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="text-xs text-gray-500 mt-1">1-60 seconds</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Rate Limit (requests/minute)
+                                </label>
+                                <input type="number" id="config-maxRequestsPerMin" min="1" max="1000" step="1"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="text-xs text-gray-500 mt-1">1-1000 requests per minute</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Allowed Hosts Section -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-list text-indigo-600"></i>
+                            Allowed Hosts (Whitelist)
+                        </h4>
+
+                        <div>
+                            <textarea id="config-allowedHosts" rows="3"
+                                placeholder="example.com&#10;api.example.com&#10;localhost"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">One host per line. Leave empty to allow all (if
+                                external hosts enabled)</p>
+                        </div>
+                    </div>
+
+                    <!-- Security Warning -->
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                        <div class="flex">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-0.5"></i>
+                            <div class="text-sm text-yellow-700">
+                                <strong>Security Notice:</strong> Enabling external hosts can expose your server to SSRF
+                                attacks.
+                                Only enable if you understand the risks and have proper network segmentation.
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Response Headers -->
-                <div id="response-headers-container" class="hidden mb-3 sm:mb-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-xs sm:text-sm font-medium text-gray-700">Response Headers</label>
-                        <button onclick="document.getElementById('response-headers').classList.toggle('hidden')"
-                            class="text-xs text-gray-600 hover:text-gray-800 flex items-center gap-1">
-                            <i class="fas fa-chevron-down text-xs"></i>
-                            <span class="hidden sm:inline">Toggle</span>
-                        </button>
-                    </div>
-                    <div id="response-headers"
-                        class="bg-gray-50 rounded p-2 sm:p-3 text-xs font-mono text-gray-700 max-h-32 sm:max-h-40 overflow-y-auto hidden">
-                    </div>
-                </div>
-
-                <!-- Response Body -->
-                <div id="response-body-container" class="hidden">
-                    <label class="text-xs sm:text-sm font-medium text-gray-700 mb-2 block">Response Body</label>
-                    <div class="bg-gray-50 rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-96 overflow-y-auto">
-                        <pre id="response-body"
-                            class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words"></pre>
-                    </div>
-                </div>
             </div>
 
-            <!-- Saved Requests -->
-            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
-                <div class="flex items-center justify-between mb-3 sm:mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 flex items-center">
-                        <i class="fas fa-bookmark mr-2 text-yellow-600 text-sm sm:text-base"></i>
-                        <span class="hidden sm:inline">Saved Requests</span>
-                        <span class="sm:hidden">Saved</span>
-                    </h3>
-                    <button onclick="window.playgroundPage.saveRequest()"
-                        class="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 flex items-center gap-1 whitespace-nowrap">
-                        <i class="fas fa-save text-xs"></i>
-                        <span class="hidden sm:inline">Save</span>
+            <!-- Footer -->
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-between gap-3 bg-gray-50">
+                <button onclick="resetToDefaults()"
+                    class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <i class="fas fa-undo mr-2"></i>Reset to Defaults
+                </button>
+                <div class="flex gap-3">
+                    <button onclick="closeSettingsDialog()"
+                        class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
                     </button>
-                </div>
-                <div id="saved-requests" class="space-y-2">
-                    <!-- Saved requests will be listed here -->
-                    <p class="text-xs sm:text-sm text-gray-400 text-center py-3 sm:py-4">No saved requests yet</p>
+                    <button onclick="saveSettings()"
+                        class="px-6 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                        <i class="fas fa-save mr-2"></i>Save Settings
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    (function () {
-        if (window.playgroundPage) {
-            window.playgroundPage.init();
-            return;
-        }
+    <script>
+        (function () {
+            let headerCount = 0;
 
-        const state = {
-            savedRequests: JSON.parse(localStorage.getItem('api_playground_saved') || '[]'),
-            mockMode: true
-        };
-
-        function toggleMockMode () {
-            const toggle = document.getElementById('mock-mode-toggle');
-            state.mockMode = toggle.checked;
-
-            const mockInfo = document.getElementById('mock-mode-info');
-            const liveInfo = document.getElementById('live-mode-info');
-
-            if (state.mockMode) {
-                mockInfo.classList.remove('hidden');
-                liveInfo.classList.add('hidden');
-            } else {
-                mockInfo.classList.add('hidden');
-                liveInfo.classList.remove('hidden');
+            // Initialize
+            function init () {
+                addHeader(); // Add one default header
+                loadSettings(); // Load current settings
             }
-        }
 
-        function loadRoute (method, path) {
-            document.getElementById('method').value = method;
-            const baseUrl = window.location.origin;
-            document.getElementById('url').value = baseUrl + path;
+            // Add header input
+            window.addHeader = function () {
+                const container = document.getElementById('headers-container');
+                const id = headerCount++;
 
-            if (method === 'POST') {
-                if (path.includes('/products')) {
-                    document.getElementById('request-body').value = JSON.stringify({
-                        "name": "New Product",
-                        "price": 99.99,
-                        "category": "Electronics"
-                    }, null, 2);
-                }
-            } else if (method === 'PUT') {
-                if (path.includes('/products')) {
-                    document.getElementById('request-body').value = JSON.stringify({
-                        "name": "Updated Product",
-                        "price": 149.99,
-                        "category": "Electronics"
-                    }, null, 2);
-                }
-            } else {
-                document.getElementById('request-body').value = '';
-            }
-        }
-
-        function addHeader () {
-            const container = document.getElementById('headers-container');
-            const row = document.createElement('div');
-            row.className = 'flex flex-col sm:flex-row gap-2 header-row';
-            row.innerHTML = `
-                <input type="text" placeholder="Name"
-                    class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                <div class="flex gap-2">
-                    <input type="text" placeholder="Value"
-                        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                    <button onclick="this.closest('.header-row').remove()" 
-                        class="px-2 py-2 text-red-600 hover:text-red-800 flex-shrink-0">
-                        <i class="fas fa-times text-sm"></i>
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'flex gap-2';
+                headerDiv.id = `header-${id}`;
+                headerDiv.innerHTML = `
+                    <input type="text" placeholder="Header name" 
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                           data-header-key="${id}">
+                    <input type="text" placeholder="Value" 
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                           data-header-value="${id}">
+                    <button onclick="removeHeader(${id})" 
+                            class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
+                        <i class="fas fa-trash"></i>
                     </button>
-                </div>
-            `;
-            container.appendChild(row);
-        }
+                `;
 
-        function formatJSON () {
-            const textarea = document.getElementById('request-body');
-            try {
-                const json = JSON.parse(textarea.value);
-                textarea.value = JSON.stringify(json, null, 2);
-            } catch (e) {
-                alert('Invalid JSON: ' + e.message);
-            }
-        }
+                container.appendChild(headerDiv);
+            };
 
-        async function executeRequest () {
-            const method = document.getElementById('method').value;
-            const url = document.getElementById('url').value;
-            const body = document.getElementById('request-body').value;
+            window.removeHeader = function (id) {
+                const element = document.getElementById(`header-${id}`);
+                if (element) element.remove();
+            };
 
-            const headers = {};
-            document.querySelectorAll('.header-row').forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                if (inputs[0].value && inputs[1].value) {
-                    headers[inputs[0].value] = inputs[1].value;
-                }
-            });
+            // Get headers from inputs
+            function getHeaders () {
+                const headers = {};
+                document.querySelectorAll('[data-header-key]').forEach(input => {
+                    const id = input.dataset.headerKey;
+                    const key = input.value.trim();
+                    const valueInput = document.querySelector(`[data-header-value="${id}"]`);
+                    const value = valueInput ? valueInput.value.trim() : '';
 
-            document.getElementById('empty-state').classList.add('hidden');
-            document.getElementById('error-state').classList.add('hidden');
-            document.getElementById('response-body-container').classList.add('hidden');
-            document.getElementById('response-headers-container').classList.add('hidden');
-            document.getElementById('response-meta').classList.add('hidden');
-            document.getElementById('loading-state').classList.remove('hidden');
-
-            try {
-                const response = await fetch('/cms/api/playground/execute', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        method,
-                        url,
-                        headers,
-                        body,
-                        mockMode: state.mockMode
-                    })
+                    if (key && value) {
+                        headers[key] = value;
+                    }
                 });
+                return headers;
+            }
 
-                const result = await response.json();
-                document.getElementById('loading-state').classList.add('hidden');
+            // Send request
+            window.sendRequest = async function () {
+                const method = document.getElementById('method').value;
+                const url = document.getElementById('url').value.trim();
+                const body = document.getElementById('body').value.trim();
+                const mockMode = document.getElementById('mockMode').checked;
+                const headers = getHeaders();
 
-                if (!result.success) {
-                    document.getElementById('error-message').textContent = result.error;
-                    document.getElementById('error-state').classList.remove('hidden');
+                if (!url) {
+                    showNotification('Please enter a URL', 'error');
                     return;
                 }
 
-                const data = result.data;
-
-                document.getElementById('response-meta').classList.remove('hidden');
-                const statusEl = document.getElementById('response-status');
-                statusEl.textContent = data.status;
-                statusEl.className = data.statusCode >= 200 && data.statusCode < 300
-                    ? 'font-semibold text-green-600'
-                    : 'font-semibold text-red-600';
-                document.getElementById('response-time').textContent = data.time + 'ms';
-                document.getElementById('response-size').textContent = formatBytes(data.size);
-
-                const mockBadge = document.getElementById('mock-mode-badge');
-                if (data.mockMode) {
-                    mockBadge.classList.remove('hidden');
-                } else {
-                    mockBadge.classList.add('hidden');
-                }
-
-                document.getElementById('response-headers-container').classList.remove('hidden');
-                const headersHtml = Object.entries(data.headers)
-                    .map(([key, value]) => `<div class="break-words"><span class="text-blue-600">${key}:</span> ${value}</div>`)
-                    .join('');
-                document.getElementById('response-headers').innerHTML = headersHtml;
-
-                document.getElementById('response-body-container').classList.remove('hidden');
-                const bodyEl = document.getElementById('response-body');
-                if (typeof data.body === 'object') {
-                    bodyEl.textContent = JSON.stringify(data.body, null, 2);
-                } else {
-                    bodyEl.textContent = data.body;
-                }
-
-            } catch (error) {
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('error-message').textContent = error.message;
-                document.getElementById('error-state').classList.remove('hidden');
-            }
-        }
-
-        function formatBytes (bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
-
-        function saveRequest () {
-            const name = prompt('Enter a name for this request:');
-            if (!name) return;
-
-            const method = document.getElementById('method').value;
-            const url = document.getElementById('url').value;
-            const body = document.getElementById('request-body').value;
-
-            const headers = {};
-            document.querySelectorAll('.header-row').forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                if (inputs[0].value && inputs[1].value) {
-                    headers[inputs[0].value] = inputs[1].value;
-                }
-            });
-
-            const request = {
-                id: Date.now(),
-                name,
-                method,
-                url,
-                headers,
-                body,
-                createdAt: new Date().toISOString()
-            };
-
-            state.savedRequests.push(request);
-            localStorage.setItem('api_playground_saved', JSON.stringify(state.savedRequests));
-            renderSavedRequests();
-        }
-
-        function loadSavedRequest (id) {
-            const request = state.savedRequests.find(r => r.id === id);
-            if (!request) return;
-
-            document.getElementById('method').value = request.method;
-            document.getElementById('url').value = request.url;
-            document.getElementById('request-body').value = request.body;
-
-            const container = document.getElementById('headers-container');
-            container.innerHTML = '';
-            Object.entries(request.headers).forEach(([key, value]) => {
-                const row = document.createElement('div');
-                row.className = 'flex flex-col sm:flex-row gap-2 header-row';
-                row.innerHTML = `
-                    <input type="text" value="${key}" placeholder="Name"
-                        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                    <div class="flex gap-2">
-                        <input type="text" value="${value}" placeholder="Value"
-                            class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
-                        <button onclick="this.closest('.header-row').remove()" 
-                            class="px-2 py-2 text-red-600 hover:text-red-800 flex-shrink-0">
-                            <i class="fas fa-times text-sm"></i>
-                        </button>
+                // Show loading state
+                document.getElementById('response-container').classList.remove('hidden');
+                document.getElementById('response-content').classList.add('hidden');
+                document.getElementById('response-container').innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-spinner fa-spin text-6xl text-indigo-600 mb-4"></i>
+                        <p class="text-gray-600">Sending request...</p>
                     </div>
                 `;
-                container.appendChild(row);
-            });
-        }
 
-        function deleteSavedRequest (id) {
-            if (!confirm('Delete this saved request?')) return;
+                try {
+                    const response = await fetch('/cms/api/playground/execute', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            method: method,
+                            url: url,
+                            headers: headers,
+                            body: body,
+                            mockMode: mockMode
+                        })
+                    });
 
-            state.savedRequests = state.savedRequests.filter(r => r.id !== id);
-            localStorage.setItem('api_playground_saved', JSON.stringify(state.savedRequests));
-            renderSavedRequests();
-        }
+                    const result = await response.json();
 
-        function renderSavedRequests () {
-            const container = document.getElementById('saved-requests');
+                    if (result.success) {
+                        displayResponse(result.data);
+                    } else {
+                        displayError(result.error);
+                    }
+                } catch (error) {
+                    displayError('Network error: ' + error.message);
+                }
+            };
 
-            if (state.savedRequests.length === 0) {
-                container.innerHTML = '<p class="text-xs sm:text-sm text-gray-400 text-center py-3 sm:py-4">No saved requests yet</p>';
-                return;
+            // Display response
+            function displayResponse (data) {
+                document.getElementById('response-container').classList.add('hidden');
+                document.getElementById('response-content').classList.remove('hidden');
+
+                // Status
+                const statusBadge = document.getElementById('response-status');
+                statusBadge.textContent = `${data.statusCode} ${data.status}`;
+                statusBadge.className = data.statusCode < 400
+                    ? 'font-semibold text-green-600'
+                    : 'font-semibold text-red-600';
+
+                // Time & Size
+                document.getElementById('response-time').textContent = `${data.time}ms`;
+                document.getElementById('response-size').textContent = formatBytes(data.size);
+
+                // Mock mode badge
+                if (data.mockMode) {
+                    document.getElementById('mock-badge').classList.remove('hidden');
+                } else {
+                    document.getElementById('mock-badge').classList.add('hidden');
+                }
+
+                // Headers
+                document.getElementById('response-headers-content').textContent =
+                    JSON.stringify(data.headers, null, 2);
+
+                // Body
+                const bodyElement = document.getElementById('response-body');
+                if (typeof data.body === 'object') {
+                    bodyElement.textContent = JSON.stringify(data.body, null, 2);
+                } else {
+                    bodyElement.textContent = data.body || '(empty)';
+                }
             }
 
-            container.innerHTML = state.savedRequests.map(req => `
-                <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors gap-2">
-                    <div class="flex-1 cursor-pointer min-w-0" onclick="window.playgroundPage.loadSavedRequest(${req.id})">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded ${getMethodBadgeClass(req.method)} whitespace-nowrap">
-                                ${req.method}
-                            </span>
-                            <span class="text-xs sm:text-sm font-medium text-gray-800 truncate">${req.name}</span>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1 truncate">${req.url}</div>
+            // Display error
+            function displayError (error) {
+                document.getElementById('response-container').classList.remove('hidden');
+                document.getElementById('response-content').classList.add('hidden');
+                document.getElementById('response-container').innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+                        <p class="text-red-600 font-semibold mb-2">Request Failed</p>
+                        <p class="text-sm text-gray-600">${error}</p>
                     </div>
-                    <button onclick="event.stopPropagation(); window.playgroundPage.deleteSavedRequest(${req.id})" 
-                        class="text-red-600 hover:text-red-800 flex-shrink-0 p-1">
-                        <i class="fas fa-trash text-xs sm:text-sm"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
+                `;
+            }
 
-        function getMethodBadgeClass (method) {
-            const classes = {
-                'GET': 'bg-blue-100 text-blue-800',
-                'POST': 'bg-green-100 text-green-800',
-                'PUT': 'bg-yellow-100 text-yellow-800',
-                'DELETE': 'bg-red-100 text-red-800',
-                'PATCH': 'bg-purple-100 text-purple-800'
+            // Toggle response headers
+            window.toggleResponseHeaders = function () {
+                const container = document.getElementById('response-headers');
+                const icon = document.getElementById('headers-toggle-icon');
+
+                if (container.classList.contains('hidden')) {
+                    container.classList.remove('hidden');
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    container.classList.add('hidden');
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
             };
-            return classes[method] || 'bg-gray-100 text-gray-800';
-        }
 
-        function init () {
-            renderSavedRequests();
+            // Copy response
+            window.copyResponse = function () {
+                const text = document.getElementById('response-body').textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('Response copied to clipboard', 'success');
+                });
+            };
 
-            const baseUrl = window.location.origin;
-            document.getElementById('url').value = baseUrl + '/api/products';
+            // Clear request
+            window.clearRequest = function () {
+                document.getElementById('url').value = 'http://localhost:8080/api/users';
+                document.getElementById('body').value = '';
+                document.getElementById('mockMode').checked = false;
 
-            const toggle = document.getElementById('mock-mode-toggle');
-            toggle.addEventListener('change', toggleMockMode);
+                // Clear headers
+                document.getElementById('headers-container').innerHTML = '';
+                headerCount = 0;
+                addHeader();
+            };
 
-            toggleMockMode();
-        }
+            // Load example
+            window.loadExample = function (type) {
+                const examples = {
+                    get: {
+                        method: 'GET',
+                        url: 'http://localhost:8080/api/users',
+                        body: ''
+                    },
+                    post: {
+                        method: 'POST',
+                        url: 'http://localhost:8080/api/users',
+                        body: JSON.stringify({
+                            name: "John Doe",
+                            email: "john@example.com",
+                            age: 30
+                        }, null, 2)
+                    },
+                    put: {
+                        method: 'PUT',
+                        url: 'http://localhost:8080/api/users/1',
+                        body: JSON.stringify({
+                            name: "John Doe Updated",
+                            email: "john.updated@example.com"
+                        }, null, 2)
+                    },
+                    delete: {
+                        method: 'DELETE',
+                        url: 'http://localhost:8080/api/users/1',
+                        body: ''
+                    }
+                };
 
-        window.playgroundPage = {
-            init,
-            loadRoute,
-            addHeader,
-            formatJSON,
-            executeRequest,
-            saveRequest,
-            loadSavedRequest,
-            deleteSavedRequest
-        };
+                const example = examples[type];
+                if (example) {
+                    document.getElementById('method').value = example.method;
+                    document.getElementById('url').value = example.url;
+                    document.getElementById('body').value = example.body;
+                }
+            };
 
-        init();
-    })();
-</script>
+            // Show mock mode info
+            window.showMockModeInfo = function () {
+                alert('Mock Mode:\n\n' +
+                    '• Automatically rolls back changes after the request\n' +
+                    '• Safe for testing POST, PUT, DELETE operations\n' +
+                    '• Database state is preserved\n' +
+                    '• Perfect for trying destructive operations without risk');
+            };
+
+            // Settings Dialog Functions
+            let currentConfig = {};
+
+            async function loadSettings () {
+                try {
+                    const response = await fetch('/cms/api/playground/config', {
+                        credentials: 'include'
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        currentConfig = result.data;
+                        populateSettingsDialog(result.data);
+                    }
+                } catch (error) {
+                    console.error('Failed to load settings:', error);
+                }
+            }
+
+            function populateSettingsDialog (config) {
+                document.getElementById('config-allowOnlyLocalhost').checked = config.allowOnlyLocalhost;
+                document.getElementById('config-blockPrivateIPs').checked = config.blockPrivateIPs;
+                document.getElementById('config-enableExternalHosts').checked = config.enableExternalHosts;
+                document.getElementById('config-requireHTTPS').checked = config.requireHTTPS;
+                document.getElementById('config-enableMockMode').checked = config.enableMockMode;
+
+                document.getElementById('config-maxBodySize').value = config.maxBodySize;
+                document.getElementById('current-maxBodySize').textContent = formatBytes(config.maxBodySize);
+
+                document.getElementById('config-timeout').value = config.timeout;
+                document.getElementById('config-maxRequestsPerMin').value = config.maxRequestsPerMin;
+
+                document.getElementById('config-allowedHosts').value = (config.allowedHosts || []).join('\n');
+            }
+
+            window.openSettingsDialog = async function () {
+                await loadSettings();
+                document.getElementById('settings-dialog').classList.remove('hidden');
+            };
+
+            window.closeSettingsDialog = function () {
+                document.getElementById('settings-dialog').classList.add('hidden');
+            };
+
+            window.saveSettings = async function () {
+                const config = {
+                    allowOnlyLocalhost: document.getElementById('config-allowOnlyLocalhost').checked,
+                    blockPrivateIPs: document.getElementById('config-blockPrivateIPs').checked,
+                    enableExternalHosts: document.getElementById('config-enableExternalHosts').checked,
+                    requireHTTPS: document.getElementById('config-requireHTTPS').checked,
+                    enableMockMode: document.getElementById('config-enableMockMode').checked,
+                    maxBodySize: parseInt(document.getElementById('config-maxBodySize').value),
+                    timeout: parseFloat(document.getElementById('config-timeout').value),
+                    maxRequestsPerMin: parseInt(document.getElementById('config-maxRequestsPerMin').value),
+                    allowedHosts: document.getElementById('config-allowedHosts').value
+                        .split('\n')
+                        .map(h => h.trim())
+                        .filter(h => h.length > 0)
+                };
+
+                try {
+                    const response = await fetch('/cms/api/playground/config', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(config)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showNotification('Settings saved successfully', 'success');
+                        closeSettingsDialog();
+                    } else {
+                        showNotification('Error: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Failed to save settings:', error);
+                    showNotification('Failed to save settings', 'error');
+                }
+            };
+
+            window.resetToDefaults = function () {
+                if (!confirm('Reset all settings to secure defaults?')) return;
+
+                populateSettingsDialog({
+                    allowOnlyLocalhost: true,
+                    blockPrivateIPs: true,
+                    enableExternalHosts: false,
+                    requireHTTPS: false,
+                    enableMockMode: true,
+                    maxBodySize: 1048576, // 1MB
+                    timeout: 10,
+                    maxRequestsPerMin: 30,
+                    allowedHosts: []
+                });
+            };
+
+            // Update body size display on change
+            document.getElementById('config-maxBodySize')?.addEventListener('input', function () {
+                document.getElementById('current-maxBodySize').textContent = formatBytes(parseInt(this.value));
+            });
+
+            // Utility functions
+            function formatBytes (bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+            }
+
+            function showNotification (message, type = 'success') {
+                const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+                const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-lg shadow-2xl z-50 flex items-center gap-3 max-w-md`;
+                notification.innerHTML = `
+                    <i class="fas ${icon} text-xl"></i>
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 ml-2">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transition = 'opacity 0.3s';
+                    setTimeout(() => notification.remove(), 300);
+                }, 5000);
+            }
+
+            // Initialize
+            init();
+        })();
+    </script>
+</body>
+
+</html>

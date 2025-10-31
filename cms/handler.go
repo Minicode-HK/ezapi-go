@@ -89,6 +89,8 @@ func RegisterCMSRoutes(router *gin.Engine) {
 
         // API Playground
         protected.POST("/api/playground/execute", playgroundHandler.ExecuteRequest)
+        protected.GET("/api/playground/config", playgroundHandler.GetConfig)
+        protected.PUT("/api/playground/config", playgroundHandler.UpdateConfig)
 
         // Mock Data
         protected.POST("/api/mockdata/generate", mockDataHandler.Generate)
