@@ -21,7 +21,7 @@
 <script defer>
     (async () => {
         const moduleName = "{{ .moduleName }}";
-        const cmsModule = new CMSModule();
-        await cmsModule.setModule(moduleName);
+        currentModule = new CMSModule();
+        await currentModule.setModule(moduleName);
     })();
 </script>
