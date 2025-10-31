@@ -2,6 +2,7 @@ package cms
 
 import (
     "strings"
+    "time"
 
     "github.com/gin-gonic/gin"
 
@@ -23,7 +24,18 @@ func RegisterCMSRoutes(router *gin.Engine) {
     contentHandler := handlers.NewContentHandler()
     schemaHandler := handlers.NewSchemaHandler()
     snapshotHandler := handlers.NewSnapshotHandler(cfg.SnapshotDir)
-    playgroundHandler := handlers.NewPlaygroundHandler() 
+    playgroundHandler := handlers.NewPlaygroundHandler(
+       &handlers.PlaygroundConfig{
+            AllowOnlyLocalhost:  false,  // Only allow testing local API
+            BlockPrivateIPs:     true,
+            MaxBodySize:         5 * 1024 * 1024, // 5MB
+            Timeout:             10 * time.Second,
+            MaxRequestsPerMin:   15,
+            EnableMockMode:      true,
+            EnableExternalHosts: false, // Disable external hosts
+            RequireHTTPS:        false, // Allow HTTP for localhost
+        },
+    ) 
     mockDataHandler := handlers.NewMockDataHandler()
     apiLogger := handlers.GetAPILogger()
 
