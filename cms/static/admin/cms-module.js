@@ -50,8 +50,8 @@ class CMSModule {
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">${this.schema.name}</h3>
                         <p class="text-sm text-gray-600 mt-1">${data.data.length} record(s) found</p>
-                    </div>
-                    <button onclick="currentModule.showCreateForm()" 
+                    </div> 
+                    <button onclick="currentModule.showCreateForm()"  style="cursor: pointer;"
                             class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
                         <i class="fas fa-plus"></i>
                         <span>Create New</span>
@@ -112,12 +112,12 @@ class CMSModule {
                 }).join('')}
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button onclick="currentModule.edit('${row.id}')" 
-                            class="text-blue-600 hover:text-blue-900 mr-4 transition-colors"
+                            class="text-blue-600 hover:text-blue-900 mr-4 transition-colors" style="cursor: pointer;"
                             title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
                     <button onclick="currentModule.delete('${row.id}')" 
-                            class="text-red-600 hover:text-red-900 transition-colors"
+                            class="text-red-600 hover:text-red-900 transition-colors" style="cursor: pointer;"
                             title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -257,7 +257,7 @@ class CMSModule {
         
         const modalHTML = `
             <div id="edit-modal" class="fixed inset-0 flex items-center justify-center z-50">
-                <div class="fixed inset-0 bg-black opacity-50 z-10" onclick="currentModule.closeModal()"></div>
+                <div class="fixed inset-0 bg-black opacity-50 z-10"  onclick="currentModule.closeModal()"></div>
                 <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden z-20 mx-4">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
                         <div class="flex justify-between items-center">
@@ -265,7 +265,7 @@ class CMSModule {
                                 <i class="fas ${modalIcon}"></i>
                                 ${modalTitle}
                             </h3>
-                            <button onclick="currentModule.closeModal()" 
+                            <button onclick="currentModule.closeModal()"  style="cursor: pointer;"
                                     class="text-white hover:text-gray-200 transition-colors">
                                 <i class="fas fa-times text-xl"></i>
                             </button>
@@ -280,12 +280,12 @@ class CMSModule {
                     </form>
                     
                     <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
-                        <button type="button"
+                        <button type="button" style="cursor: pointer;"
                                 onclick="currentModule.closeModal()" 
                                 class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                             <i class="fas fa-times mr-2"></i>Cancel
                         </button>
-                        <button type="button"
+                        <button type="button" style="cursor: pointer;"
                                 onclick="currentModule.submitForm(${isEdit}, '${data?.id || ''}')" 
                                 class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
                             <i class="fas fa-save"></i>

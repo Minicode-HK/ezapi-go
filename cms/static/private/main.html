@@ -17,14 +17,43 @@
 </head>
 
 <body class="bg-gray-100">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-gray-800 text-white flex flex-col">
-            <div class="p-4 border-b border-gray-700 flex items-center space-x-2">
+    <!-- Top Navigation Bar (Mobile) -->
+    <nav class="cursor-pointer lg:hidden fixed top-0 left-0 right-0 bg-gray-800 text-white shadow-lg z-50">
+        <div class="flex items-center justify-between p-4">
+            <div class="flex items-center space-x-2">
                 <img src="https://temp.r2.minicodehk.com/minicodehk_dark_no_bg.png" alt="Logo" class="h-8">
-                <h1 class="text-xl font-bold border-l border-gray-600 pl-2">
-                    EZAPI CMS
-                </h1>
+                <h1 class="text-lg font-bold">EZAPI CMS</h1>
+            </div>
+            <button id="mobile-menu-btn" class="text-white hover:text-gray-300 transition-colors">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="flex h-screen overflow-hidden pt-16 lg:pt-0">
+        <!-- Backdrop for mobile -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gray-800 text-white flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+
+            <!-- Header (Desktop only) -->
+            <div class="hidden lg:flex p-4 border-b border-gray-700 items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <img src="https://temp.r2.minicodehk.com/minicodehk_dark_no_bg.png" alt="Logo" class="h-8">
+                    <h1 class="text-xl font-bold border-l border-gray-600 pl-2">
+                        EZAPI CMS
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Close button for mobile -->
+            <div class="lg:hidden flex items-center justify-between p-4 border-b border-gray-700">
+                <span class="text-sm font-semibold text-gray-400">MENU</span>
+                <button id="mobile-menu-close" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
             </div>
 
             <!-- Navigation -->
@@ -42,7 +71,7 @@
                 </a>
                 <a href="#" hx-get="/cms/api/content/system_routes" hx-target="#main-content" hx-swap="innerHTML"
                     class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
-                    <i class="fas fa-cog mr-2"></i> System Routes
+                    <i class="fas fa-route mr-2"></i> System Routes
                 </a>
 
                 <div class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">
@@ -60,7 +89,7 @@
                     <span id="username-display" class="font-medium">Loading...</span>
                 </div>
 
-                <button id="logout-btn"
+                <button id="logout-btn" style="cursor: pointer;"
                     class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
                     <i class="fas fa-sign-out-alt mr-2"></i> Logout
                 </button>
@@ -74,20 +103,63 @@
     </div>
 
     <script>
-        // Highlight active nav item
+        // Mobile menu toggle
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const closeBtn = document.getElementById('mobile-menu-close');
+
+        function openSidebar () {
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar () {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        if (menuBtn) menuBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+        if (backdrop) backdrop.addEventListener('click', closeSidebar);
+
+        // Close sidebar on navigation (mobile only)
         document.addEventListener('htmx:afterOnLoad', function (event) {
+            // Highlight active nav item
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('bg-gray-700');
             });
 
             if (event.detail.elt && event.detail.elt.classList.contains('nav-link')) {
                 event.detail.elt.classList.add('bg-gray-700');
+
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth < 1024) {
+                    closeSidebar();
+                }
             }
         });
 
         // Load dashboard by default
         window.addEventListener('load', () => {
             htmx.ajax('GET', '/cms/api/content/dashboard', { target: '#main-content' });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                // Desktop: ensure sidebar is visible and backdrop is hidden
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.style.overflow = '';
+            } else {
+                // Mobile: ensure sidebar is hidden by default
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    closeSidebar();
+                }
+            }
         });
     </script>
 </body>
