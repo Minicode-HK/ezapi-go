@@ -1,10 +1,14 @@
 # Ezapi Golang version
 
-Simalar to this repo [ezapi](https://github.com/Minicode-HK/ezapi)
+Similar to this repo [ezapi](https://github.com/Minicode-HK/ezapi)
 
 Build a simple RESTful API with `type` and `data`. The API does not require a database and provides endpoints for basic CRUD operations. All the data is stored in runtime memory.
 
 Anytime you restart the server, the data will be reset. This is a good tool for testing and prototyping.
+
+## Issus ( I guess?)
+
+- I use reflection to access `Id` field in the struct.
 
 ## Example
 
