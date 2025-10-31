@@ -1,188 +1,244 @@
-# Ezapi Golang Version
+# EZAPI-GO - Zero-Setup REST API for Prototyping
 
-Similar to this repo [ezapi](https://github.com/Minicode-HK/ezapi)
+> Build and test REST APIs in minutes, not hours. No database, no configuration, just pure Go.
 
-Build a simple RESTful API with `type` and `data` within minutes. The API does not require a database and provides endpoints for basic CRUD operations. All the data is stored in runtime memory.
+```bash
+# Just clone and run
+go run main.go
+```
 
-Anytime you restart the server, the data will be reset. This is a good tool for testing and prototyping.
+---
 
-## Features
+## What Problem Does This Solve?
 
-- Auto-generated CRUD endpoints with `RegisterRouter`
-- Custom API endpoints with `RegisterRouterWith`  
-- Automatic route registration
-- Generic handlers with reflection
-- Built-in CMS Admin Panel - auto-generate admin UI for data management. Full CRUD support & form field type detection.
-    ![CMS Screenshot](./docs/dashboard.png)
+**Before EZAPI-GO:**
+```bash
+# Want to test a REST API idea?
+1. Setting MySQL connection (10 min)
+2. Write migrations (15 min)
+3. Set up ORM framework (20 min)
+4. Write CRUD handlers (45 min)
+5. Finally start coding your actual feature...
+```
 
-## TODO
-- Password should be hashed
-- Mutex support for concurrent access
-- Snapshot and versioning
-- Pagination support
-- Schema reload
-
-## Quick Start
-
-### `RegisterRouter` - Auto CRUD
-For standard REST APIs with full CRUD operations:
-
-```golang
-func init() {
-    RegisterRouter(&YourDB, "/api/endpoint")
+**With EZAPI-GO:**
+```go
+type Product struct {
+    Id    string  `json:"id"`
+    Name  string  `json:"name" binding:"required"`
+    Price float64 `json:"price" binding:"required,gt=0"`
 }
+
+var ProductDB []Product
+
+func init() {
+    RegisterRouter(&ProductDB, "/api/products")
+}
+// Done. You now have 5 endpoints + admin UI.
+```
+
+---
+
+## Quick Start (2 Minutes)
+
+### 1. Define Your Data Model
+
+```go
+// route/product.go
+package route
+
+type Product struct {
+    Id       string  `json:"id"`
+    Name     string  `json:"name" binding:"required"`
+    Price    float64 `json:"price" binding:"required,gt=0"`
+    Category string  `json:"category"`
+    InStock  bool    `json:"in_stock"`
+}
+
+var ProductDB []Product
+```
+
+### 2. Register Routes
+
+```go
+func init() {
+    // Add some initial data
+    ProductDB = ResetableDatabase(&ProductDB, []Product{
+        {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics", InStock: true},
+        {Id: "2", Name: "Mouse", Price: 29.99, Category: "Electronics", InStock: true},
+    })
+
+    // This single line creates 5 REST endpoints
+    RegisterRouter(&ProductDB, "/api/products")
+}
+```
+
+### 3. Start Server
+
+```go
+// main.go
+package main
+
+import (
+    "github.com/gin-gonic/gin"
+    "simple_backend_go/route" // Auto-registers routes
+    "simple_backend_go/cms"
+)
+
+func main() {
+    router := gin.Default()
+    // Setup all registered API routes
+    route.SetupAllRouters(router)
+
+    // Setup CMS admin panel
+    // comment this line if you don't want admin UI
+    cms.RegisterCMSRoutes(router)
+
+    router.Run(":8080")
+}
+```
+
+### 4. Everything is Ready!
+
+## Core Concepts
+
+### 1. `RegisterRouter` - Auto CRUD
+
+One line creates **RESTful endpoints**:
+
+```go
+RegisterRouter(&ProductDB, "/api/products")
 ```
 
 **Generates:**
-- `GET /api/endpoint` - List all
-- `GET /api/endpoint/:id` - Get by ID
-- `POST /api/endpoint` - Create
-- `PUT /api/endpoint/:id` - Update  
-- `DELETE /api/endpoint/:id` - Delete
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/products` | List all products |
+| `GET` | `/api/products/:id` | Get product by ID |
+| `POST` | `/api/products` | Create new product |
+| `PUT` | `/api/products/:id` | Update product |
+| `DELETE` | `/api/products/:id` | Delete product |
 
-### `RegisterRouterWith` - Custom Routes
-For custom endpoints, authentication, or special logic:
+### 2. `ResetableDatabase` - Predictable State
 
-```golang
-func init() {
-    RegisterRouterWith(func(router *gin.Engine) {
-        router.POST("/api/login", loginHandler)
-        router.GET("/api/stats", statsHandler)
-        // Any custom routes you need
-    })
-}
-```
-
-### `ResetableDatabase` - In-Memory DB
-To create an in-memory database that able to reset:
-
-```golang
-var YourDB = ResetableDatabase(&YourDB, []YourType{
-    { ... initial data ... },
+```go
+ProductDB = ResetableDatabase(&ProductDB, []Product{
+    {Id: "1", Name: "Laptop", Price: 999.99},
 })
 ```
 
-And the data will be reset when `/api/reset` is called.
 
-### `init` Function
-The `init` function is called automatically when the package is imported. You can use it to register your routes.
+### 3. `RegisterRouterWith` - Custom Logic
 
-### Example
+Need custom endpoints? Add them alongside auto-generated ones:
 
-```golang
-package route
-
-import (
-    "strings"
-    
-    "github.com/gin-gonic/gin"
-)
-
-type Product struct {
-    Id          string  `json:"id"`
-    Name        string  `json:"name" binding:"required"`
-    Price       float64 `json:"price" binding:"required,gt=0"`
-    Category    string  `json:"category"`
-    InStock     bool    `json:"in_stock"`
-}
-
-var ProductDB []Product 
-
-func GetProductDB() *[]Product {
-    return &ProductDB
-}
-
+```go
 func init() {
-    // Initialize the in-memory database
-    ProductDB = ResetableDatabase(&ProductDB, []Product{
-        {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics", InStock: true},
-    })
-
-    // Standard CRUD operations
+    // Auto-generated CRUD
     RegisterRouter(&ProductDB, "/api/products")
     
     // Custom endpoints
     RegisterRouterWith(func(router *gin.Engine) {
-        // Get products by category
-        router.GET("/api/products/category/:category", func(c *gin.Context) {
-            category := c.Param("category")
-            var filtered []Product
-            
-            for _, product := range ProductDB {
-                if product.Category == category {
-                    filtered = append(filtered, product)
-                }
-            }
-            
-            SendSuccess(c, filtered)
-        })
-        
         // Search products
         router.GET("/api/products/search", func(c *gin.Context) {
             query := c.Query("q")
-            var results []Product 
+            var results []Product
             
             for _, product := range ProductDB {
-                if strings.Contains(strings.ToLower(product.Name), strings.ToLower(query)) {
+                if strings.Contains(
+                    strings.ToLower(product.Name), 
+                    strings.ToLower(query),
+                ) {
                     results = append(results, product)
                 }
             }
             
             SendSuccess(c, results)
         })
+        
+        // Get by category
+        router.GET("/api/products/category/:category", func(c *gin.Context) {
+            category := c.Param("category")
+            var filtered []Product
+            
+            for _, p := range ProductDB {
+                if p.Category == category {
+                    filtered = append(filtered, p)
+                }
+            }
+            
+            SendSuccess(c, filtered)
+        })
     })
 }
 ```
 
-This gives you:
-- **CRUD routes**: `/api/products`, `/api/products/:id` etc.
-- **Custom routes**: `/api/products/category/:category`, `/api/products/search`
-- **CMS interface**: Manage products through web UI at `/cms/admin`
+**Now you have:**
+- `GET /api/products` (auto)
+- `GET /api/products/:id` (auto)
+- `GET /api/products/search?q=laptop` (custom)
+- `GET /api/products/category/electronics` (custom)
+- Plus POST, PUT, DELETE (auto)
 
-## CMS Admin Panel
+---
 
-### Setup CMS
-1. **Register your data models:** in cms/main.go
-```golang
-// Register your models here
-// Leave empty to include *ALL* models automatically
+## Built-in Admin Panel
+
+Every model you register **automatically gets an admin interface**:
+
+### Setup (30 seconds)
+
+```go
+// cms/main.go
+
 var Modules = []interface{}{
+    // Leave empty to auto-discover ALL models
     route.Product{},
-    // Add more models as needed
 }
 ```
 
-2. **Register CMS routes in your main.go:**
-
-```golang
-// Register CMS routes
+```go
+// main.go
 cms.RegisterCMSRoutes(router)
 ```
 
-3. **Access the CMS:**
-   - Login page: `http://localhost:8080/cms/login`
-   - Admin panel: `http://localhost:8080/cms/admin` (requires login)
+**Access:**
+- Login: `http://localhost:8080/cms/login`
+- Dashboard: `http://localhost:8080/cms/admin`
 
-   - Username: `superadmin`, Password: `superadmin`
-   - You can change credentials in `cms/main.go`
+**Default credentials:**
+- Username: `superadmin`
+- Password: `superadmin`
+
+### What You Get
+
+The CMS automatically generates:
+
+- **List View** - See all records in a table
+- **Create Form** - Smart inputs based on field types
+- **Edit Form** - Pre-filled with existing data
+- **Delete** - With confirmation dialog
+
+**Field Type Mapping:**
+
+| Go Type | Form Input | Example |
+|---------|------------|---------|
+| `string` | Text input | `<input type="text">` |
+| `int`, `float64` | Number input | `<input type="number">` |
+| `bool` | Checkbox | `<input type="checkbox">` |
+| `time.Time` | DateTime picker | `<input type="datetime-local">` |
+| Field name contains `json` | JSON textarea | Syntax highlighted editor |
+| `[]string`, `map[string]any` | JSON textarea | Multi-line editor |
 
 
-### Supported Field Types
+### Example Forms
+![Form Example](./docs/create_form.png)
 
-The CMS automatically detects field types from your Go structs:
+---
 
-**Type mappings:**
-- `string` → Text input
-- `int`, `float64` → Number input
-- `bool` → Checkbox
-- `time.Time` → DateTime picker
-- Fields containing "json" in name → JSON textarea
-- Arrays/Maps → JSON textarea
+## API Response Format
 
-
-## Response Format
-
-All responses follow this format:
+All endpoints return consistent JSON:
 
 ### Success Response
 ```json
@@ -192,28 +248,35 @@ All responses follow this format:
 }
 ```
 
-### Error Response  
+### Error Response
 ```json
 {
     "success": false,
-    "message": "Error description"
+    "message": "Product not found"
 }
 ```
 
-### Validation Error Response
+### ⚠️ Validation Error
 ```json
 {
     "success": false,
     "message": "Validation failed",
-    "details": ["Name is required", "Price must be greater than 0"]
+    "details": [
+        "Name is required",
+        "Price must be greater than 0"
+    ]
 }
 ```
 
-## Screenshots
+---
 
+## TODO 
 
-### Admin Dashboard
-![Admin Dashboard](./docs/dashboard.png)
-![Listing](./docs/listing.png)
-![Form](./docs/create_form.png)
-
+- [ ] **Security:** Hash passwords with bcrypt
+- [ ] **Concurrency:** Add mutex for thread-safe operations
+- [ ] **Persistence:** Optional JSON snapshot save/load
+- [ ] **Pagination:** Support for large datasets
+- [ ] **Filtering:** Query parameter filters
+- [ ] **Sorting:** Sort by any field
+- [ ] **Relationships:** Link between models in CMS
+- [ ] **File Upload:** Handle multipart forms
