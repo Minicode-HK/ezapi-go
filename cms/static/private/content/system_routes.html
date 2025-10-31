@@ -1,0 +1,370 @@
+<div class="p-8">
+    <!-- Header -->
+    <div class="mb-6">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">
+            <i class="fas fa-route mr-2 text-gray-600"></i>
+            System Routes
+        </h2>
+        <p class="text-gray-600">View all registered routes in your application</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Routes</p>
+                    <p id="total-routes" class="text-2xl font-bold text-gray-900">0</p>
+                </div>
+                <div class="bg-indigo-100 rounded-full p-3">
+                    <i class="fas fa-route text-indigo-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">API Routes</p>
+                    <p id="api-routes-count" class="text-2xl font-bold text-green-600">0</p>
+                </div>
+                <div class="bg-green-100 rounded-full p-3">
+                    <i class="fas fa-code text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">CMS Routes</p>
+                    <p id="cms-routes-count" class="text-2xl font-bold text-purple-600">0</p>
+                </div>
+                <div class="bg-purple-100 rounded-full p-3">
+                    <i class="fas fa-cog text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" id="search-routes" placeholder="Search routes by path, module, or description..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="window.routesPage.filterRoutes('all')"
+                    class="cursor-pointer filter-btn active px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-gray-500 hover:text-white transition-colors">
+                    <i class="fas fa-list mr-1"></i> All
+                </button>
+                <button onclick="window.routesPage.filterRoutes('api')"
+                    class="cursor-pointer filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-500 hover:text-white transition-colors">
+                    <i class="fas fa-code mr-1"></i> API
+                </button>
+                <button onclick="window.routesPage.filterRoutes('cms')"
+                    class="cursor-pointer filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-500 hover:text-white transition-colors">
+                    <i class="fas fa-cog mr-1"></i> CMS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Routes Tables -->
+    <div id="routes-container">
+        <!-- API Routes Section -->
+        <div class="mb-8 route-section api-section">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-gradient-to-r from-green-600 to-emerald-700 px-6 py-4">
+                    <h3 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-code mr-2"></i>
+                        API Routes
+                    </h3>
+                    <p class="text-green-100 text-sm mt-1">Application API endpoints</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Method
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Path
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Module
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Description
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="api-routes-body" class="bg-white divide-y divide-gray-200">
+                            <!-- API routes will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CMS Routes Section -->
+        <div class="mb-8 route-section cms-section" style="display: none;">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-700 px-6 py-4">
+                    <h3 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-cog mr-2"></i>
+                        CMS Routes
+                    </h3>
+                    <p class="text-purple-100 text-sm mt-1">System and CMS management routes</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Method
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Path
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Description
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="cms-routes-body" class="bg-white divide-y divide-gray-200">
+                            <!-- CMS routes will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // Skip if already initialized
+        if (window.routesPage) {
+            window.routesPage.init();
+            return;
+        }
+
+        const state = {
+            allRoutes: [],
+            currentFilter: 'api' // default filter
+        };
+
+        // Fetch routes from backend
+        async function loadRoutes () {
+            try {
+                const response = await fetch('/cms/system_routes');
+                const data = await response.json();
+
+                if (data.success) {
+                    state.allRoutes = data.data || [];
+                    updateStats();
+                    renderRoutes();
+                }
+            } catch (error) {
+                console.error('Failed to load routes:', error);
+            }
+        }
+
+        // Update stats cards
+        function updateStats () {
+            const cmsRoutes = state.allRoutes.filter(r => r.type === 'cms');
+            const apiRoutes = state.allRoutes.filter(r => r.type === 'api');
+
+            document.getElementById('total-routes').textContent = state.allRoutes.length;
+            document.getElementById('api-routes-count').textContent = apiRoutes.length;
+            document.getElementById('cms-routes-count').textContent = cmsRoutes.length;
+        }
+
+        // Get HTTP method badge color
+        function getMethodColor (method) {
+            const colors = {
+                'GET': 'bg-blue-100 text-blue-800',
+                'POST': 'bg-green-100 text-green-800',
+                'PUT': 'bg-yellow-100 text-yellow-800',
+                'DELETE': 'bg-red-100 text-red-800',
+                'PATCH': 'bg-purple-100 text-purple-800'
+            };
+            return colors[method] || 'bg-gray-100 text-gray-800';
+        }
+
+        // Render routes
+        function renderRoutes () {
+            const searchInput = document.getElementById('search-routes');
+            if (!searchInput) return;
+
+            const searchTerm = searchInput.value.toLowerCase();
+
+            let filteredRoutes = state.allRoutes;
+
+            // Filter by type
+            if (state.currentFilter !== 'all') {
+                filteredRoutes = filteredRoutes.filter(r => r.type === state.currentFilter);
+            }
+
+            // Filter by search
+            if (searchTerm) {
+                filteredRoutes = filteredRoutes.filter(r =>
+                    r.path.toLowerCase().includes(searchTerm) ||
+                    (r.module && r.module.toLowerCase().includes(searchTerm)) ||
+                    (r.description && r.description.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            const cmsRoutes = filteredRoutes.filter(r => r.type === 'cms');
+            const apiRoutes = filteredRoutes.filter(r => r.type === 'api');
+
+            // Render API routes
+            const apiBody = document.getElementById('api-routes-body');
+            if (apiRoutes.length === 0) {
+                apiBody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No API routes found</td></tr>';
+            } else {
+                apiBody.innerHTML = apiRoutes.map(route => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${getMethodColor(route.method)}">
+                                ${route.method}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-900">
+                            ${route.path}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            ${route.module || '-'}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            ${route.description || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button onclick="window.routesPage.copyPath('${route.path}')" 
+                                class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render CMS routes
+            const cmsBody = document.getElementById('cms-routes-body');
+            if (cmsRoutes.length === 0) {
+                cmsBody.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-gray-500">No CMS routes found</td></tr>';
+            } else {
+                cmsBody.innerHTML = cmsRoutes.map(route => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${getMethodColor(route.method)}">
+                                ${route.method}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-900">
+                            ${route.path}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            ${route.description || '-'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Show/hide sections
+            const cmsSection = document.querySelector('.cms-section');
+            const apiSection = document.querySelector('.api-section');
+
+            if (cmsSection) {
+                cmsSection.style.display =
+                    (state.currentFilter === 'all' || state.currentFilter === 'cms') && cmsRoutes.length > 0 ? 'block' : 'none';
+            }
+
+            if (apiSection) {
+                apiSection.style.display =
+                    (state.currentFilter === 'all' || state.currentFilter === 'api') && apiRoutes.length > 0 ? 'block' : 'none';
+            }
+        }
+
+        // Filter routes by type
+        function filterRoutes (type) {
+            state.currentFilter = type;
+
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-indigo-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+
+            const activeBtn = event && event.target ? event.target :
+                document.querySelector(`.filter-btn[onclick*="'${type}'"]`);
+
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-indigo-600', 'text-white');
+                activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+            }
+
+            renderRoutes();
+        }
+
+        // Copy path to clipboard
+        function copyPath (path) {
+            navigator.clipboard.writeText(path).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                toast.textContent = 'Path copied to clipboard!';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            });
+        }
+
+        // Initialize
+        function init () {
+            state.currentFilter = 'api';
+            filterRoutes(state.currentFilter);
+            // default set API filter
+            // Set up search handler
+            const searchInput = document.getElementById('search-routes');
+            if (searchInput) {
+                // Remove any existing listeners
+                const newSearchInput = searchInput.cloneNode(true);
+                searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+
+                // Add new listener
+                newSearchInput.addEventListener('input', renderRoutes);
+            }
+
+            // Load routes
+            loadRoutes();
+        }
+
+        // Export to global scope
+        window.routesPage = {
+            init,
+            filterRoutes,
+            copyPath
+        };
+
+        // Initialize on first load
+        init();
+    })();
+</script>

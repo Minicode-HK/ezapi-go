@@ -1,10 +1,14 @@
 package cms
 
 import (
+    "strings"
+
+    "github.com/gin-gonic/gin"
+
     "simple_backend_go/cms/auth"
     "simple_backend_go/cms/handlers"
+    "simple_backend_go/route"
     
-    "github.com/gin-gonic/gin"
 )
 
 func RegisterCMSRoutes(router *gin.Engine) {
@@ -19,20 +23,97 @@ func RegisterCMSRoutes(router *gin.Engine) {
     contentHandler := handlers.NewContentHandler()
     schemaHandler := handlers.NewSchemaHandler()
     snapshotHandler := handlers.NewSnapshotHandler(cfg.SnapshotDir)
-
-    router.LoadHTMLGlob("cms/static/private/content/dynamic/*.html")
     
     // CMS routes group
     cms := router.Group("/cms")
-    
-    // Public routes
-    cms.POST("/login", authHandler.Login)
-    cms.GET("/login", authHandler.ServeLoginPage)
     
     // Protected routes
     protected := cms.Group("")
     protected.Use(auth.Middleware(authService))
     {
+        protected.GET("/system_routes", func(c *gin.Context) {
+            // Get all registered routes from Gin
+            routes := router.Routes()
+            var routeList []map[string]interface{}
+            
+            // Get module registry for additional info
+            modules := route.GetModuleRegistry()
+            moduleMap := make(map[string]string)
+            for _, mod := range modules {
+                moduleMap[mod.BasePath] = mod.TypeName.Name()
+            }
+            
+            for _, r := range routes {
+                routeType := "api"
+                module := "CMS"
+                description := "Registered route"
+                
+                // Determine route type
+                if strings.HasPrefix(r.Path, "/cms") || strings.HasPrefix(r.Path, "/snapshots") {
+                    routeType = "cms"
+                }
+                
+                // Try to find module from path
+                if routeType == "api" {
+                    for basePath, moduleName := range moduleMap {
+                        if strings.HasPrefix(r.Path, basePath) {
+                            module = moduleName
+                            break
+                        }
+                    }
+                }
+                
+                // Add description for common routes
+                if routeType == "cms" {
+                    if strings.Contains(r.Path, "/login") {
+                        description = "Authentication"
+                    } else if strings.Contains(r.Path, "/admin") {
+                        description = "Admin interface"
+                    } else if strings.Contains(r.Path, "/snapshot") {
+                        description = "Snapshot management"
+                    } else if strings.Contains(r.Path, "/static") {
+                        description = "Static files"
+                    }
+                }
+
+                if routeType == "api" {
+                    if strings.Contains(r.Path, "/reset") {
+                        description = "Reset in-memory databases to initial state"
+                    }
+                    // GET basePath + / - Schema listing
+                    // GET basePath + /:id - Get :module by ID
+                    // POST basePath + / - Create :module
+                    // PUT basePath + /:id - Update :module by ID
+                    // DELETE basePath + /:id - Delete :module by ID
+                    if strings.HasSuffix(r.Path, "/") && r.Method == "GET" {
+                        description = "List all " + module
+                    } else if strings.HasSuffix(r.Path, "/:id") && r.Method == "GET" {
+                        description = "Get " + module + " by ID"
+                    } else if strings.HasSuffix(r.Path, "/") && r.Method == "POST" {
+                        description = "Create new " + module
+                    } else if strings.HasSuffix(r.Path, "/:id") && r.Method == "PUT" {
+                        description = "Update " + module + " by ID"
+                    } else if strings.HasSuffix(r.Path, "/:id") && r.Method == "DELETE" {
+                        description = "Delete " + module + " by ID"
+                    }
+
+                }
+                
+                routeList = append(routeList, map[string]interface{}{
+                    "method":      r.Method,
+                    "path":        r.Path,
+                    "type":        routeType,
+                    "module":      module,
+                    "description": description,
+                })
+            }
+            
+            c.JSON(200, gin.H{
+                "success": true,
+                "data":    routeList,
+            })
+        })
+            
         // Auth
         protected.POST("/logout", authHandler.Logout)
         protected.GET("/api/me", authHandler.Me)
@@ -42,6 +123,7 @@ func RegisterCMSRoutes(router *gin.Engine) {
         protected.GET("/api/content/dashboard", contentHandler.ServeDashboard)
         protected.GET("/api/content/snapshot", contentHandler.ServeSnapshot)
         protected.GET("/api/content/module/:name", contentHandler.ServeModule)
+        protected.GET("/api/content/system_routes", contentHandler.ServeSystemRoutes)
         
         // Schema
         protected.GET("/api/schemas", func(c *gin.Context) {
@@ -54,8 +136,14 @@ func RegisterCMSRoutes(router *gin.Engine) {
         protected.POST("/api/snapshots/save", snapshotHandler.Save)
         protected.POST("/api/snapshots/load", snapshotHandler.Load)
         protected.DELETE("/api/snapshots/:filename", snapshotHandler.Delete)
+
     }
-    
+
+    // Public routes
+    cms.POST("/login", authHandler.Login)
+    cms.GET("/login", authHandler.ServeLoginPage)
+
+    router.LoadHTMLGlob("cms/static/private/content/dynamic/*.html")
     // Serve static files
     router.Static("/cms/static", "./cms/static")
     router.Static("/snapshots", cfg.SnapshotDir)

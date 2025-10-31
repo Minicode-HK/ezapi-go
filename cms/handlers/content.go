@@ -22,6 +22,11 @@ func (h *ContentHandler) ServeSnapshot(c *gin.Context) {
     c.File("./cms/static/private/content/snapshot.html")
 }
 
+func (h *ContentHandler) ServeSystemRoutes(c *gin.Context) {
+    c.Header("Content-Type", "text/html; charset=utf-8")
+    c.File("cms/static/private/content/system_routes.html")
+}
+
 func (h *ContentHandler) ServeModule(c *gin.Context) {
     moduleName := c.Param("name")
 
