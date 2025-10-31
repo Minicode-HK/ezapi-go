@@ -145,14 +145,19 @@ func SendErrorWithDetails(c *gin.Context, code int, message string, details inte
 var _resetableDBInitialData = []any{}
 var _resetableDBs = []any{}
 
-func ResetableDatabase[T any](initialData []T) []T {
+// Usage in init(): var ProductDB = ResetableDatabase(&ProductDB, []Product{...})
+func ResetableDatabase[T any](dbPtr *[]T, initialData []T) []T {
     db := make([]T, len(initialData))
     copy(db, initialData)
-    _resetableDBInitialData = append(_resetableDBInitialData, initialData)
-    _resetableDBs = append(_resetableDBs, &db)
+    
+    initialCopy := make([]T, len(initialData))
+    copy(initialCopy, initialData)
+    
+    _resetableDBInitialData = append(_resetableDBInitialData, initialCopy)
+    _resetableDBs = append(_resetableDBs, dbPtr)
+    
     return db
 }
-
 
 
 var routerRegistry []func(*gin.Engine)
@@ -176,10 +181,18 @@ func SetupAllRouters(router *gin.Engine) {
 
     // add /api/reset endpoint to reset all resetableDBs
     router.POST("/api/reset", func(c *gin.Context) {
-        for i, dbPtr := range _resetableDBs {
-            initialData := _resetableDBInitialData[i]
-            reflect.ValueOf(dbPtr).Elem().Set(reflect.ValueOf(initialData))
+        for i := range _resetableDBs {
+            initialData := reflect.ValueOf(_resetableDBInitialData[i])
+            dbPtr := reflect.ValueOf(_resetableDBs[i])
+            
+            dbSlice := dbPtr.Elem()
+            
+            newSlice := reflect.MakeSlice(dbSlice.Type(), initialData.Len(), initialData.Len())
+            reflect.Copy(newSlice, initialData)
+
+            dbSlice.Set(newSlice)
         }
+
         SendSuccess(c, gin.H{"message": "All databases have been reset"})
     })
 }

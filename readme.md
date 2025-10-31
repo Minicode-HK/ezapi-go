@@ -44,6 +44,19 @@ func init() {
 }
 ```
 
+### `ResetableDatabase` - In-Memory DB
+To create an in-memory database that able to reset:
+
+```golang
+var YourDB = ResetableDatabase([]YourType{
+    { ... initial data ... },
+})
+```
+
+And the data will be reset when `/api/reset` is called.
+
+
+
 ### `init` Function
 The `init` function is called automatically when the package is imported. You can use it to register your routes.
 
@@ -52,6 +65,12 @@ The `init` function is called automatically when the package is imported. You ca
 ```golang
 package route
 
+import (
+    "strings"
+    
+    "github.com/gin-gonic/gin"
+)
+
 type Product struct {
     Id          string  `json:"id"`
     Name        string  `json:"name" binding:"required"`
@@ -59,11 +78,19 @@ type Product struct {
     Category    string  `json:"category"`
 }
 
-var ProductDB []Product = []Product{
-    {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
+var ProductDB []Product 
+
+func GetProductDB() *[]Product {
+    return &ProductDB
 }
 
 func init() {
+
+    // Initialize the in-memory database
+    ProductDB = ResetableDatabase(&ProductDB, []Product{
+        {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
+    })
+
     // Standard CRUD operations
     RegisterRouter(&ProductDB, "/api/products")
     
@@ -86,7 +113,7 @@ func init() {
         // Search products
         router.GET("/api/products/search", func(c *gin.Context) {
             query := c.Query("q")
-            var results []Product
+            var results []Product 
             
             for _, product := range ProductDB {
                 if strings.Contains(strings.ToLower(product.Name), strings.ToLower(query)) {

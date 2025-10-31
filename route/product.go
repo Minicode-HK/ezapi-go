@@ -13,15 +13,19 @@ type Product struct {
     Category    string  `json:"category"`
 }
 
-var ProductDB []Product = ResetableDatabase([]Product{
-    {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
-});
+var ProductDB []Product 
 
 func GetProductDB() *[]Product {
     return &ProductDB
 }
 
 func init() {
+
+    // Initialize the in-memory database
+    ProductDB = ResetableDatabase(&ProductDB, []Product{
+        {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
+    })
+
     // Standard CRUD operations
     RegisterRouter(&ProductDB, "/api/products")
     
@@ -44,7 +48,7 @@ func init() {
         // Search products
         router.GET("/api/products/search", func(c *gin.Context) {
             query := c.Query("q")
-            var results []Product
+            var results []Product 
             
             for _, product := range ProductDB {
                 if strings.Contains(strings.ToLower(product.Name), strings.ToLower(query)) {
