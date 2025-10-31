@@ -1,30 +1,42 @@
 package main
 
 import (
-	"net/http"
+    "log"
+    "net/http"
+    "os"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+    "github.com/gin-contrib/cors"
+    "github.com/gin-gonic/gin"
 
-	"simple_backend_go/route"
+    "simple_backend_go/route"
 )
 
-var UserDB []route.User = []route.User{
-	{ Id: "1" },
-	{ Id: "2" },
-}
-
-
 func main() {
-	// gin.SetMode(gin.ReleaseMode)
-	router := gin.Default()
-	router.Use(cors.Default())
-	router.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	});
+    // Set up router
+    router := gin.Default()
+    
+    // Configure CORS
+    router.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"*"},
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+        AllowHeaders:     []string{"Content-Type", "Authorization"},
+        AllowCredentials: true,
+    }))
+    
+    // Health check endpoint
+    router.GET("/ping", func(c *gin.Context) {
+        c.String(http.StatusOK, "pong")
+    })
 
-	route.Router(router, &UserDB)
-
-	router.Static("/public", "./public")
-	router.Run(":8080")
+    // Add more resource routers here
+    route.SetupAllRouters(router)
+    
+    // Get port from env or use default
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+    
+    log.Printf("Server starting on port %s", port)
+    router.Run(":" + port)
 }
