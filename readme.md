@@ -1,5 +1,7 @@
 # EZAPI-GO - Zero-Setup REST API for Prototyping
 
+![ezapi-go-logo](./docs/landing.png)
+
 > Build and test REST APIs in minutes, not hours. No database, no configuration, just pure Go.
 
 ```bash
