@@ -166,6 +166,7 @@ var routerRegistry []func(*gin.Engine)
 type ModuleInfo struct {
 	TypeName reflect.Type
     BasePath string
+    Data    interface{}
 }
 // TODO: currently only RegisterRouter have this info
 var moduleRegistry []ModuleInfo
@@ -182,6 +183,7 @@ func RegisterRouter[T any](inMemoryDB *[]T, basePath string) {
     moduleRegistry = append(moduleRegistry, ModuleInfo{
         TypeName: reflect.TypeOf(*inMemoryDB).Elem(),
         BasePath: basePath,
+        Data:    inMemoryDB,
     })
 }
 

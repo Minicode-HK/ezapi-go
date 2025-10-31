@@ -1,0 +1,27 @@
+<header class="bg-white shadow-sm px-8 py-4">
+    <div class="flex justify-between items-center">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800" id="page-title">{{ .moduleName }}</h2>
+            <p class="text-sm text-gray-600 mt-1" id="page-subtitle">Manage {{ .moduleName }} records</p>
+        </div>
+    </div>
+</header>
+
+<div class="p-8">
+    <div id="content-area">
+        <div class="text-center py-12">
+            <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-600">Loading {{ .moduleName }}...</p>
+        </div>
+    </div>
+</div>
+
+
+
+<script defer>
+    (async () => {
+        const moduleName = "{{ .moduleName }}";
+        const cmsModule = new CMSModule();
+        await cmsModule.setModule(moduleName);
+    })();
+</script>

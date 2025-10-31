@@ -1,88 +1,62 @@
 package cms
 
 import (
+    "simple_backend_go/cms/auth"
+    "simple_backend_go/cms/handlers"
+    
     "github.com/gin-gonic/gin"
 )
 
 func RegisterCMSRoutes(router *gin.Engine) {
+
+    var cfg = DefaultConfig()
+
+    // Initialize services
+    authService := auth.NewAuthService(cfg.Users)
+
+    // Initialize handlers
+    authHandler := handlers.NewAuthHandler(authService)
+    contentHandler := handlers.NewContentHandler()
+    schemaHandler := handlers.NewSchemaHandler()
+    snapshotHandler := handlers.NewSnapshotHandler(cfg.SnapshotDir)
+
+    router.LoadHTMLGlob("cms/static/private/content/dynamic/*.html")
+    
+    // CMS routes group
     cms := router.Group("/cms")
     
-    // Public routes (no auth required)
-    cms.POST("/login", loginHandler)
-    cms.GET("/login", serveLoginPage)
+    // Public routes
+    cms.POST("/login", authHandler.Login)
+    cms.GET("/login", authHandler.ServeLoginPage)
     
-    // Protected routes (auth required)
+    // Protected routes
     protected := cms.Group("")
-    protected.Use(AuthMiddleware())
+    protected.Use(auth.Middleware(authService))
     {
-        protected.GET("/admin", serveAdminPage)
+        // Auth
+        protected.POST("/logout", authHandler.Logout)
+        protected.GET("/api/me", authHandler.Me)
+        
+        // Content pages
+        protected.GET("/admin", contentHandler.ServeLayout)
+        protected.GET("/api/content/dashboard", contentHandler.ServeDashboard)
+        protected.GET("/api/content/snapshot", contentHandler.ServeSnapshot)
+        protected.GET("/api/content/module/:name", contentHandler.ServeModule)
+        
+        // Schema
         protected.GET("/api/schemas", func(c *gin.Context) {
-            GetSchemaHandler(c.Writer, c.Request)
+            schemaHandler.GetSchemas(c.Writer, c.Request)
         })
-        protected.POST("/logout", logoutHandler)
-        protected.GET("/api/me", meHandler)
+        
+        // Snapshots
+        protected.GET("/api/snapshots/modules", snapshotHandler.GetModules)
+        protected.GET("/api/snapshots", snapshotHandler.List)
+        protected.POST("/api/snapshots/save", snapshotHandler.Save)
+        protected.POST("/api/snapshots/load", snapshotHandler.Load)
+        protected.DELETE("/api/snapshots/:filename", snapshotHandler.Delete)
     }
-
+    
     // Serve static files
     router.Static("/cms/static", "./cms/static")
-}
-
-func loginHandler(c *gin.Context) {
-    var credentials struct {
-        Username string `json:"username" binding:"required"`
-        Password string `json:"password" binding:"required"`
-    }
-    
-    if err := c.ShouldBindJSON(&credentials); err != nil {
-        c.JSON(400, gin.H{"success": false, "message": "Invalid request"})
-        return
-    }
-    
-    token, err := authManager.Login(credentials.Username, credentials.Password)
-    if err != nil {
-        c.JSON(401, gin.H{"success": false, "message": "Invalid credentials"})
-        return
-    }
-    
-    // Set cookie with httpOnly=false so JavaScript can read it
-    // In production, consider using httpOnly=true and rely only on cookie
-    c.SetSameSite(3) // SameSiteStrictMode
-	c.SetCookie("cms_token", token, 86400, "/", "", false, true)
-    
-    c.JSON(200, gin.H{
-        "success": true,
-        "user":    credentials.Username,
-    })
-}
-
-func logoutHandler(c *gin.Context) {
-    token := c.GetHeader("Authorization")
-    if token == "" {
-        token, _ = c.Cookie("cms_token")
-    }
-    
-    if token != "" {
-        authManager.Logout(token)
-    }
-    
-    // Clear cookie
-    c.SetSameSite(3)
-    c.SetCookie("cms_token", "", -1, "/", "", false, false)
-    c.JSON(200, gin.H{"success": true, "message": "Logged out"})
-}
-
-func meHandler(c *gin.Context) {
-    username, _ := c.Get("username")
-    c.JSON(200, gin.H{
-        "success":  true,
-        "username": username,
-    })
-}
-
-func serveLoginPage(c *gin.Context) {
-    c.File("./cms/static/admin/login.html")
-}
-
-func serveAdminPage(c *gin.Context) {
-    c.File("./cms/static/admin/index.html")
+    router.Static("/snapshots", cfg.SnapshotDir)
 }

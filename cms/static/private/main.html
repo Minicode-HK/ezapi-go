@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZAPI CMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Load global manager only -->
+    <script src="/cms/static/admin/cms-manager.js"></script>
+    <script src="/cms/static/admin/cms-module.js"></script>
+</head>
+
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 text-white flex flex-col">
+            <div class="p-4 border-b border-gray-700">
+                <h1 class="text-xl font-bold">
+                    <i class="fas fa-cog mr-2"></i>EZAPI CMS
+                </h1>
+            </div>
+
+            <!-- Navigation -->
+            <div class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">
+                System
+            </div>
+            <nav class="flex-1 overflow-y-auto">
+                <a href="#" hx-get="/cms/api/content/dashboard" hx-target="#main-content" hx-swap="innerHTML"
+                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-home mr-2"></i> Dashboard
+                </a>
+                <a href="#" hx-get="/cms/api/content/snapshot" hx-target="#main-content" hx-swap="innerHTML"
+                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-camera mr-2"></i> Snapshots
+                </a>
+
+                <div class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">
+                    Data Models
+                </div>
+                <div id="sidebar-nav">
+                    <!-- Dynamic navigation will be inserted here -->
+                </div>
+            </nav>
+
+            <!-- User Info & Actions -->
+            <div class="p-4 border-t border-gray-700 space-y-2 mt-auto">
+                <div class="flex items-center text-sm text-gray-300 mb-3">
+                    <i class="fas fa-user-circle text-xl mr-2"></i>
+                    <span id="username-display" class="font-medium">Loading...</span>
+                </div>
+
+                <button id="logout-btn"
+                    class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="main-content" class="flex-1 overflow-y-auto">
+            <!-- Content will be loaded here via htmx -->
+        </main>
+    </div>
+
+    <script>
+        // Highlight active nav item
+        document.addEventListener('htmx:afterOnLoad', function (event) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-gray-700');
+            });
+
+            if (event.detail.elt && event.detail.elt.classList.contains('nav-link')) {
+                event.detail.elt.classList.add('bg-gray-700');
+            }
+        });
+
+        // Load dashboard by default
+        window.addEventListener('load', () => {
+            htmx.ajax('GET', '/cms/api/content/dashboard', { target: '#main-content' });
+        });
+    </script>
+</body>
+
+</html>
