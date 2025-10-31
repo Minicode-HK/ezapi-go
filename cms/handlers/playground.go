@@ -151,7 +151,6 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
     })
 }
 
-
 // Helper function to check if HTTP method modifies data
 func isModifyingMethod(method string) bool {
     return method == "POST" || method == "PUT" || method == "DELETE" || method == "PATCH"

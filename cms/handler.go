@@ -27,6 +27,12 @@ func RegisterCMSRoutes(router *gin.Engine) {
     mockDataHandler := handlers.NewMockDataHandler()
     apiLogger := handlers.GetAPILogger()
 
+    apiGroup := router.Group("/api").Use(auth.Middleware(authService))
+    {
+        apiGroup.POST("/scheduler/config", snapshotHandler.UpdateSchedulerConfig)
+        apiGroup.POST("/scheduler/trigger", snapshotHandler.TriggerManualBackup)
+    }
+
     // CMS routes group
     cms := router.Group("/cms")
 
@@ -84,6 +90,8 @@ func RegisterCMSRoutes(router *gin.Engine) {
         protected.GET("/api/logger/stats", apiLogger.Stats)
         protected.GET("/api/logger/export", apiLogger.Export)
 
+        // snapshot scheduler
+        protected.GET("/api/scheduler/status", snapshotHandler.GetSchedulerStatus)
 
         // System Routes Listing
          protected.GET("/system_routes", func(c *gin.Context) {
