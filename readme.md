@@ -6,6 +6,9 @@
 
 ```bash
 # Just clone and run
+git clone https://github.com/Minicode-HK/ezapi-go.git
+cd ezapi-go
+go get
 go run main.go
 ```
 
