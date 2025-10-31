@@ -24,6 +24,7 @@ func RegisterCMSRoutes(router *gin.Engine) {
     schemaHandler := handlers.NewSchemaHandler()
     snapshotHandler := handlers.NewSnapshotHandler(cfg.SnapshotDir)
     playgroundHandler := handlers.NewPlaygroundHandler() 
+    mockDataHandler := handlers.NewMockDataHandler()
     
     // CMS routes group
     cms := router.Group("/cms")
@@ -60,6 +61,11 @@ func RegisterCMSRoutes(router *gin.Engine) {
         protected.GET("/api/content/playground", playgroundHandler.ServePlayground)
         protected.POST("/api/playground/execute", playgroundHandler.ExecuteRequest)
 
+        // Mock Data
+        protected.POST("/api/mockdata/generate", mockDataHandler.Generate)
+        protected.GET("/api/mockdata/preview/:module", mockDataHandler.Preview)
+
+        // System Routes Listing
          protected.GET("/system_routes", func(c *gin.Context) {
             // Get all registered routes from Gin
             routes := router.Routes()
