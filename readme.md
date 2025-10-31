@@ -57,3 +57,31 @@ func main() {
    //  ...
 }
 ```
+
+---
+
+Custom handler
+
+Define handler in `route/newmessage.go`
+
+```golang
+package route
+
+func NewmessageRouter(router *gin.Engine, db *[]Message) {
+	router.GET("/newmessage", func(c *gin.Context) {
+		c.JSON(200, /* you can access Message db here */)
+	})
+}
+```
+
+Register the route in `main.go`
+
+```golang
+func main() {
+    router := gin.Default()
+    // ...
+    route.Router(router, &MessageDB)
+    route.NewmessageRouter(router, &MessageDB)
+   //  ...
+}
+```
