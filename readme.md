@@ -2,7 +2,7 @@
 
 Similar to this repo [ezapi](https://github.com/Minicode-HK/ezapi)
 
-Build a simple RESTful API with `type` and `data`. The API does not require a database and provides endpoints for basic CRUD operations. All the data is stored in runtime memory.
+Build a simple RESTful API with `type` and `data` within minutes. The API does not require a database and provides endpoints for basic CRUD operations. All the data is stored in runtime memory.
 
 Anytime you restart the server, the data will be reset. This is a good tool for testing and prototyping.
 
@@ -13,6 +13,7 @@ Anytime you restart the server, the data will be reset. This is a good tool for 
 - Automatic route registration
 - Generic handlers with reflection
 - Built-in CMS Admin Panel - auto-generate admin UI for data management. Full CRUD support & form field type detection.
+    ![CMS Screenshot](./docs/dashboard.png)
 
 ## TODO
 - Password should be hashed
