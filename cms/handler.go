@@ -25,10 +25,19 @@ func RegisterCMSRoutes(router *gin.Engine) {
     snapshotHandler := handlers.NewSnapshotHandler(cfg.SnapshotDir)
     playgroundHandler := handlers.NewPlaygroundHandler() 
     mockDataHandler := handlers.NewMockDataHandler()
-    
+    apiLogger := handlers.GetAPILogger()
+
     // CMS routes group
     cms := router.Group("/cms")
-    
+
+    // no-cache middleware
+    cms.Use(func (c *gin.Context) {
+        c.Writer.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0")
+        c.Writer.Header().Set("Pragma", "no-cache")
+        c.Writer.Header().Set("Expires", "0")
+        c.Next()
+    })
+
     // Protected routes
     protected := cms.Group("")
     protected.Use(auth.Middleware(authService))
@@ -40,10 +49,12 @@ func RegisterCMSRoutes(router *gin.Engine) {
         
         // Content pages
         protected.GET("/admin", contentHandler.ServeLayout)
+        protected.GET("/api-logger", contentHandler.ServeAPILogger)
         protected.GET("/api/content/dashboard", contentHandler.ServeDashboard)
         protected.GET("/api/content/snapshot", contentHandler.ServeSnapshot)
         protected.GET("/api/content/module/:name", contentHandler.ServeModule)
         protected.GET("/api/content/system_routes", contentHandler.ServeSystemRoutes)
+        protected.GET("/api/content/playground", contentHandler.ServePlayground)
         
         // Schema
         protected.GET("/api/schemas", func(c *gin.Context) {
@@ -59,12 +70,20 @@ func RegisterCMSRoutes(router *gin.Engine) {
         protected.DELETE("/api/snapshots/:filename", snapshotHandler.Delete)
 
         // API Playground
-        protected.GET("/api/content/playground", playgroundHandler.ServePlayground)
         protected.POST("/api/playground/execute", playgroundHandler.ExecuteRequest)
 
         // Mock Data
         protected.POST("/api/mockdata/generate", mockDataHandler.Generate)
         protected.GET("/api/mockdata/preview/:module", mockDataHandler.Preview)
+
+        // API Logger
+        protected.GET("/api/logger/logs", apiLogger.List)
+        protected.GET("/api/logger/logs/:id", apiLogger.GetByID)
+        protected.DELETE("/api/logger/logs", apiLogger.Clear)
+        protected.POST("/api/logger/toggle", apiLogger.Toggle)
+        protected.GET("/api/logger/stats", apiLogger.Stats)
+        protected.GET("/api/logger/export", apiLogger.Export)
+
 
         // System Routes Listing
          protected.GET("/system_routes", func(c *gin.Context) {

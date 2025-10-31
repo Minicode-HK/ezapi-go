@@ -10,6 +10,7 @@ import (
 
     "simple_backend_go/route"
     "simple_backend_go/cms"
+    "simple_backend_go/cms/handlers"
 )
 
 func main() {
@@ -28,6 +29,8 @@ func main() {
     router.GET("/ping", func(c *gin.Context) {
         c.String(http.StatusOK, "pong")
     })
+
+    router.Use(handlers.LoggingMiddleware())  // This logs EVERYTHING including /api/*
 
     // Add more resource routers here
     route.SetupAllRouters(router)

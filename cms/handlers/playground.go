@@ -151,10 +151,6 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
     })
 }
 
-func (h *PlaygroundHandler) ServePlayground(c *gin.Context) {
-    c.Header("Content-Type", "text/html; charset=utf-8")
-    c.File("cms/static/private/content/playground.html")
-}
 
 // Helper function to check if HTTP method modifies data
 func isModifyingMethod(method string) bool {

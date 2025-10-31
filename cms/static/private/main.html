@@ -62,33 +62,52 @@
             </div>
 
             <!-- Navigation -->
-            <div class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">
-                System
-            </div>
             <nav class="flex-1 overflow-y-auto">
+                <!-- Overview Section -->
+                <div class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">
+                    Overview
+                </div>
                 <a href="#" hx-get="/cms/api/content/dashboard" hx-target="#main-content" hx-swap="innerHTML"
                     class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
                     <i class="fas fa-home mr-2"></i> Dashboard
                 </a>
-                <a href="#" hx-get="/cms/api/content/snapshot" hx-target="#main-content" hx-swap="innerHTML"
-                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
-                    <i class="fas fa-camera mr-2"></i> Snapshots
-                </a>
-                <a href="#" hx-get="/cms/api/content/system_routes" hx-target="#main-content" hx-swap="innerHTML"
-                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
-                    <i class="fas fa-route mr-2"></i> System Routes
-                </a>
-                <a href="#" hx-get="/cms/api/content/playground" hx-target="#main-content" hx-swap="innerHTML"
-                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
-                    <i class="fas fa-play-circle mr-2"></i> API Playground
-                </a>
 
-                <div class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">
+                <!-- Data Models Section -->
+                <div
+                    class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4 border-t border-gray-700 pt-4">
                     Data Models
                 </div>
                 <div id="sidebar-nav">
                     <!-- Dynamic navigation will be inserted here -->
                 </div>
+
+                <!-- Developer Tools Section -->
+                <div
+                    class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4 border-t border-gray-700 pt-4">
+                    Developer Tools
+                </div>
+                <a href="#" hx-get="/cms/api/content/playground" hx-target="#main-content" hx-swap="innerHTML"
+                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-play-circle mr-2"></i> API Playground
+                </a>
+                <a href="/cms/api-logger" target="_blank"
+                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-list-alt mr-2"></i> API Logger
+                </a>
+                <a href="#" hx-get="/cms/api/content/system_routes" hx-target="#main-content" hx-swap="innerHTML"
+                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-route mr-2"></i> System Routes
+                </a>
+
+                <!-- System Section -->
+                <div
+                    class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4 border-t border-gray-700 pt-4">
+                    System
+                </div>
+                <a href="#" hx-get="/cms/api/content/snapshot" hx-target="#main-content" hx-swap="innerHTML"
+                    class="nav-link block px-4 py-2 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-camera mr-2"></i> Snapshots
+                </a>
             </nav>
 
             <!-- User Info & Actions -->

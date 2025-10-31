@@ -34,3 +34,12 @@ func (h *ContentHandler) ServeModule(c *gin.Context) {
         "moduleName": moduleName,
     })
 }
+
+func (h *ContentHandler) ServePlayground(c *gin.Context) {
+    c.Header("Content-Type", "text/html; charset=utf-8")
+    c.File("cms/static/private/content/playground.html")
+}
+
+func (h *ContentHandler) ServeAPILogger(c *gin.Context) {
+    c.File("cms/static/private/content/api-logger.html")
+}
