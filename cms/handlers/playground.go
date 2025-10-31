@@ -8,6 +8,8 @@ import (
     "time"
     
     "github.com/gin-gonic/gin"
+    
+    "simple_backend_go/route"
 )
 
 type PlaygroundHandler struct{}
@@ -21,6 +23,7 @@ type PlaygroundRequest struct {
     URL     string            `json:"url" binding:"required"`
     Headers map[string]string `json:"headers"`
     Body    string            `json:"body"`
+    MockMode bool             `json:"mockMode"`
 }
 
 type PlaygroundResponse struct {
@@ -30,6 +33,7 @@ type PlaygroundResponse struct {
     Body       interface{}       `json:"body"`
     Time       int64             `json:"time"` // milliseconds
     Size       int               `json:"size"` // bytes
+    MockMode   bool              `json:"mockMode"`
 }
 
 func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
@@ -40,6 +44,15 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
             "error":   "Invalid request: " + err.Error(),
         })
         return
+    }
+
+    // Create snapshot before request if mock mode is enabled and it's a modifying method
+    var snapshot map[string]interface{}
+    shouldRollback := false
+    
+    if req.MockMode && isModifyingMethod(req.Method) {
+        snapshot = route.CreateSnapshot()
+        shouldRollback = true
     }
 
     // Start timing
@@ -95,6 +108,11 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
         return
     }
 
+    // Rollback if mock mode was enabled
+    if shouldRollback && snapshot != nil {
+        route.RestoreSnapshot(snapshot)
+    }
+
     // Calculate time taken
     duration := time.Since(startTime).Milliseconds()
 
@@ -124,6 +142,7 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
         Body:       bodyData,
         Time:       duration,
         Size:       len(bodyBytes),
+        MockMode:   req.MockMode && shouldRollback,
     }
 
     c.JSON(http.StatusOK, gin.H{
@@ -135,4 +154,9 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
 func (h *PlaygroundHandler) ServePlayground(c *gin.Context) {
     c.Header("Content-Type", "text/html; charset=utf-8")
     c.File("cms/static/private/content/playground.html")
+}
+
+// Helper function to check if HTTP method modifies data
+func isModifyingMethod(method string) bool {
+    return method == "POST" || method == "PUT" || method == "DELETE" || method == "PATCH"
 }

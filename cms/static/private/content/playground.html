@@ -1,10 +1,51 @@
 <div class="p-4 md:p-8">
     <!-- Header -->
     <div class="mb-6">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-            API Playground
-        </h2>
-        <p class="text-sm md:text-base text-gray-600">Test your API endpoints directly from the browser</p>
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                    API Playground
+                </h2>
+                <p class="text-sm md:text-base text-gray-600">Test your API endpoints directly from the browser</p>
+            </div>
+
+            <!-- Mock Mode Toggle -->
+            <div class="flex items-center gap-3 bg-white rounded-lg shadow px-4 py-3">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-gray-600"></i>
+                    <span class="text-sm font-medium text-gray-700">Mock Mode</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="mock-mode-toggle" class="sr-only peer" checked>
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600">
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div id="mock-mode-info" class="mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex items-start gap-3">
+        <i class="fas fa-info-circle text-indigo-600 mt-0.5"></i>
+        <div class="flex-1">
+            <h4 class="text-sm font-semibold text-indigo-900">Mock Mode is ON</h4>
+            <p class="text-xs text-indigo-700 mt-1">
+                Your API calls will execute normally but all data changes will be automatically rolled back.
+                Perfect for testing without affecting your data!
+            </p>
+        </div>
+    </div>
+
+    <div id="live-mode-info"
+        class="mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-start gap-3 hidden">
+        <i class="fas fa-exclamation-triangle text-orange-600 mt-0.5"></i>
+        <div class="flex-1">
+            <h4 class="text-sm font-semibold text-orange-900">Live Mode is ON</h4>
+            <p class="text-xs text-orange-700 mt-1">
+                Your API calls will modify the actual data on the server. Use with caution!
+            </p>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -39,7 +80,7 @@
                     </div>
 
                     <!-- Quick Routes -->
-                    <div class="flex flex-wrap gap-2 items-center text-gray-600 text-sm">
+                    <div class="flex flex-wrap gap-2">
                         <span class="text-xs text-gray-500">Quick:</span>
                         <button onclick="window.playgroundPage.loadRoute('GET', '/api/products')"
                             class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
@@ -49,9 +90,13 @@
                             class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200">
                             POST Product
                         </button>
-                        <button onclick="window.playgroundPage.loadRoute('POST', '/api/reset')"
+                        <button onclick="window.playgroundPage.loadRoute('PUT', '/api/products/1')"
                             class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
-                            Reset DB
+                            PUT Product
+                        </button>
+                        <button onclick="window.playgroundPage.loadRoute('DELETE', '/api/products/1')"
+                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">
+                            DELETE Product
                         </button>
                     </div>
                 </div>
@@ -109,6 +154,10 @@
                         <span id="response-time"></span>
                         <span class="mx-2">•</span>
                         <span id="response-size"></span>
+                        <span id="mock-mode-badge"
+                            class="hidden ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded">
+                            <i class="fas fa-undo mr-1"></i>ROLLED BACK
+                        </span>
                     </div>
                 </h3>
 
@@ -168,7 +217,7 @@
                         Saved Requests
                     </h3>
                     <button onclick="window.playgroundPage.saveRequest()"
-                        class="text-sm px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        class="text-sm px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
                         <i class="fas fa-save mr-1"></i>Save Current
                     </button>
                 </div>
@@ -189,14 +238,52 @@
         }
 
         const state = {
-            savedRequests: JSON.parse(localStorage.getItem('api_playground_saved') || '[]')
+            savedRequests: JSON.parse(localStorage.getItem('api_playground_saved') || '[]'),
+            mockMode: true
         };
+
+        function toggleMockMode () {
+            const toggle = document.getElementById('mock-mode-toggle');
+            state.mockMode = toggle.checked;
+
+            // Update UI
+            const mockInfo = document.getElementById('mock-mode-info');
+            const liveInfo = document.getElementById('live-mode-info');
+
+            if (state.mockMode) {
+                mockInfo.classList.remove('hidden');
+                liveInfo.classList.add('hidden');
+            } else {
+                mockInfo.classList.add('hidden');
+                liveInfo.classList.remove('hidden');
+            }
+        }
 
         function loadRoute (method, path) {
             document.getElementById('method').value = method;
             const baseUrl = window.location.origin;
             document.getElementById('url').value = baseUrl + path;
-            document.getElementById('request-body').value = '';
+
+            // Load sample body for POST/PUT
+            if (method === 'POST') {
+                if (path.includes('/products')) {
+                    document.getElementById('request-body').value = JSON.stringify({
+                        "name": "New Product",
+                        "price": 99.99,
+                        "category": "Electronics"
+                    }, null, 2);
+                }
+            } else if (method === 'PUT') {
+                if (path.includes('/products')) {
+                    document.getElementById('request-body').value = JSON.stringify({
+                        "name": "Updated Product",
+                        "price": 149.99,
+                        "category": "Electronics"
+                    }, null, 2);
+                }
+            } else {
+                document.getElementById('request-body').value = '';
+            }
         }
 
         function addHeader () {
@@ -258,7 +345,8 @@
                         method,
                         url,
                         headers,
-                        body
+                        body,
+                        mockMode: state.mockMode
                     })
                 });
 
@@ -285,6 +373,14 @@
                     : 'font-semibold text-red-600';
                 document.getElementById('response-time').textContent = data.time + 'ms';
                 document.getElementById('response-size').textContent = formatBytes(data.size);
+
+                // Show mock mode badge if it was rolled back
+                const mockBadge = document.getElementById('mock-mode-badge');
+                if (data.mockMode) {
+                    mockBadge.classList.remove('hidden');
+                } else {
+                    mockBadge.classList.add('hidden');
+                }
 
                 // Show response headers
                 document.getElementById('response-headers-container').classList.remove('hidden');
@@ -428,6 +524,13 @@
             // Set default URL
             const baseUrl = window.location.origin;
             document.getElementById('url').value = baseUrl + '/api/products';
+
+            // Setup toggle listener
+            const toggle = document.getElementById('mock-mode-toggle');
+            toggle.addEventListener('change', toggleMockMode);
+
+            // Initialize UI state
+            toggleMockMode();
         }
 
         window.playgroundPage = {
