@@ -6,7 +6,7 @@ Build a simple RESTful API with `type` and `data`. The API does not require a da
 
 Anytime you restart the server, the data will be reset. This is a good tool for testing and prototyping.
 
-## Issus ( I guess?)
+## Issue ( I guess?)
 
 - I use reflection to access `Id` field in the struct.
 
