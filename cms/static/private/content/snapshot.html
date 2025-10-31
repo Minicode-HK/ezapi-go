@@ -11,35 +11,41 @@
 </head>
 
 <body class="bg-gray-50">
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <!-- Header -->
-        <div class="mb-6">
-            <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <i class="fas fa-camera text-gray-600"></i>
-                Snapshot Manager
-            </h2>
-            <p class="text-gray-600 mt-1">Save, restore, and automate your data backups</p>
+    <!-- Header -->
+    <header class="bg-white shadow-sm px-4 sm:px-8 py-4">
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2 sm:gap-3">
+                    <i class="fas fa-camera text-gray-600"></i>
+                    Snapshot Manager
+                </h2>
+                <p class="text-xs sm:text-sm text-gray-600 mt-1">Save, restore, and automate your data backups</p>
+            </div>
         </div>
+    </header>
 
+    <div class="p-4 sm:p-8">
         <!-- Tab Navigation -->
-        <div class="mb-6">
+        <div class="mb-6 bg-white rounded-lg shadow-sm overflow-x-auto">
             <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <nav class="flex min-w-max sm:min-w-0" aria-label="Tabs">
                     <button onclick="switchTab('automated')" id="tab-automated"
-                        class="tab-button border-b-2 border-indigo-600 py-4 px-1 text-sm font-medium text-indigo-600">
-                        <i class="fas fa-clock mr-2"></i>Automated Backups
+                        class="tab-button flex-1 sm:flex-none border-b-2 border-indigo-600 py-3 sm:py-4 px-3 sm:px-6 text-xs sm:text-sm font-medium text-indigo-600 whitespace-nowrap">
+                        <i class="fas fa-clock mr-1 sm:mr-2"></i><span class="hidden sm:inline">Automated </span>Backups
                     </button>
                     <button onclick="switchTab('manual')" id="tab-manual"
-                        class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fas fa-hand-pointer mr-2"></i>Manual Snapshot
+                        class="tab-button flex-1 sm:flex-none border-b-2 border-transparent py-3 sm:py-4 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                        <i class="fas fa-hand-pointer mr-1 sm:mr-2"></i><span class="hidden sm:inline">Manual
+                        </span>Snapshot
                     </button>
                     <button onclick="switchTab('snapshots')" id="tab-snapshots"
-                        class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fas fa-folder-open mr-2"></i>Saved Snapshots
+                        class="tab-button flex-1 sm:flex-none border-b-2 border-transparent py-3 sm:py-4 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                        <i class="fas fa-folder-open mr-1 sm:mr-2"></i><span class="hidden sm:inline">Saved
+                        </span>Snapshots
                     </button>
                     <button onclick="switchTab('reset')" id="tab-reset"
-                        class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fas fa-undo mr-2"></i>Reset Data
+                        class="tab-button flex-1 sm:flex-none border-b-2 border-transparent py-3 sm:py-4 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                        <i class="fas fa-undo mr-1 sm:mr-2"></i><span class="hidden sm:inline">Reset </span>Data
                     </button>
                 </nav>
             </div>
@@ -49,64 +55,67 @@
         <div id="tab-content">
             <!-- Automated Backups Tab -->
             <div id="content-automated" class="tab-content">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                     <!-- Configuration Panel -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+                        <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                 <i class="fas fa-cog text-indigo-600"></i>
                                 Scheduler Configuration
                             </h3>
 
                             <!-- Enable Toggle -->
-                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                                <label class="flex items-center cursor-pointer">
+                            <div class="mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                <label class="flex items-start sm:items-center cursor-pointer gap-3">
                                     <input type="checkbox" id="scheduler-enabled"
-                                        class="mr-3 h-6 w-6 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500">
+                                        class="flex-shrink-0 mt-1 sm:mt-0 h-5 w-5 sm:h-6 sm:w-6 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500">
                                     <div>
-                                        <span class="text-lg font-medium text-gray-900">Enable Automated Backups</span>
-                                        <p class="text-sm text-gray-500">Automatically create snapshots at scheduled
-                                            intervals</p>
+                                        <span class="text-base sm:text-lg font-medium text-gray-900">Enable Automated
+                                            Backups</span>
+                                        <p class="text-xs sm:text-sm text-gray-500">Automatically create snapshots at
+                                            scheduled intervals</p>
                                     </div>
                                 </label>
                             </div>
 
                             <div id="scheduler-config"
-                                class="space-y-6 opacity-50 pointer-events-none transition-opacity">
+                                class="space-y-4 sm:space-y-6 opacity-50 pointer-events-none transition-opacity">
                                 <!-- Interval Selection -->
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-3">
                                         <i class="fas fa-clock text-gray-400 mr-2"></i>Backup Interval
                                     </label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                                         <button onclick="selectInterval('1h')" data-interval="1h"
-                                            class="interval-btn p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
-                                            <div class="font-semibold text-gray-900">Every Hour</div>
-                                            <div class="text-xs text-gray-500">High frequency</div>
+                                            class="interval-btn p-2 sm:p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
+                                            <div class="font-semibold text-gray-900 text-xs sm:text-sm">Every Hour</div>
+                                            <div class="text-xs text-gray-500">High freq.</div>
                                         </button>
                                         <button onclick="selectInterval('6h')" data-interval="6h"
-                                            class="interval-btn p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
-                                            <div class="font-semibold text-gray-900">Every 6 Hours</div>
-                                            <div class="text-xs text-gray-500">4 times daily</div>
+                                            class="interval-btn p-2 sm:p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
+                                            <div class="font-semibold text-gray-900 text-xs sm:text-sm">Every 6 Hours
+                                            </div>
+                                            <div class="text-xs text-gray-500">4x daily</div>
                                         </button>
                                         <button onclick="selectInterval('12h')" data-interval="12h"
-                                            class="interval-btn p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
-                                            <div class="font-semibold text-gray-900">Every 12 Hours</div>
-                                            <div class="text-xs text-gray-500">Twice daily</div>
+                                            class="interval-btn p-2 sm:p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
+                                            <div class="font-semibold text-gray-900 text-xs sm:text-sm">Every 12 Hours
+                                            </div>
+                                            <div class="text-xs text-gray-500">2x daily</div>
                                         </button>
                                         <button onclick="selectInterval('24h')" data-interval="24h"
-                                            class="interval-btn p-3 border-2 border-indigo-600 bg-indigo-50 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
-                                            <div class="font-semibold text-indigo-700">Daily</div>
+                                            class="interval-btn p-2 sm:p-3 border-2 border-indigo-600 bg-indigo-50 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
+                                            <div class="font-semibold text-indigo-700 text-xs sm:text-sm">Daily</div>
                                             <div class="text-xs text-indigo-600">Recommended</div>
                                         </button>
                                         <button onclick="selectInterval('168h')" data-interval="168h"
-                                            class="interval-btn p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
-                                            <div class="font-semibold text-gray-900">Weekly</div>
+                                            class="interval-btn p-2 sm:p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
+                                            <div class="font-semibold text-gray-900 text-xs sm:text-sm">Weekly</div>
                                             <div class="text-xs text-gray-500">7 days</div>
                                         </button>
                                         <button onclick="selectInterval('720h')" data-interval="720h"
-                                            class="interval-btn p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
-                                            <div class="font-semibold text-gray-900">Monthly</div>
+                                            class="interval-btn p-2 sm:p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-center">
+                                            <div class="font-semibold text-gray-900 text-xs sm:text-sm">Monthly</div>
                                             <div class="text-xs text-gray-500">30 days</div>
                                         </button>
                                     </div>
@@ -116,30 +125,30 @@
                                 <!-- Module Selection -->
                                 <div>
                                     <div class="flex items-center justify-between mb-3">
-                                        <label class="block text-sm font-semibold text-gray-700">
+                                        <label class="block text-xs sm:text-sm font-semibold text-gray-700">
                                             <i class="fas fa-database text-gray-400 mr-2"></i>Modules to Backup
                                         </label>
                                         <button onclick="toggleAllSchedulerModules()"
-                                            class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                                            class="text-xs sm:text-sm text-indigo-600 hover:text-indigo-700 font-medium">
                                             <i class="fas fa-check-double mr-1"></i>Toggle All
                                         </button>
                                     </div>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3 bg-gray-50"
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-2 sm:p-3 bg-gray-50"
                                         id="scheduler-module-checkboxes">
                                         <!-- Dynamically populated -->
                                     </div>
                                 </div>
 
                                 <!-- Action Buttons -->
-                                <div class="flex gap-3 pt-4 border-t border-gray-200">
+                                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-200">
                                     <button onclick="saveSchedulerConfig()" style="cursor: pointer;"
-                                        class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2 shadow-sm">
+                                        class="flex-1 bg-indigo-600 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base">
                                         <i class="fas fa-save"></i>
                                         <span>Save Configuration</span>
                                     </button>
 
                                     <button onclick="triggerManualBackup()" style="cursor: pointer;"
-                                        class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors font-semibold flex items-center justify-center gap-2 shadow-sm">
+                                        class="flex-1 bg-gray-600 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-gray-700 transition-colors font-semibold flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base">
                                         <i class="fas fa-bolt"></i>
                                         <span>Backup Now</span>
                                     </button>
@@ -150,52 +159,54 @@
 
                     <!-- Status Panel -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white rounded-lg shadow p-6 sticky top-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <div class="bg-white rounded-lg shadow p-4 sm:p-6 lg:sticky lg:top-6">
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                 <i class="fas fa-info-circle text-indigo-600"></i>
                                 Scheduler Status
                             </h3>
 
                             <div class="space-y-4">
                                 <!-- Status Badge -->
-                                <div class="p-4 bg-gray-50 rounded-lg">
-                                    <div class="text-sm text-gray-600 mb-1">Current Status</div>
+                                <div class="p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                    <div class="text-xs sm:text-sm text-gray-600 mb-1">Current Status</div>
                                     <div id="scheduler-status-badge"
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-200 text-gray-600">
+                                        class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-gray-200 text-gray-600">
                                         <span class="w-2 h-2 rounded-full bg-gray-400 mr-2"></span>
                                         Disabled
                                     </div>
                                 </div>
 
                                 <!-- Stats -->
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                        <span class="text-sm text-gray-600 flex items-center gap-2">
+                                <div class="space-y-2 sm:space-y-3">
+                                    <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-xs sm:text-sm text-gray-600 flex items-center gap-2">
                                             <i class="fas fa-clock text-gray-400"></i>Interval
                                         </span>
-                                        <span id="scheduler-interval" class="font-semibold text-gray-900">-</span>
+                                        <span id="scheduler-interval"
+                                            class="font-semibold text-gray-900 text-xs sm:text-sm">-</span>
                                     </div>
 
-                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                        <span class="text-sm text-gray-600 flex items-center gap-2">
+                                    <div class="flex justify-between items-start p-2 sm:p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-xs sm:text-sm text-gray-600 flex items-center gap-2">
                                             <i class="fas fa-calendar-alt text-gray-400"></i>Next Backup
                                         </span>
                                         <span id="scheduler-next-run"
-                                            class="font-semibold text-gray-900 text-right">-</span>
+                                            class="font-semibold text-gray-900 text-right text-xs sm:text-sm break-all">-</span>
                                     </div>
 
-                                    <div class="p-3 bg-gray-50 rounded-lg">
-                                        <span class="text-sm text-gray-600 flex items-center gap-2 mb-2">
+                                    <div class="p-2 sm:p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-xs sm:text-sm text-gray-600 flex items-center gap-2 mb-2">
                                             <i class="fas fa-database text-gray-400"></i>Selected Modules
                                         </span>
-                                        <div id="scheduler-modules" class="text-sm font-medium text-gray-900">-</div>
+                                        <div id="scheduler-modules"
+                                            class="text-xs sm:text-sm font-medium text-gray-900 break-words">-</div>
                                     </div>
                                 </div>
 
                                 <!-- Help Text -->
-                                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <div class="flex">
-                                        <i class="fas fa-lightbulb text-blue-500 mr-2 mt-0.5"></i>
+                                <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <div class="flex gap-2">
+                                        <i class="fas fa-lightbulb text-blue-500 mt-0.5 flex-shrink-0"></i>
                                         <div class="text-xs text-blue-700">
                                             <strong>Tip:</strong> Automated backups run in the background. Enable the
                                             scheduler and choose your preferred interval to get started.
@@ -211,21 +222,22 @@
             <!-- Manual Snapshot Tab -->
             <div id="content-manual" class="tab-content hidden">
                 <div class="max-w-4xl">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                    <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+                        <h3
+                            class="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
                             <i class="fas fa-camera text-gray-600"></i>
                             Create Manual Snapshot
                         </h3>
 
-                        <div class="space-y-6">
+                        <div class="space-y-4 sm:space-y-6">
                             <!-- Filename Input -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                                     <i class="fas fa-file-signature text-gray-400 mr-2"></i>Snapshot Filename (optional)
                                 </label>
                                 <input type="text" id="snapshot-filename"
                                     placeholder="Leave empty for auto-generated timestamp"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:text-base">
                                 <p class="text-xs text-gray-500 mt-2">
                                     <i class="fas fa-info-circle mr-1"></i>Will be saved as: <code
                                         class="bg-gray-100 px-2 py-1 rounded">filename.json</code>
@@ -234,23 +246,23 @@
 
                             <!-- Module Selection -->
                             <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="block text-sm font-semibold text-gray-700">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+                                    <label class="block text-xs sm:text-sm font-semibold text-gray-700">
                                         <i class="fas fa-database text-gray-400 mr-2"></i>Select Modules to Save
                                     </label>
                                     <div class="flex gap-2">
                                         <button onclick="selectAllModules()"
-                                            class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                                            class="text-xs sm:text-sm text-indigo-600 hover:text-indigo-700 font-medium">
                                             <i class="fas fa-check-square mr-1"></i>Select All
                                         </button>
                                         <span class="text-gray-400">|</span>
                                         <button onclick="deselectAllModules()"
-                                            class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                                            class="text-xs sm:text-sm text-indigo-600 hover:text-indigo-700 font-medium">
                                             <i class="fas fa-square mr-1"></i>Deselect All
                                         </button>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3"
                                     id="module-checkboxes">
                                     <!-- Dynamically populated -->
                                 </div>
@@ -259,7 +271,7 @@
                             <!-- Create Button -->
                             <div class="pt-4 border-t border-gray-200">
                                 <button onclick="saveSnapshot()" style="cursor: pointer;"
-                                    class="w-full sm:w-auto bg-gray-600 text-white py-3 px-8 rounded-lg hover:bg-gray-700 transition-colors font-semibold flex items-center justify-center gap-2 shadow-sm">
+                                    class="w-full sm:w-auto bg-gray-600 text-white py-2 sm:py-3 px-6 sm:px-8 rounded-lg hover:bg-gray-700 transition-colors font-semibold flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base">
                                     <i class="fas fa-camera"></i>
                                     <span>Create Snapshot</span>
                                 </button>
@@ -272,8 +284,8 @@
             <!-- Saved Snapshots Tab -->
             <div id="content-snapshots" class="tab-content hidden">
                 <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                             <i class="fas fa-archive text-gray-600"></i>
                             Available Snapshots
                         </h3>
@@ -289,25 +301,26 @@
             <div id="content-reset" class="tab-content hidden">
                 <div class="max-w-2xl">
                     <div class="bg-white rounded-lg shadow overflow-hidden border-l-4 border-red-500">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <div class="p-4 sm:p-6">
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                 <i class="fas fa-exclamation-triangle text-red-600"></i>
                                 Reset to Initial Data
                             </h3>
 
                             <div class="space-y-4">
-                                <p class="text-gray-700">
+                                <p class="text-sm sm:text-base text-gray-700">
                                     This will reset all modules back to their initial testing data as defined in the
-                                    code.
-                                    All current data will be permanently lost.
+                                    code. All current data will be permanently lost.
                                 </p>
 
-                                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
-                                    <div class="flex">
-                                        <i class="fas fa-exclamation-triangle text-red-400 text-xl mr-3"></i>
+                                <div class="bg-red-50 border-l-4 border-red-400 p-3 sm:p-4 rounded">
+                                    <div class="flex gap-2 sm:gap-3">
+                                        <i
+                                            class="fas fa-exclamation-triangle text-red-400 text-lg sm:text-xl flex-shrink-0 mt-0.5"></i>
                                         <div>
-                                            <p class="font-semibold text-red-800 mb-1">Warning: Irreversible Action</p>
-                                            <p class="text-sm text-red-700">
+                                            <p class="font-semibold text-red-800 mb-1 text-sm sm:text-base">Warning:
+                                                Irreversible Action</p>
+                                            <p class="text-xs sm:text-sm text-red-700">
                                                 This action cannot be undone. Consider creating a snapshot before
                                                 resetting.
                                             </p>
@@ -317,7 +330,7 @@
 
                                 <div class="pt-4">
                                     <button onclick="resetToInitialData()" style="cursor: pointer;"
-                                        class="bg-red-600 text-white py-3 px-8 rounded-lg hover:bg-red-700 transition-colors font-semibold flex items-center gap-2 shadow-sm">
+                                        class="w-full sm:w-auto bg-red-600 text-white py-2 sm:py-3 px-6 sm:px-8 rounded-lg hover:bg-red-700 transition-colors font-semibold flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base">
                                         <i class="fas fa-undo"></i>
                                         <span>Reset All Data to Initial State</span>
                                     </button>
@@ -369,13 +382,13 @@
                     if (btn.dataset.interval === interval) {
                         btn.classList.remove('border-gray-200');
                         btn.classList.add('border-indigo-600', 'bg-indigo-50');
-                        btn.querySelector('div:first-child').classList.add('text-indigo-700');
-                        btn.querySelector('div:last-child').classList.add('text-indigo-600');
+                        btn.querySelectorAll('div')[0].classList.add('text-indigo-700');
+                        btn.querySelectorAll('div')[1].classList.add('text-indigo-600');
                     } else {
                         btn.classList.remove('border-indigo-600', 'bg-indigo-50');
                         btn.classList.add('border-gray-200');
-                        btn.querySelector('div:first-child').classList.remove('text-indigo-700');
-                        btn.querySelector('div:last-child').classList.remove('text-indigo-600');
+                        btn.querySelectorAll('div')[0].classList.remove('text-indigo-700');
+                        btn.querySelectorAll('div')[1].classList.remove('text-indigo-600');
                     }
                 });
             };
@@ -411,10 +424,10 @@
                 const badge = document.getElementById('scheduler-status-badge');
                 if (status.running) {
                     badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>Running';
-                    badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700';
+                    badge.className = 'inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-green-100 text-green-700';
                 } else {
                     badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-gray-400 mr-2"></span>Stopped';
-                    badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-200 text-gray-600';
+                    badge.className = 'inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-gray-200 text-gray-600';
                 }
 
                 document.getElementById('scheduler-interval').textContent = status.interval || '-';
@@ -422,7 +435,9 @@
                 // Format next run time
                 if (status.nextRun && status.nextRun !== 'N/A') {
                     const nextRun = new Date(status.nextRun);
-                    document.getElementById('scheduler-next-run').textContent = nextRun.toLocaleString();
+                    const dateStr = nextRun.toLocaleDateString();
+                    const timeStr = nextRun.toLocaleTimeString();
+                    document.getElementById('scheduler-next-run').textContent = `${dateStr} ${timeStr}`;
                 } else {
                     document.getElementById('scheduler-next-run').textContent = 'N/A';
                 }
@@ -451,14 +466,14 @@
                 container.innerHTML = modules.map((module, index) => {
                     const isChecked = schedulerModules.length === 0 || schedulerModules.includes(module.name);
                     return `
-                    <label class="flex items-center p-3 bg-white rounded-lg hover:bg-gray-50 cursor-pointer border border-gray-200 transition-all">
+                    <label class="flex items-center p-2 sm:p-3 bg-white rounded-lg hover:bg-gray-50 cursor-pointer border border-gray-200 transition-all">
                         <input type="checkbox" 
                                value="${module.name}" 
                                id="scheduler-module-${index}"
                                ${isChecked ? 'checked' : ''}
-                               class="scheduler-module-checkbox mr-3 h-5 w-5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500">
-                        <div class="flex-1">
-                            <span class="text-sm font-medium text-gray-900">${module.name}</span>
+                               class="scheduler-module-checkbox mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500 flex-shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <span class="text-xs sm:text-sm font-medium text-gray-900 block truncate">${module.name}</span>
                             <span class="text-xs text-gray-500 block">${module.count} records</span>
                         </div>
                     </label>
@@ -563,14 +578,14 @@
                 if (!container) return;
 
                 container.innerHTML = modules.map((module, index) => `
-                    <label class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer border border-gray-200 transition-all">
+                    <label class="flex items-center p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer border border-gray-200 transition-all">
                         <input type="checkbox" 
                                value="${module.name}" 
                                id="module-${index}"
-                               class="module-checkbox mr-3 h-5 w-5 text-gray-800 rounded focus:ring-2 focus:ring-gray-500">
-                        <div class="flex-1">
-                            <span class="font-medium text-gray-900 block">${module.name}</span>
-                            <span class="text-sm text-gray-500">${module.count} records</span>
+                               class="module-checkbox mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-800 rounded focus:ring-2 focus:ring-gray-500 flex-shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <span class="font-medium text-gray-900 block text-sm sm:text-base truncate">${module.name}</span>
+                            <span class="text-xs sm:text-sm text-gray-500">${module.count} records</span>
                         </div>
                     </label>
                 `).join('');
@@ -677,11 +692,11 @@
 
                 if (snapshots.length === 0) {
                     container.innerHTML = `
-                        <div class="text-center py-16 px-4">
-                            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 text-lg font-medium">No snapshots found</p>
+                        <div class="text-center py-12 sm:py-16 px-4">
+                            <i class="fas fa-inbox text-5xl sm:text-6xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 text-base sm:text-lg font-medium">No snapshots found</p>
                             <p class="text-gray-400 text-sm mt-2">Create your first snapshot or enable automated backups</p>
-                            <div class="mt-6 flex gap-3 justify-center">
+                            <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
                                 <button onclick="switchTab('manual')" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm">
                                     <i class="fas fa-camera mr-2"></i>Create Snapshot
                                 </button>
@@ -699,19 +714,19 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Filename
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="hidden md:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Modules
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Created
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Size
                                     </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -719,49 +734,49 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 ${snapshots.map((snapshot, idx) => `
                                     <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-file-archive text-gray-400 mr-3 text-lg"></i>
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">${snapshot.filename}</div>
-                                                    ${snapshot.filename.startsWith('auto_backup') ? '<span class="text-xs text-indigo-600"><i class="fas fa-robot mr-1"></i>Automated</span>' : ''}
+                                        <td class="px-4 sm:px-6 py-4">
+                                            <div class="flex items-center gap-2 sm:gap-3">
+                                                <i class="fas fa-file-archive text-gray-400 text-base sm:text-lg flex-shrink-0"></i>
+                                                <div class="min-w-0">
+                                                    <div class="text-xs sm:text-sm font-medium text-gray-900 truncate">${snapshot.filename}</div>
+                                                    ${snapshot.filename.startsWith('auto_backup') ? '<span class="text-xs text-indigo-600"><i class="fas fa-robot mr-1"></i>Auto</span>' : ''}
                                                     ${snapshot.filename.startsWith('manual_backup') ? '<span class="text-xs text-gray-600"><i class="fas fa-hand-pointer mr-1"></i>Manual</span>' : ''}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <div class="text-sm text-gray-900">
-                                                ${snapshot.modules && snapshot.modules.length > 0 ? snapshot.modules.join(', ') : '<span class="text-gray-500 italic">All modules</span>'}
+                                        <td class="hidden md:table-cell px-4 sm:px-6 py-4">
+                                            <div class="text-xs sm:text-sm text-gray-900">
+                                                ${snapshot.modules && snapshot.modules.length > 0 ? snapshot.modules.join(', ') : '<span class="text-gray-500 italic">All</span>'}
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900">${new Date(snapshot.modified).toLocaleDateString()}</div>
+                                        <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                            <div class="text-xs sm:text-sm text-gray-900">${new Date(snapshot.modified).toLocaleDateString()}</div>
                                             <div class="text-xs text-gray-500">${new Date(snapshot.modified).toLocaleTimeString()}</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <td class="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                                             ${formatBytes(snapshot.size)}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <div class="flex justify-end gap-2">
+                                        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex justify-end gap-1 sm:gap-2">
                                                 <button onclick="previewSnapshotByIndex(${idx})" style="cursor: pointer;"
-                                                        class="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded transition-colors"
+                                                        class="text-gray-600 hover:text-gray-900 p-1.5 sm:p-2 hover:bg-gray-100 rounded transition-colors"
                                                         title="Preview">
-                                                    <i class="fas fa-eye"></i>
+                                                    <i class="fas fa-eye text-sm"></i>
                                                 </button>
                                                 <button onclick="showLoadModalByIndex(${idx})" style="cursor: pointer;"
-                                                        class="text-indigo-600 hover:text-indigo-900 p-2 hover:bg-indigo-50 rounded transition-colors"
+                                                        class="text-indigo-600 hover:text-indigo-900 p-1.5 sm:p-2 hover:bg-indigo-50 rounded transition-colors"
                                                         title="Load">
-                                                    <i class="fas fa-upload"></i>
+                                                    <i class="fas fa-upload text-sm"></i>
                                                 </button>
                                                 <button onclick='downloadSnapshot("${snapshot.filename}")' style="cursor: pointer;"
-                                                        class="text-green-600 hover:text-green-900 p-2 hover:bg-green-50 rounded transition-colors"
+                                                        class="text-green-600 hover:text-green-900 p-1.5 sm:p-2 hover:bg-green-50 rounded transition-colors"
                                                         title="Download">
-                                                    <i class="fas fa-download"></i>
+                                                    <i class="fas fa-download text-sm"></i>
                                                 </button>
                                                 <button onclick='deleteSnapshot("${snapshot.filename}")' style="cursor: pointer;"
-                                                        class="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors"
+                                                        class="text-red-600 hover:text-red-900 p-1.5 sm:p-2 hover:bg-red-50 rounded transition-colors"
                                                         title="Delete">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="fas fa-trash text-sm"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -797,27 +812,27 @@
                     const modalHTML = `
                         <div id="preview-modal" class="fixed inset-0 flex items-center justify-center z-50 p-4">
                             <div class="fixed inset-0 bg-black opacity-50 z-[10]" onclick="closePreviewModal()"></div>
-                            <div class="bg-white rounded-lg shadow-2xl max-w-5xl w-full mx-4 max-h-[90vh] flex flex-col z-[99]">
-                                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                                    <h3 class="text-xl font-semibold flex items-center gap-2">
+                            <div class="bg-white rounded-lg shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col z-[99]">
+                                <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                                    <h3 class="text-lg sm:text-xl font-semibold flex items-center gap-2">
                                         <i class="fas fa-eye text-gray-600"></i>
-                                        Preview: ${filename}
+                                        <span class="truncate">Preview: ${filename}</span>
                                     </h3>
-                                    <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-200 rounded transition-colors">
+                                    <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-200 rounded transition-colors flex-shrink-0">
                                         <i class="fas fa-times text-xl"></i>
                                     </button>
                                 </div>
 
-                                <div class="p-6 overflow-y-auto flex-1">
+                                <div class="p-4 sm:p-6 overflow-y-auto flex-1">
                                     <div class="mb-6">
-                                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center gap-2 text-sm sm:text-base">
                                             <i class="fas fa-info-circle text-indigo-600"></i>
                                             Metadata
                                         </h4>
-                                        <div class="bg-gray-50 p-4 rounded-lg text-sm grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg text-xs sm:text-sm grid grid-cols-1 sm:grid-cols-3 gap-3">
                                             <div>
                                                 <strong class="text-gray-600">Timestamp:</strong>
-                                                <div class="text-gray-900">${new Date(snapshot.metadata.timestamp).toLocaleString()}</div>
+                                                <div class="text-gray-900 break-words">${new Date(snapshot.metadata.timestamp).toLocaleString()}</div>
                                             </div>
                                             <div>
                                                 <strong class="text-gray-600">Version:</strong>
@@ -825,41 +840,41 @@
                                             </div>
                                             <div>
                                                 <strong class="text-gray-600">Modules:</strong>
-                                                <div class="text-gray-900">${snapshot.metadata.modules.join(', ')}</div>
+                                                <div class="text-gray-900 break-words">${snapshot.metadata.modules.join(', ')}</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center gap-2 text-sm sm:text-base">
                                             <i class="fas fa-database text-indigo-600"></i>
                                             Data
                                         </h4>
                                         ${Object.entries(snapshot.data).map(([moduleName, data]) => `
                                             <div class="mb-4">
-                                                <h5 class="font-medium text-gray-600 mb-2 flex items-center gap-2">
+                                                <h5 class="font-medium text-gray-600 mb-2 flex items-center gap-2 text-xs sm:text-sm">
                                                     <i class="fas fa-table text-gray-400"></i>
-                                                    ${moduleName}
-                                                    <span class="text-sm text-gray-500 font-normal">(${Array.isArray(data) ? data.length : 0} records)</span>
+                                                    <span class="truncate">${moduleName}</span>
+                                                    <span class="text-xs sm:text-sm text-gray-500 font-normal">(${Array.isArray(data) ? data.length : 0} records)</span>
                                                 </h5>
                                                 <details class="bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
-                                                    <summary class="px-4 py-3 cursor-pointer hover:bg-gray-100 text-sm font-medium text-gray-700 transition-colors">
+                                                    <summary class="px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-gray-100 text-xs sm:text-sm font-medium text-gray-700 transition-colors">
                                                         <i class="fas fa-code mr-2"></i>Click to view JSON
                                                     </summary>
-                                                    <pre class="p-4 text-xs overflow-x-auto bg-gray-900 text-green-400">${JSON.stringify(data, null, 2)}</pre>
+                                                    <pre class="p-3 sm:p-4 text-xs overflow-x-auto bg-gray-900 text-green-400">${JSON.stringify(data, null, 2)}</pre>
                                                 </details>
                                             </div>
                                         `).join('')}
                                     </div>
                                 </div>
 
-                                <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50">
+                                <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-3 bg-gray-50">
                                     <button onclick="closePreviewModal()" 
-                                            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
                                         Close
                                     </button>
                                     <button onclick='downloadSnapshot("${filename}"); closePreviewModal();' 
-                                            class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors">
+                                            class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 transition-colors text-sm">
                                         <i class="fas fa-download"></i> Download
                                     </button>
                                 </div>
@@ -887,51 +902,51 @@
             // Show load modal
             window.showLoadModal = function (snapshot) {
                 const modalHTML = `
-                    <div id="load-modal" class="fixed inset-0 flex items-center justify-center z-50">
+                    <div id="load-modal" class="fixed inset-0 flex items-center justify-center z-50 p-4">
                         <div class="fixed inset-0 bg-black opacity-50 z-[10]" onclick="closeLoadModal()"></div>
-                        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4 z-[99]">
-                            <div class="px-6 py-4 border-b border-gray-200 bg-indigo-50">
-                                <h3 class="text-xl font-semibold flex items-center gap-2 text-indigo-900">
+                        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full z-[99]">
+                            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 bg-indigo-50">
+                                <h3 class="text-lg sm:text-xl font-semibold flex items-center gap-2 text-indigo-900">
                                     <i class="fas fa-upload text-indigo-600"></i>
                                     Load Snapshot
                                 </h3>
                             </div>
 
-                            <div class="p-6">
+                            <div class="p-4 sm:p-6">
                                 <div class="space-y-3 mb-4">
                                     <div class="flex items-start gap-2">
-                                        <i class="fas fa-file text-gray-400 mt-1"></i>
-                                        <div>
-                                            <span class="text-sm text-gray-600">Filename:</span>
-                                            <div class="font-medium text-gray-900">${snapshot.filename}</div>
+                                        <i class="fas fa-file text-gray-400 mt-1 flex-shrink-0"></i>
+                                        <div class="min-w-0">
+                                            <span class="text-xs sm:text-sm text-gray-600">Filename:</span>
+                                            <div class="font-medium text-gray-900 text-sm sm:text-base break-all">${snapshot.filename}</div>
                                         </div>
                                     </div>
                                     <div class="flex items-start gap-2">
-                                        <i class="fas fa-database text-gray-400 mt-1"></i>
-                                        <div>
-                                            <span class="text-sm text-gray-600">Modules:</span>
-                                            <div class="font-medium text-gray-900">${snapshot.modules ? snapshot.modules.join(', ') : 'All modules'}</div>
+                                        <i class="fas fa-database text-gray-400 mt-1 flex-shrink-0"></i>
+                                        <div class="min-w-0">
+                                            <span class="text-xs sm:text-sm text-gray-600">Modules:</span>
+                                            <div class="font-medium text-gray-900 text-sm sm:text-base break-words">${snapshot.modules ? snapshot.modules.join(', ') : 'All modules'}</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                                    <div class="flex">
-                                        <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-0.5"></i>
-                                        <div class="text-sm text-yellow-700">
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 rounded">
+                                    <div class="flex gap-2 sm:gap-3">
+                                        <i class="fas fa-exclamation-triangle text-yellow-400 mt-0.5 flex-shrink-0"></i>
+                                        <div class="text-xs sm:text-sm text-yellow-700">
                                             <strong>Warning:</strong> This will replace current data. This action cannot be undone.
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50">
+                            <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-3 bg-gray-50">
                                 <button onclick="closeLoadModal()" 
-                                        class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                        class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
                                     Cancel
                                 </button>
                                 <button onclick='confirmLoadSnapshot("${snapshot.filename}", ${JSON.stringify(snapshot.modules || [])})' 
-                                        class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                                        class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm">
                                     Load Snapshot
                                 </button>
                             </div>
@@ -1019,11 +1034,11 @@
                 const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
 
                 const notification = document.createElement('div');
-                notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-lg shadow-2xl z-50 flex items-center gap-3 max-w-md`;
+                notification.className = `fixed top-4 right-4 ${bgColor} text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg shadow-2xl z-50 flex items-center gap-2 sm:gap-3 max-w-xs sm:max-w-md text-sm sm:text-base`;
                 notification.innerHTML = `
-                    <i class="fas ${icon} text-xl"></i>
-                    <span class="flex-1">${message}</span>
-                    <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 ml-2">
+                    <i class="fas ${icon} text-lg sm:text-xl flex-shrink-0"></i>
+                    <span class="flex-1 break-words">${message}</span>
+                    <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 flex-shrink-0">
                         <i class="fas fa-times"></i>
                     </button>
                 `;
