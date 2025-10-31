@@ -52,7 +52,7 @@ class CMSModule {
                         <p class="text-sm text-gray-600 mt-1">${data.data.length} record(s) found</p>
                     </div> 
                     <button onclick="currentModule.showCreateForm()"  style="cursor: pointer;"
-                            class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors flex items-center gap-2">
+                            class="bg-indigo-700 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition-colors flex items-center gap-2">
                         <i class="fas fa-plus"></i>
                         <span>Create New</span>
                     </button>
@@ -112,7 +112,7 @@ class CMSModule {
                 }).join('')}
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button onclick="currentModule.edit('${row.id}')" 
-                            class="text-blue-600 hover:text-blue-900 mr-4 transition-colors" style="cursor: pointer;"
+                            class="text-indigo-600 hover:text-indigo-900 mr-4 transition-colors" style="cursor: pointer;"
                             title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
@@ -259,7 +259,7 @@ class CMSModule {
             <div id="edit-modal" class="fixed inset-0 flex items-center justify-center z-50">
                 <div class="fixed inset-0 bg-black opacity-50 z-10"  onclick="currentModule.closeModal()"></div>
                 <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden z-20 mx-4">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-600 to-blue-700 text-white">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-600 to-indigo-700 text-white">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xl font-semibold flex items-center gap-2">
                                 <i class="fas ${modalIcon}"></i>
@@ -287,7 +287,7 @@ class CMSModule {
                         </button>
                         <button type="button" style="cursor: pointer;"
                                 onclick="currentModule.submitForm(${isEdit}, '${data?.id || ''}')" 
-                                class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2">
                             <i class="fas fa-save"></i>
                             <span>${isEdit ? 'Update' : 'Create'}</span>
                         </button>
