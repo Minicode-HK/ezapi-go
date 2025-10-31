@@ -196,12 +196,14 @@ Build on top of Gin framework. Easy to customize.
 - [ ] **Project Structure Refactor** - separate CMS, CMS_Backend, Core
 - [ ] **Query Parameters** - Filter, sort, search
 - [ ] **Pagination** - Handle large datasets
+- [ ] **Mass Delete** - Mass record delete
+- [ ] **Model Generator** - Generate new model in CMS
 - [ ] **Relationships** - Link between models
-- [ ] **File Uploads** - Multipart form support
 - [ ] **Export/Import** - JSON/CSV data exchange
 - [ ] **Webhooks** - Event notifications
-- [ ] **Scheduled Jobs** - Automated tasks
+- [ ] **Scheduled Jobs** - Automated data / log / snapshot cleanup
 - [ ] **Role-based Access** - Fine-grained permissions
+- [ ] **File Uploads** - Multipart form support
 - [ ] **Real Database Support** - exposing api for real dbs (Postgres, MySQL, etc)
 ---
 
