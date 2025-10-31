@@ -17,36 +17,37 @@
 </head>
 
 <body class="bg-gray-50">
-    <header class="bg-white shadow-sm px-8 py-4">
-        <div class="flex justify-between items-center">
+    <!-- Header -->
+    <header class="bg-white shadow-sm px-4 sm:px-8 py-4">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <div class="flex items-center gap-3">
-                <h2 class="text-2xl font-bold text-gray-800">API Playground</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800">API Playground</h2>
                 <button onclick="openSettingsDialog()"
-                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm flex items-center gap-2">
+                    class="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm flex items-center gap-2">
                     <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                    <span class="hidden sm:inline">Settings</span>
                 </button>
             </div>
-            <div class="text-sm text-gray-600">
+            <div class="text-xs sm:text-sm text-gray-600">
                 <span>Test your API endpoints safely</span>
             </div>
         </div>
     </header>
 
-    <div class="p-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="p-4 sm:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <!-- Request Panel -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <i class="fas fa-paper-plane text-indigo-600"></i>
                     Request
                 </h3>
 
                 <div class="space-y-4">
                     <!-- Method & URL -->
-                    <div class="flex gap-3">
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                         <select id="method"
-                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white font-medium">
+                            class="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white font-medium text-sm sm:text-base">
                             <option value="GET">GET</option>
                             <option value="POST">POST</option>
                             <option value="PUT">PUT</option>
@@ -55,7 +56,7 @@
                         </select>
 
                         <input type="text" id="url" placeholder="http://localhost:8080/api/..."
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
                             value="http://localhost:8080/api/users">
                     </div>
 
@@ -79,34 +80,36 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-code mr-2"></i>Request Body (JSON)
                         </label>
-                        <textarea id="body" rows="10"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 code-editor font-mono text-sm"
+                        <textarea id="body" rows="8"
+                            class="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 code-editor font-mono text-xs sm:text-sm"
                             placeholder='{\n  "name": "John Doe",\n  "email": "john@example.com"\n}'></textarea>
                     </div>
 
                     <!-- Mock Mode -->
-                    <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div class="flex items-center gap-3">
+                    <div
+                        class="flex items-center justify-between p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="flex items-center gap-2 sm:gap-3">
                             <label class="flex items-center cursor-pointer">
-                                <input type="checkbox" id="mockMode" class="mr-2 h-5 w-5 text-indigo-600 rounded">
-                                <span class="font-medium text-gray-900">Mock Mode (Safe Testing)</span>
+                                <input type="checkbox" id="mockMode"
+                                    class="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 rounded">
+                                <span class="font-medium text-gray-900 text-sm sm:text-base">Mock Mode</span>
                             </label>
                             <button onclick="showMockModeInfo()" class="text-blue-600 hover:text-blue-700">
-                                <i class="fas fa-info-circle"></i>
+                                <i class="fas fa-info-circle text-sm sm:text-base"></i>
                             </button>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex gap-3 pt-2">
+                    <div class="flex gap-2 sm:gap-3 pt-2">
                         <button onclick="sendRequest()" style="cursor: pointer;"
-                            class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2">
+                            class="flex-1 bg-indigo-600 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2 text-sm sm:text-base">
                             <i class="fas fa-play"></i>
-                            <span>Send Request</span>
+                            <span>Send</span>
                         </button>
 
                         <button onclick="clearRequest()" style="cursor: pointer;"
-                            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -114,33 +117,33 @@
             </div>
 
             <!-- Response Panel -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <i class="fas fa-reply text-green-600"></i>
                     Response
                 </h3>
 
                 <div id="response-container" class="text-center py-12 text-gray-400">
-                    <i class="fas fa-inbox text-6xl mb-4"></i>
-                    <p>Send a request to see the response</p>
+                    <i class="fas fa-inbox text-5xl sm:text-6xl mb-4"></i>
+                    <p class="text-sm sm:text-base">Send a request to see the response</p>
                 </div>
 
                 <div id="response-content" class="hidden space-y-4">
                     <!-- Status -->
                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span class="text-sm font-medium text-gray-600">Status</span>
-                        <span id="response-status" class="font-semibold"></span>
+                        <span class="text-xs sm:text-sm font-medium text-gray-600">Status</span>
+                        <span id="response-status" class="font-semibold text-sm sm:text-base"></span>
                     </div>
 
                     <!-- Time & Size -->
                     <div class="grid grid-cols-2 gap-3">
                         <div class="p-3 bg-gray-50 rounded-lg">
                             <div class="text-xs text-gray-600 mb-1">Time</div>
-                            <div id="response-time" class="font-semibold text-gray-900"></div>
+                            <div id="response-time" class="font-semibold text-gray-900 text-sm sm:text-base"></div>
                         </div>
                         <div class="p-3 bg-gray-50 rounded-lg">
                             <div class="text-xs text-gray-600 mb-1">Size</div>
-                            <div id="response-size" class="font-semibold text-gray-900"></div>
+                            <div id="response-size" class="font-semibold text-gray-900 text-sm sm:text-base"></div>
                         </div>
                     </div>
 
@@ -148,7 +151,7 @@
                     <div id="mock-badge" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-lg">
                         <div class="flex items-center gap-2 text-blue-700">
                             <i class="fas fa-shield-alt"></i>
-                            <span class="text-sm font-medium">Mock Mode: Changes were rolled back</span>
+                            <span class="text-xs sm:text-sm font-medium">Mock Mode: Changes were rolled back</span>
                         </div>
                     </div>
 
@@ -156,26 +159,27 @@
                     <div>
                         <button onclick="toggleResponseHeaders()"
                             class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                            <span class="text-sm font-medium text-gray-700">
+                            <span class="text-xs sm:text-sm font-medium text-gray-700">
                                 <i class="fas fa-list mr-2"></i>Response Headers
                             </span>
                             <i id="headers-toggle-icon" class="fas fa-chevron-down text-gray-400"></i>
                         </button>
-                        <div id="response-headers" class="hidden mt-2 p-4 bg-gray-50 rounded-lg">
-                            <pre id="response-headers-content" class="text-xs font-mono text-gray-700"></pre>
+                        <div id="response-headers" class="hidden mt-2 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                            <pre id="response-headers-content"
+                                class="text-xs font-mono text-gray-700 overflow-x-auto"></pre>
                         </div>
                     </div>
 
                     <!-- Body -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-file-code mr-2"></i>Response Body
                         </label>
                         <div class="relative">
                             <pre id="response-body"
-                                class="p-4 bg-gray-900 text-green-400 rounded-lg overflow-x-auto text-sm font-mono max-h-96"></pre>
+                                class="p-3 sm:p-4 bg-gray-900 text-green-400 rounded-lg overflow-x-auto text-xs sm:text-sm font-mono max-h-64 sm:max-h-96"></pre>
                             <button onclick="copyResponse()"
-                                class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 text-xs">
+                                class="absolute top-2 right-2 px-2 sm:px-3 py-1 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 text-xs">
                                 <i class="fas fa-copy mr-1"></i>Copy
                             </button>
                         </div>
@@ -185,34 +189,34 @@
         </div>
 
         <!-- Quick Examples -->
-        <div class="mt-6 bg-white rounded-lg shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <div class="mt-4 sm:mt-6 bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <i class="fas fa-lightbulb text-yellow-500"></i>
                 Quick Examples
             </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <button onclick="loadExample('get')"
-                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
-                    <div class="font-semibold text-gray-900 mb-1">GET Request</div>
+                    class="p-3 sm:p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">GET Request</div>
                     <div class="text-xs text-gray-500">Fetch all users</div>
                 </button>
 
                 <button onclick="loadExample('post')"
-                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
-                    <div class="font-semibold text-gray-900 mb-1">POST Request</div>
+                    class="p-3 sm:p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">POST Request</div>
                     <div class="text-xs text-gray-500">Create new user</div>
                 </button>
 
                 <button onclick="loadExample('put')"
-                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
-                    <div class="font-semibold text-gray-900 mb-1">PUT Request</div>
+                    class="p-3 sm:p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">PUT Request</div>
                     <div class="text-xs text-gray-500">Update user</div>
                 </button>
 
                 <button onclick="loadExample('delete')"
-                    class="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
-                    <div class="font-semibold text-gray-900 mb-1">DELETE Request</div>
+                    class="p-3 sm:p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <div class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">DELETE Request</div>
                     <div class="text-xs text-gray-500">Delete user</div>
                 </button>
             </div>
@@ -222,12 +226,13 @@
     <!-- Settings Dialog -->
     <div id="settings-dialog" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="fixed inset-0 bg-black opacity-50 z-[10]" onclick="closeSettingsDialog()"></div>
-        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col z-[99]">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col z-[99]">
             <!-- Header -->
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h3 class="text-xl font-semibold flex items-center gap-2">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <h3 class="text-lg sm:text-xl font-semibold flex items-center gap-2">
                     <i class="fas fa-shield-alt text-indigo-600"></i>
-                    Security Settings
+                    <span class="hidden sm:inline">Security Settings</span>
+                    <span class="sm:hidden">Settings</span>
                 </h3>
                 <button onclick="closeSettingsDialog()"
                     class="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-200 rounded transition-colors">
@@ -236,141 +241,140 @@
             </div>
 
             <!-- Content -->
-            <div class="p-6 overflow-y-auto flex-1">
-                <div class="space-y-6">
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1">
+                <div class="space-y-4 sm:space-y-6">
                     <!-- Security Section -->
                     <div>
-                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm sm:text-base">
                             <i class="fas fa-lock text-red-600"></i>
                             Security Controls
                         </h4>
 
-                        <div class="space-y-3 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="space-y-2 sm:space-y-3 bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
                             <label
-                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                class="flex items-start sm:items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded gap-3">
                                 <div class="flex-1">
-                                    <span class="font-medium text-gray-900">Allow Only Localhost</span>
-                                    <p class="text-xs text-gray-600">Only accept requests to localhost/127.0.0.1</p>
+                                    <span class="font-medium text-gray-900 text-sm sm:text-base">Allow Only
+                                        Localhost</span>
+                                    <p class="text-xs text-gray-600">Only localhost/127.0.0.1</p>
                                 </div>
                                 <input type="checkbox" id="config-allowOnlyLocalhost"
-                                    class="h-5 w-5 text-indigo-600 rounded">
+                                    class="h-5 w-5 text-indigo-600 rounded flex-shrink-0 mt-0.5 sm:mt-0">
                             </label>
 
                             <label
-                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                class="flex items-start sm:items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded gap-3">
                                 <div class="flex-1">
-                                    <span class="font-medium text-gray-900">Block Private IPs</span>
-                                    <p class="text-xs text-gray-600">Block requests to private IP ranges (10.x,
-                                        192.168.x, etc.)</p>
+                                    <span class="font-medium text-gray-900 text-sm sm:text-base">Block Private
+                                        IPs</span>
+                                    <p class="text-xs text-gray-600">Block 10.x, 192.168.x, etc.</p>
                                 </div>
                                 <input type="checkbox" id="config-blockPrivateIPs"
-                                    class="h-5 w-5 text-indigo-600 rounded">
+                                    class="h-5 w-5 text-indigo-600 rounded flex-shrink-0 mt-0.5 sm:mt-0">
                             </label>
 
                             <label
-                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                class="flex items-start sm:items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded gap-3">
                                 <div class="flex-1">
-                                    <span class="font-medium text-gray-900">Enable External Hosts</span>
-                                    <p class="text-xs text-red-600 font-semibold">⚠️ WARNING: Allows SSRF attacks!</p>
+                                    <span class="font-medium text-gray-900 text-sm sm:text-base">Enable External
+                                        Hosts</span>
+                                    <p class="text-xs text-red-600 font-semibold">⚠️ SSRF risk!</p>
                                 </div>
                                 <input type="checkbox" id="config-enableExternalHosts"
-                                    class="h-5 w-5 text-red-600 rounded">
+                                    class="h-5 w-5 text-red-600 rounded flex-shrink-0 mt-0.5 sm:mt-0">
                             </label>
 
                             <label
-                                class="flex items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded">
+                                class="flex items-start sm:items-center justify-between cursor-pointer p-2 hover:bg-red-100 rounded gap-3">
                                 <div class="flex-1">
-                                    <span class="font-medium text-gray-900">Require HTTPS</span>
-                                    <p class="text-xs text-gray-600">Force HTTPS for external requests</p>
+                                    <span class="font-medium text-gray-900 text-sm sm:text-base">Require HTTPS</span>
+                                    <p class="text-xs text-gray-600">Force HTTPS externally</p>
                                 </div>
-                                <input type="checkbox" id="config-requireHTTPS" class="h-5 w-5 text-indigo-600 rounded">
+                                <input type="checkbox" id="config-requireHTTPS"
+                                    class="h-5 w-5 text-indigo-600 rounded flex-shrink-0 mt-0.5 sm:mt-0">
                             </label>
                         </div>
                     </div>
 
                     <!-- Features Section -->
                     <div>
-                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm sm:text-base">
                             <i class="fas fa-toggle-on text-indigo-600"></i>
                             Features
                         </h4>
 
                         <div class="space-y-3">
                             <label
-                                class="flex items-center justify-between cursor-pointer p-3 bg-gray-50 hover:bg-gray-100 rounded-lg">
+                                class="flex items-start sm:items-center justify-between cursor-pointer p-3 bg-gray-50 hover:bg-gray-100 rounded-lg gap-3">
                                 <div class="flex-1">
-                                    <span class="font-medium text-gray-900">Enable Mock Mode</span>
-                                    <p class="text-xs text-gray-600">Allow transactions to be rolled back automatically
-                                    </p>
+                                    <span class="font-medium text-gray-900 text-sm sm:text-base">Enable Mock Mode</span>
+                                    <p class="text-xs text-gray-600">Auto-rollback changes</p>
                                 </div>
                                 <input type="checkbox" id="config-enableMockMode"
-                                    class="h-5 w-5 text-indigo-600 rounded">
+                                    class="h-5 w-5 text-indigo-600 rounded flex-shrink-0 mt-0.5 sm:mt-0">
                             </label>
                         </div>
                     </div>
 
                     <!-- Performance Section -->
                     <div>
-                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm sm:text-base">
                             <i class="fas fa-tachometer-alt text-indigo-600"></i>
                             Performance Limits
                         </h4>
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                                     Max Body Size (bytes)
                                 </label>
                                 <input type="number" id="config-maxBodySize" min="1024" max="10485760" step="1024"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="text-xs text-gray-500 mt-1">1KB - 10MB (current: <span
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                                <p class="text-xs text-gray-500 mt-1">1KB - 10MB (<span
                                         id="current-maxBodySize">-</span>)</p>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                                     Request Timeout (seconds)
                                 </label>
                                 <input type="number" id="config-timeout" min="1" max="60" step="1"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                                 <p class="text-xs text-gray-500 mt-1">1-60 seconds</p>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Rate Limit (requests/minute)
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                                    Rate Limit (requests/min)
                                 </label>
                                 <input type="number" id="config-maxRequestsPerMin" min="1" max="1000" step="1"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="text-xs text-gray-500 mt-1">1-1000 requests per minute</p>
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                                <p class="text-xs text-gray-500 mt-1">1-1000 per minute</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Allowed Hosts Section -->
                     <div>
-                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm sm:text-base">
                             <i class="fas fa-list text-indigo-600"></i>
                             Allowed Hosts (Whitelist)
                         </h4>
 
                         <div>
-                            <textarea id="config-allowedHosts" rows="3"
-                                placeholder="example.com&#10;api.example.com&#10;localhost"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm"></textarea>
-                            <p class="text-xs text-gray-500 mt-1">One host per line. Leave empty to allow all (if
-                                external hosts enabled)</p>
+                            <textarea id="config-allowedHosts" rows="3" placeholder="example.com&#10;api.example.com"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs sm:text-sm"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">One host per line</p>
                         </div>
                     </div>
 
                     <!-- Security Warning -->
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                        <div class="flex">
-                            <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-0.5"></i>
-                            <div class="text-sm text-yellow-700">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 rounded">
+                        <div class="flex gap-2">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-0.5 flex-shrink-0"></i>
+                            <div class="text-xs sm:text-sm text-yellow-700">
                                 <strong>Security Notice:</strong> Enabling external hosts can expose your server to SSRF
                                 attacks.
-                                Only enable if you understand the risks and have proper network segmentation.
                             </div>
                         </div>
                     </div>
@@ -378,19 +382,20 @@
             </div>
 
             <!-- Footer -->
-            <div class="px-6 py-4 border-t border-gray-200 flex justify-between gap-3 bg-gray-50">
+            <div
+                class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between gap-3 bg-gray-50">
                 <button onclick="resetToDefaults()"
-                    class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm order-2 sm:order-1">
                     <i class="fas fa-undo mr-2"></i>Reset to Defaults
                 </button>
-                <div class="flex gap-3">
+                <div class="flex gap-3 order-1 sm:order-2">
                     <button onclick="closeSettingsDialog()"
-                        class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        class="flex-1 sm:flex-none px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
                         Cancel
                     </button>
                     <button onclick="saveSettings()"
-                        class="px-6 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                        <i class="fas fa-save mr-2"></i>Save Settings
+                        class="flex-1 sm:flex-none px-6 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm">
+                        <i class="fas fa-save mr-2"></i>Save
                     </button>
                 </div>
             </div>
@@ -413,7 +418,7 @@
                 const id = headerCount++;
 
                 const headerDiv = document.createElement('div');
-                headerDiv.className = 'flex gap-2';
+                headerDiv.className = 'flex flex-col sm:flex-row gap-2';
                 headerDiv.id = `header-${id}`;
                 headerDiv.innerHTML = `
                     <input type="text" placeholder="Header name" 
@@ -423,7 +428,7 @@
                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
                            data-header-value="${id}">
                     <button onclick="removeHeader(${id})" 
-                            class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
+                            class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors sm:w-auto">
                         <i class="fas fa-trash"></i>
                     </button>
                 `;
@@ -470,8 +475,8 @@
                 document.getElementById('response-content').classList.add('hidden');
                 document.getElementById('response-container').innerHTML = `
                     <div class="text-center py-12">
-                        <i class="fas fa-spinner fa-spin text-6xl text-indigo-600 mb-4"></i>
-                        <p class="text-gray-600">Sending request...</p>
+                        <i class="fas fa-spinner fa-spin text-5xl sm:text-6xl text-indigo-600 mb-4"></i>
+                        <p class="text-gray-600 text-sm sm:text-base">Sending request...</p>
                     </div>
                 `;
 
@@ -510,8 +515,8 @@
                 const statusBadge = document.getElementById('response-status');
                 statusBadge.textContent = `${data.statusCode} ${data.status}`;
                 statusBadge.className = data.statusCode < 400
-                    ? 'font-semibold text-green-600'
-                    : 'font-semibold text-red-600';
+                    ? 'font-semibold text-green-600 text-sm sm:text-base'
+                    : 'font-semibold text-red-600 text-sm sm:text-base';
 
                 // Time & Size
                 document.getElementById('response-time').textContent = `${data.time}ms`;
@@ -543,9 +548,9 @@
                 document.getElementById('response-content').classList.add('hidden');
                 document.getElementById('response-container').innerHTML = `
                     <div class="text-center py-12">
-                        <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
-                        <p class="text-red-600 font-semibold mb-2">Request Failed</p>
-                        <p class="text-sm text-gray-600">${error}</p>
+                        <i class="fas fa-exclamation-triangle text-5xl sm:text-6xl text-red-500 mb-4"></i>
+                        <p class="text-red-600 font-semibold mb-2 text-sm sm:text-base">Request Failed</p>
+                        <p class="text-xs sm:text-sm text-gray-600 px-4">${error}</p>
                     </div>
                 `;
             }
@@ -570,7 +575,7 @@
             window.copyResponse = function () {
                 const text = document.getElementById('response-body').textContent;
                 navigator.clipboard.writeText(text).then(() => {
-                    showNotification('Response copied to clipboard', 'success');
+                    showNotification('Copied!', 'success');
                 });
             };
 
@@ -629,10 +634,10 @@
             // Show mock mode info
             window.showMockModeInfo = function () {
                 alert('Mock Mode:\n\n' +
-                    '• Automatically rolls back changes after the request\n' +
-                    '• Safe for testing POST, PUT, DELETE operations\n' +
+                    '• Automatically rolls back changes\n' +
+                    '• Safe for testing POST, PUT, DELETE\n' +
                     '• Database state is preserved\n' +
-                    '• Perfect for trying destructive operations without risk');
+                    '• Perfect for destructive operations');
             };
 
             // Settings Dialog Functions
@@ -706,14 +711,14 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        showNotification('Settings saved successfully', 'success');
+                        showNotification('Settings saved!', 'success');
                         closeSettingsDialog();
                     } else {
                         showNotification('Error: ' + result.error, 'error');
                     }
                 } catch (error) {
                     console.error('Failed to save settings:', error);
-                    showNotification('Failed to save settings', 'error');
+                    showNotification('Failed to save', 'error');
                 }
             };
 
@@ -752,11 +757,11 @@
                 const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
 
                 const notification = document.createElement('div');
-                notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-lg shadow-2xl z-50 flex items-center gap-3 max-w-md`;
+                notification.className = `fixed top-4 right-4 ${bgColor} text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg shadow-2xl z-50 flex items-center gap-2 sm:gap-3 max-w-xs sm:max-w-md text-sm sm:text-base`;
                 notification.innerHTML = `
-                    <i class="fas ${icon} text-xl"></i>
+                    <i class="fas ${icon} text-lg sm:text-xl"></i>
                     <span class="flex-1">${message}</span>
-                    <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 ml-2">
+                    <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200">
                         <i class="fas fa-times"></i>
                     </button>
                 `;
