@@ -6,6 +6,35 @@
         </div>
     </div>
 </header>
+<script>
+
+    // Reset to initial data
+    window.resetToInitialData = async function () {
+        if (!confirm('Are you sure you want to reset all data to initial state? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/reset', {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // page reload
+                alert('All data has been reset to initial state');
+                location.reload();
+            } else {
+                alert('Error: ' + (result.message || 'Failed to reset data'));
+            }
+        } catch (error) {
+            console.error('Reset error:', error);
+            alert('Network error: ' + error.message);
+        }
+    };
+</script>
 
 <div class="p-8">
     <!-- Save Snapshot Section -->
@@ -49,6 +78,31 @@
         </div>
     </div>
 
+    <!-- Add this section after the "Save Snapshot Section" and before "Load Snapshot Section" -->
+
+    <!-- Reset to Initial Data Section -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-red-500">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="fas fa-undo mr-2 text-red-600"></i>Reset to Initial Data
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <p class="text-gray-700 mb-4">
+                    This will reset all modules back to their initial testing data as defined in the code.
+                </p>
+            </div>
+
+            <div class="flex items-center justify-center">
+                <button onclick="resetToInitialData()"
+                    class="w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+                    <i class="fas fa-undo"></i>
+                    <span>Reset All Data to Initial State</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Load Snapshot Section -->
     <div class="bg-white rounded-lg shadow-sm p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">
@@ -68,20 +122,26 @@
 
         // Load modules
         async function loadModules () {
-            const response = await fetch('/cms/api/snapshots/modules', {
-                credentials: 'include'
-            });
-            const result = await response.json();
+            try {
+                const response = await fetch('/cms/api/snapshots/modules', {
+                    credentials: 'include'
+                });
+                const result = await response.json();
 
-            if (result.success) {
-                modules = result.data;
-                renderModuleCheckboxes();
+                if (result.success) {
+                    modules = result.data;
+                    renderModuleCheckboxes();
+                }
+            } catch (error) {
+                console.error('Error loading modules:', error);
             }
         }
 
         // Render module checkboxes
         function renderModuleCheckboxes () {
             const container = document.getElementById('module-checkboxes');
+            if (!container) return;
+
             container.innerHTML = modules.map((module, index) => `
                 <label class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
                     <input type="checkbox" 
@@ -129,9 +189,10 @@
                 });
 
                 const result = await response.json();
+                console.log('Save snapshot result:', result);
 
                 if (result.success) {
-                    showNotification(`Snapshot saved: ${result.filename}`, 'success');
+                    showNotification(`Snapshot saved: ${result.data.filename}`, 'success');
                     document.getElementById('snapshot-filename').value = '';
                     loadSnapshots();
                 } else {
@@ -144,20 +205,25 @@
 
         // Load snapshots
         async function loadSnapshots () {
-            const response = await fetch('/cms/api/snapshots', {
-                credentials: 'include'
-            });
-            const result = await response.json();
+            try {
+                const response = await fetch('/cms/api/snapshots', {
+                    credentials: 'include'
+                });
+                const result = await response.json();
 
-            if (result.success) {
-                snapshots = result.data;
-                renderSnapshots();
+                if (result.success) {
+                    snapshots = result.data;
+                    renderSnapshots();
+                }
+            } catch (error) {
+                console.error('Error loading snapshots:', error);
             }
         }
 
         // Render snapshots
         function renderSnapshots () {
             const container = document.getElementById('snapshots-list');
+            if (!container) return;
 
             if (snapshots.length === 0) {
                 container.innerHTML = `
@@ -182,7 +248,10 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            ${snapshots.map(snapshot => `
+                            ${snapshots.map((snapshot, idx) => {
+                // Store snapshot data for later use
+                const dataAttr = `data-snapshot-idx="${idx}"`;
+                return `
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 text-sm font-medium text-gray-900">
                                         <i class="fas fa-file-archive mr-2 text-gray-600"></i>
@@ -198,12 +267,12 @@
                                         ${formatBytes(snapshot.size)}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right space-x-2">
-                                        <button onclick='previewSnapshot("${snapshot.filename}")' 
+                                        <button ${dataAttr} onclick="previewSnapshotByIndex(${idx})" 
                                                 class="text-gray-600 hover:text-gray-900"
                                                 title="Preview">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button onclick='showLoadModal(${JSON.stringify(snapshot)})' 
+                                        <button ${dataAttr} onclick="showLoadModalByIndex(${idx})" 
                                                 class="text-blue-600 hover:text-blue-900"
                                                 title="Load">
                                             <i class="fas fa-upload"></i>
@@ -220,26 +289,215 @@
                                         </button>
                                     </td>
                                 </tr>
-                            `).join('')}
+                            `}).join('')}
                         </tbody>
                     </table>
                 </div>
             `;
         }
 
-        // Preview, load, delete functions (same as before)
-        window.previewSnapshot = async function (filename) {
-            // ... same implementation
+        // Helper functions to get snapshot by index
+        window.previewSnapshotByIndex = function (idx) {
+            const snapshot = snapshots[idx];
+            if (snapshot) {
+                previewSnapshot(snapshot.filename);
+            }
         };
 
+        window.showLoadModalByIndex = function (idx) {
+            const snapshot = snapshots[idx];
+            if (snapshot) {
+                showLoadModal(snapshot);
+            }
+        };
+
+        // Preview snapshot
+        window.previewSnapshot = async function (filename) {
+            try {
+                const response = await fetch(`/snapshots/${filename}`);
+                const snapshot = await response.json();
+
+                // Create modal with JSON preview
+                const modalHTML = `
+                    <div id="preview-modal" class="fixed inset-0 flex items-center justify-center z-50 p-4">
+                        <div class="fixed inset-0 bg-black opacity-50"></div>
+                        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 relative z-10 max-h-[90vh] flex flex-col">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-xl font-semibold flex items-center gap-2">
+                                    <i class="fas fa-eye text-gray-600"></i>
+                                    Preview: ${filename}
+                                </h3>
+                                <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+
+                            <div class="p-6 overflow-y-auto flex-1">
+                                <div class="mb-4">
+                                    <h4 class="font-semibold text-gray-700 mb-2">Metadata</h4>
+                                    <div class="bg-gray-50 p-4 rounded-lg text-sm">
+                                        <p><strong>Timestamp:</strong> ${new Date(snapshot.metadata.timestamp).toLocaleString()}</p>
+                                        <p><strong>Version:</strong> ${snapshot.metadata.version}</p>
+                                        <p><strong>Modules:</strong> ${snapshot.metadata.modules.join(', ')}</p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 class="font-semibold text-gray-700 mb-2">Data</h4>
+                                    ${Object.entries(snapshot.data).map(([moduleName, data]) => `
+                                        <div class="mb-4">
+                                            <h5 class="font-medium text-gray-600 mb-2">
+                                                <i class="fas fa-table mr-2"></i>${moduleName} 
+                                                <span class="text-sm text-gray-500">(${Array.isArray(data) ? data.length : 0} records)</span>
+                                            </h5>
+                                            <details class="bg-gray-50 rounded-lg overflow-hidden">
+                                                <summary class="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm font-medium">
+                                                    Click to view JSON
+                                                </summary>
+                                                <pre class="p-4 text-xs overflow-x-auto bg-gray-900 text-green-400">${JSON.stringify(data, null, 2)}</pre>
+                                            </details>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                                <button onclick="closePreviewModal()" 
+                                        class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                                    Close
+                                </button>
+                                <button onclick='downloadSnapshot("${filename}"); closePreviewModal();' 
+                                        class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 flex items-center gap-2">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+                // Add event listener to backdrop to close modal when clicked
+                const modal = document.getElementById('preview-modal');
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal || e.target.classList.contains('opacity-50')) {
+                        closePreviewModal();
+                    }
+                });
+
+            } catch (error) {
+                console.error('Preview error:', error);
+                alert('Failed to load snapshot: ' + error.message);
+            }
+        };
+
+        window.closePreviewModal = function () {
+            const modal = document.getElementById('preview-modal');
+            if (modal) modal.remove();
+        };
+
+        // Download snapshot
         window.downloadSnapshot = function (filename) {
             window.open(`/snapshots/${filename}`, '_blank');
         };
 
+        // Show load modal
         window.showLoadModal = function (snapshot) {
-            // ... same implementation
+
+            const modalHTML = `
+                <div id="load-modal" class="fixed inset-0 flex items-center justify-center z-50">
+                    <div class="fixed inset-0 bg-black opacity-50"></div>
+                    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 relative z-10">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold flex items-center gap-2">
+                                <i class="fas fa-upload text-blue-600"></i>
+                                Load Snapshot
+                            </h3>
+                        </div>
+
+                        <div class="p-6">
+                            <p class="text-gray-700 mb-4">
+                                <strong>Filename:</strong> ${snapshot.filename}
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                <strong>Modules:</strong> ${snapshot.modules ? snapshot.modules.join(', ') : 'All'}
+                            </p>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                                <div class="flex">
+                                    <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"></i>
+                                    <p class="text-sm text-yellow-700">
+                                        This will replace current data. This action cannot be undone.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                            <button onclick="closeLoadModal()" 
+                                    class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button onclick='confirmLoadSnapshot("${snapshot.filename}", ${JSON.stringify(snapshot.modules || [])})' 
+                                    class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                                Load Snapshot
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // Add event listener to backdrop
+            const modal = document.getElementById('load-modal');
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal || e.target.classList.contains('opacity-50')) {
+                    closeLoadModal();
+                }
+            });
         };
 
+        window.closeLoadModal = function () {
+            const modal = document.getElementById('load-modal');
+            if (modal) modal.remove();
+        };
+
+        // Separate function for confirming load
+        window.confirmLoadSnapshot = function (filename, modules) {
+            closeLoadModal();
+            loadSnapshot(filename, modules);
+        };
+
+        // Load snapshot
+        window.loadSnapshot = async function (filename, modules) {
+            console.log('Loading snapshot:', filename, modules);
+
+            try {
+                const response = await fetch('/cms/api/snapshots/load', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        filename: filename,
+                        modules: modules || []
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Snapshot loaded successfully', 'success');
+                    loadModules(); // Refresh module counts
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Load error:', error);
+                alert('Network error: ' + error.message);
+            }
+        };
+
+        // Delete snapshot
         window.deleteSnapshot = async function (filename) {
             if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
                 return;
@@ -264,6 +522,7 @@
             }
         };
 
+        // Format bytes
         function formatBytes (bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -272,6 +531,7 @@
             return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
         }
 
+        // Show notification
         function showNotification (message, type = 'success') {
             const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
             const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';

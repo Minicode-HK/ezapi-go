@@ -186,6 +186,17 @@ func (h *SnapshotHandler) List(c *gin.Context) {
             })
         }
     }
+
+    // sort snapshots by modified time descending
+    for i := 0; i < len(snapshots)-1; i++ {
+        for j := i + 1; j < len(snapshots); j++ {
+            timeI := snapshots[i]["modified"].(time.Time)
+            timeJ := snapshots[j]["modified"].(time.Time)
+            if timeJ.After(timeI) {
+                snapshots[i], snapshots[j] = snapshots[j], snapshots[i]
+            }
+        }
+    }
     
     c.JSON(200, models.APIResponse{
         Success: true,
