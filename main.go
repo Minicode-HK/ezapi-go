@@ -9,6 +9,7 @@ import (
     "github.com/gin-gonic/gin"
 
     "simple_backend_go/route"
+    "simple_backend_go/cms"
 )
 
 func main() {
@@ -30,6 +31,9 @@ func main() {
 
     // Add more resource routers here
     route.SetupAllRouters(router)
+
+    // Register CMS routes
+    cms.RegisterCMSRoutes(router)
     
     // Get port from env or use default
     port := os.Getenv("PORT")

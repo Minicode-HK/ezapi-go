@@ -162,11 +162,27 @@ func ResetableDatabase[T any](dbPtr *[]T, initialData []T) []T {
 
 var routerRegistry []func(*gin.Engine)
 
+// store module information
+type ModuleInfo struct {
+	TypeName reflect.Type
+    BasePath string
+}
+// TODO: currently only RegisterRouter have this info
+var moduleRegistry []ModuleInfo
+
+func GetModuleRegistry() []ModuleInfo {
+    return moduleRegistry
+}
+
 // Register a router setup function
 func RegisterRouter[T any](inMemoryDB *[]T, basePath string) {
 	routerRegistry = append(routerRegistry, func(router *gin.Engine) {
 		Router(router, inMemoryDB, basePath)
 	})
+    moduleRegistry = append(moduleRegistry, ModuleInfo{
+        TypeName: reflect.TypeOf(*inMemoryDB).Elem(),
+        BasePath: basePath,
+    })
 }
 
 func RegisterRouterWith(setup func(*gin.Engine)) {

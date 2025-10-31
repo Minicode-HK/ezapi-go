@@ -12,6 +12,14 @@ Anytime you restart the server, the data will be reset. This is a good tool for 
 - Custom API endpoints with `RegisterRouterWith`  
 - Automatic route registration
 - Generic handlers with reflection
+- Built-in CMS Admin Panel - auto-generate admin UI for data management. Full CRUD support & form field type detection.
+
+## TODO
+- Password should be hashed
+- Mutex support for concurrent access
+- Snapshot and versioning
+- Pagination support
+- Schema reload
 
 ## Quick Start
 
@@ -48,19 +56,17 @@ func init() {
 To create an in-memory database that able to reset:
 
 ```golang
-var YourDB = ResetableDatabase([]YourType{
+var YourDB = ResetableDatabase(&YourDB, []YourType{
     { ... initial data ... },
 })
 ```
 
 And the data will be reset when `/api/reset` is called.
 
-
-
 ### `init` Function
 The `init` function is called automatically when the package is imported. You can use it to register your routes.
 
-## Example
+### Example
 
 ```golang
 package route
@@ -76,6 +82,7 @@ type Product struct {
     Name        string  `json:"name" binding:"required"`
     Price       float64 `json:"price" binding:"required,gt=0"`
     Category    string  `json:"category"`
+    InStock     bool    `json:"in_stock"`
 }
 
 var ProductDB []Product 
@@ -85,10 +92,9 @@ func GetProductDB() *[]Product {
 }
 
 func init() {
-
     // Initialize the in-memory database
     ProductDB = ResetableDatabase(&ProductDB, []Product{
-        {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
+        {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics", InStock: true},
     })
 
     // Standard CRUD operations
@@ -130,10 +136,52 @@ func init() {
 This gives you:
 - **CRUD routes**: `/api/products`, `/api/products/:id` etc.
 - **Custom routes**: `/api/products/category/:category`, `/api/products/search`
+- **CMS interface**: Manage products through web UI at `/cms/admin`
+
+## CMS Admin Panel
+
+### Setup CMS
+1. **Register your data models:** in cms/main.go
+```golang
+// Register your models here
+// Leave empty to include *ALL* models automatically
+var Modules = []interface{}{
+    route.Product{},
+    // Add more models as needed
+}
+```
+
+2. **Register CMS routes in your main.go:**
+
+```golang
+// Register CMS routes
+cms.RegisterCMSRoutes(router)
+```
+
+3. **Access the CMS:**
+   - Login page: `http://localhost:8080/cms/login`
+   - Admin panel: `http://localhost:8080/cms/admin` (requires login)
+
+   - Username: `superadmin`, Password: `superadmin`
+   - You can change credentials in `cms/main.go`
+
+
+### Supported Field Types
+
+The CMS automatically detects field types from your Go structs:
+
+**Type mappings:**
+- `string` → Text input
+- `int`, `float64` → Number input
+- `bool` → Checkbox
+- `time.Time` → DateTime picker
+- Fields containing "json" in name → JSON textarea
+- Arrays/Maps → JSON textarea
+
 
 ## Response Format
 
-All responses follow with this format:
+All responses follow this format:
 
 ### Success Response
 ```json
@@ -159,4 +207,12 @@ All responses follow with this format:
     "details": ["Name is required", "Price must be greater than 0"]
 }
 ```
+
+## Screenshots
+
+
+### Admin Dashboard
+![Admin Dashboard](./docs/dashboard.png)
+![Listing](./docs/listing.png)
+![Form](./docs/create_form.png)
 
