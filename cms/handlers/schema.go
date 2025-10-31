@@ -4,6 +4,8 @@ import (
     "encoding/json"
     "net/http"
     "reflect"
+
+    "github.com/gin-gonic/gin"
     
     "simple_backend_go/route"
 )
@@ -38,6 +40,32 @@ func (h *SchemaHandler) GetSchemas(w http.ResponseWriter, r *http.Request) {
     
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(schemas)
+}
+
+func (h *SchemaHandler) GetSchema(c *gin.Context) {
+    name := c.Param("name")
+    var foundSchema *SchemaDefinition
+    
+    for _, module := range route.GetModuleRegistry() {
+        schema := h.reflectSchema(module)
+        if schema.Name == name {
+            foundSchema = &schema
+            break
+        }
+    }
+    
+    if foundSchema == nil {
+        c.JSON(http.StatusNotFound, gin.H{
+            "success": false,
+            "error":   "Schema not found",
+        })
+        return
+    }
+    
+    c.JSON(http.StatusOK, gin.H{
+        "success": true,
+        "data":   foundSchema,
+    })
 }
 
 func (h *SchemaHandler) reflectSchema(module route.ModuleInfo) SchemaDefinition {

@@ -5,7 +5,12 @@
             <p class="text-sm text-gray-600 mt-1" id="page-subtitle">Manage {{ .moduleName }} records</p>
         </div>
         <div class="flex gap-2">
-            <button onclick="window.mockDataModal.show()"
+            <button onclick="window.schemaViewer.show()" style="cursor: pointer;"
+                class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center text-sm md:text-base">
+                <i class="fas fa-code mr-2"></i>
+                View Schema
+            </button>
+            <button onclick="window.mockDataModal.show()" style="cursor: pointer;"
                 class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
                 <i class="fas fa-magic mr-2"></i>
                 Generate Mock Data
@@ -97,11 +102,125 @@
                     Cancel
                 </button>
                 <button onclick="window.mockDataModal.generate()" style="cursor: pointer;"
-                    class="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center">
+                    class="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center justify-center">
                     <i class="fas fa-magic mr-2"></i>
                     Generate Data
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Schema Viewer Modal -->
+<div id="schema-viewer-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="bg-black opacity-50 absolute inset-0 z-[10]"></div>
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col z-[99]">
+        <!-- Modal Header -->
+        <div
+            class="bg-gradient-to-r from-gray-600 to-indigo-700 px-6 py-4 flex items-center justify-between flex-shrink-0">
+            <h3 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-code mr-2"></i>
+                Schema: <span id="schema-module-name" class="ml-2 font-mono">{{ .moduleName }}</span>
+            </h3>
+            <button onclick="window.schemaViewer.hide()" class="text-white hover:text-gray-200">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="flex-1 overflow-y-auto p-6">
+            <!-- Schema Tabs -->
+            <div class="mb-4">
+                <div class="border-b border-gray-200">
+                    <nav class="flex gap-4">
+                        <button onclick="window.schemaViewer.showTab('table')" data-tab="table"
+                            class="schema-tab px-4 py-2 border-b-2 border-blue-600 text-blue-600 font-medium text-sm">
+                            <i class="fas fa-table mr-1"></i>
+                            Table View
+                        </button>
+                        <button onclick="window.schemaViewer.showTab('json')" data-tab="json"
+                            class="schema-tab px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-800 font-medium text-sm">
+                            <i class="fas fa-code mr-1"></i>
+                            JSON Schema
+                        </button>
+                        <button onclick="window.schemaViewer.showTab('go')" data-tab="go"
+                            class="schema-tab px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-800 font-medium text-sm">
+                            <i class="fab fa-golang mr-1"></i>
+                            Go Struct
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="schema-tab-content">
+                <!-- Table View -->
+                <div id="tab-table" class="schema-tab-content">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border border-gray-200 rounded-lg">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                                        Field Name
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                                        Go Type
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                                        JSON Tag
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                                        Required
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="schema-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- JSON Schema View -->
+                <div id="tab-json" class="schema-tab-content hidden">
+                    <div class="flex justify-end mb-2">
+                        <button onclick="window.schemaViewer.copyToClipboard('json')"
+                            class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre id="schema-json" class="text-sm font-mono text-green-400"></pre>
+                    </div>
+                </div>
+
+                <!-- Go Struct View -->
+                <div id="tab-go" class="schema-tab-content hidden">
+                    <div class="flex justify-end mb-2">
+                        <button onclick="window.schemaViewer.copyToClipboard('go')"
+                            class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre id="schema-go" class="text-sm font-mono text-blue-400"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="border-t border-gray-200 px-6 py-4 flex justify-end gap-3 flex-shrink-0">
+            <button onclick="window.schemaViewer.hide()"
+                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Close
+            </button>
         </div>
     </div>
 </div>
@@ -111,6 +230,190 @@
         const moduleName = "{{ .moduleName }}";
         currentModule = new CMSModule();
         await currentModule.setModule(moduleName);
+
+        // Initialize Schema Viewer
+        window.schemaViewer = {
+            moduleName: moduleName,
+            schema: null,
+            currentTab: 'table',
+
+            async show () {
+                document.getElementById('schema-viewer-modal').classList.remove('hidden');
+                document.getElementById('schema-module-name').textContent = this.moduleName;
+                await this.loadSchema();
+            },
+
+            hide () {
+                document.getElementById('schema-viewer-modal').classList.add('hidden');
+            },
+
+            async loadSchema () {
+                try {
+                    const response = await fetch(`/cms/api/schema/${this.moduleName}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.schema = result.data;
+                        this.renderTableView();
+                        this.renderJSONView();
+                        this.renderGoView();
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    console.error('Failed to load schema:', error);
+                    alert('Failed to load schema: ' + error.message);
+                }
+            },
+
+            renderTableView () {
+                const tbody = document.getElementById('schema-table-body');
+                tbody.innerHTML = this.schema.fields.map(field => {
+                    const isRequired = field.tags && field.tags.binding && field.tags.binding.includes('required');
+                    return `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-medium text-gray-900">
+                                <i class="fas fa-key text-gray-400 mr-2"></i>
+                                ${field.name}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-700">
+                                <code class="bg-gray-100 px-2 py-1 rounded text-xs">${field.type}</code>
+                            </td>
+                            <td class="px-4 py-3 text-sm font-mono text-gray-600">
+                                ${field.jsonTag || '-'}
+                            </td>
+                            <td class="px-4 py-3 text-sm">
+                                ${isRequired
+                            ? '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded">Required</span>'
+                            : '<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded">Optional</span>'
+                        }
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+
+            renderJSONView () {
+                const jsonSchema = {
+                    type: "object",
+                    properties: {}
+                };
+
+                this.schema.fields.forEach(field => {
+                    const jsonType = this.goTypeToJSONType(field.type);
+                    jsonSchema.properties[field.jsonTag || field.name] = {
+                        type: jsonType
+                    };
+                });
+
+                document.getElementById('schema-json').textContent = JSON.stringify(jsonSchema, null, 2);
+            },
+
+            renderGoView () {
+                let goStruct = `type ${this.moduleName} struct {\n`;
+
+                this.schema.fields.forEach(field => {
+                    const tags = [];
+                    if (field.jsonTag) {
+                        tags.push(`json:"${field.jsonTag}"`);
+                    }
+                    if (field.tags && field.tags.binding) {
+                        tags.push(`binding:"${field.tags.binding}"`);
+                    }
+
+                    const tagString = tags.length > 0 ? ` \`${tags.join(' ')}\`` : '';
+                    goStruct += `    ${field.name.padEnd(15)} ${field.type.padEnd(10)}${tagString}\n`;
+                });
+
+                goStruct += '}';
+                document.getElementById('schema-go').textContent = goStruct;
+            },
+
+            goTypeToJSONType (goType) {
+                const typeMap = {
+                    'string': 'string',
+                    'int': 'integer',
+                    'int8': 'integer',
+                    'int16': 'integer',
+                    'int32': 'integer',
+                    'int64': 'integer',
+                    'uint': 'integer',
+                    'uint8': 'integer',
+                    'uint16': 'integer',
+                    'uint32': 'integer',
+                    'uint64': 'integer',
+                    'float32': 'number',
+                    'float64': 'number',
+                    'bool': 'boolean',
+                };
+                return typeMap[goType] || 'string';
+            },
+
+            goTypeToTypeScriptType (goType) {
+                const typeMap = {
+                    'string': 'string',
+                    'int': 'number',
+                    'int8': 'number',
+                    'int16': 'number',
+                    'int32': 'number',
+                    'int64': 'number',
+                    'uint': 'number',
+                    'uint8': 'number',
+                    'uint16': 'number',
+                    'uint32': 'number',
+                    'uint64': 'number',
+                    'float32': 'number',
+                    'float64': 'number',
+                    'bool': 'boolean',
+                };
+                return typeMap[goType] || 'any';
+            },
+
+            showTab (tabName) {
+                // Update tab buttons
+                document.querySelectorAll('.schema-tab').forEach(tab => {
+                    if (tab.dataset.tab === tabName) {
+                        tab.classList.remove('border-transparent', 'text-gray-600');
+                        tab.classList.add('border-blue-600', 'text-blue-600');
+                    } else {
+                        tab.classList.remove('border-blue-600', 'text-blue-600');
+                        tab.classList.add('border-transparent', 'text-gray-600');
+                    }
+                });
+
+                // Update tab content
+                document.querySelectorAll('.schema-tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+                this.currentTab = tabName;
+            },
+
+            copyToClipboard (format) {
+                let text = '';
+                if (format === 'json') {
+                    text = document.getElementById('schema-json').textContent;
+                } else if (format === 'go') {
+                    text = document.getElementById('schema-go').textContent;
+                } else if (format === 'typescript') {
+                    text = document.getElementById('schema-typescript').textContent;
+                }
+
+                navigator.clipboard.writeText(text).then(() => {
+                    // Show toast
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
+                    toast.textContent = 'Copied to clipboard!';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 2000);
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                    alert('Failed to copy to clipboard');
+                });
+            }
+        };
+
 
         // Initialize Mock Data Modal
         window.mockDataModal = {

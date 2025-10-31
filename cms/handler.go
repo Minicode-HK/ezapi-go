@@ -49,6 +49,7 @@ func RegisterCMSRoutes(router *gin.Engine) {
         protected.GET("/api/schemas", func(c *gin.Context) {
             schemaHandler.GetSchemas(c.Writer, c.Request)
         })
+        protected.GET("/api/schema/:name", schemaHandler.GetSchema)
         
         // Snapshots
         protected.GET("/api/snapshots/modules", snapshotHandler.GetModules)
