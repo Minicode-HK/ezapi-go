@@ -2,22 +2,48 @@ package route
 
 import (
     "reflect"
+    "sync"
 
     "github.com/gin-gonic/gin"
     "github.com/go-playground/validator/v10"
 )
 
-func Get[T any](inMemoryDB *[]T) gin.HandlerFunc {
-    return func(c *gin.Context) {
-        SendSuccess(c, inMemoryDB)
+// DBWrapper wraps the in-memory database with a mutex for thread-safe operations
+type DBWrapper[T any] struct {
+    data *[]T
+    mu   sync.RWMutex // RWMutex allows multiple readers or single writer
+}
+
+// NewDBWrapper creates a new thread-safe database wrapper
+func NewDBWrapper[T any](data *[]T) *DBWrapper[T] {
+    return &DBWrapper[T]{
+        data: data,
     }
 }
 
-func GetById[T any](inMemoryDB *[]T) gin.HandlerFunc {
+// Get returns a handler that retrieves all items from the database
+func Get[T any](db *DBWrapper[T]) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        db.mu.RLock() // Read lock - allows concurrent reads
+        defer db.mu.RUnlock()
+        
+        // Create a copy to avoid returning pointer to internal slice
+        dataCopy := make([]T, len(*db.data))
+        copy(dataCopy, *db.data)
+        
+        SendSuccess(c, dataCopy)
+    }
+}
+
+// GetById returns a handler that retrieves a single item by ID
+func GetById[T any](db *DBWrapper[T]) gin.HandlerFunc {
     return func(c *gin.Context) {
         id := c.Param("id")
-        
-        for _, item := range *inMemoryDB {
+
+        db.mu.RLock() // Read lock
+        defer db.mu.RUnlock()
+
+        for _, item := range *db.data {
             idField := reflect.ValueOf(item).FieldByName("Id")
             if idField.IsValid() && idField.String() == id {
                 SendSuccess(c, item)
@@ -28,50 +54,40 @@ func GetById[T any](inMemoryDB *[]T) gin.HandlerFunc {
     }
 }
 
-func Post[T any](inMemoryDB *[]T) gin.HandlerFunc {
+// Post returns a handler that creates a new item
+func Post[T any](db *DBWrapper[T]) gin.HandlerFunc {
     return func(c *gin.Context) {
         var newItem T
-        
+
         if !ValidateBind(c, &newItem) {
             return
         }
+
+        db.mu.Lock() // Write lock - exclusive access
+        defer db.mu.Unlock()
         
-        *inMemoryDB = append(*inMemoryDB, newItem)
+        *db.data = append(*db.data, newItem)
         SendSuccess(c, newItem)
     }
 }
 
-func Delete[T any](inMemoryDB *[]T) gin.HandlerFunc {
-    return func(c *gin.Context) {
-        id := c.Param("id")
-        
-        for i, item := range *inMemoryDB {
-            // make sure the struct has an Id field
-            idField := reflect.ValueOf(item).FieldByName("Id")
-            if idField.IsValid() && idField.String() == id {
-                *inMemoryDB = append((*inMemoryDB)[:i], (*inMemoryDB)[i+1:]...)
-                SendSuccess(c, gin.H{"message": "Item deleted successfully"})
-                return
-            }
-        }
-        SendError(c, 404, "Item not found")
-    }
-}
-
-func Put[T any](inMemoryDB *[]T) gin.HandlerFunc {
+// Put returns a handler that updates an existing item by ID
+func Put[T any](db *DBWrapper[T]) gin.HandlerFunc {
     return func(c *gin.Context) {
         id := c.Param("id")
         var updatedItem T
-        
+
         if !ValidateBind(c, &updatedItem) {
             return
         }
-        
-        for i, item := range *inMemoryDB {
-            // make sure the struct has an Id field
+
+        db.mu.Lock() // Write lock
+        defer db.mu.Unlock()
+
+        for i, item := range *db.data {
             idField := reflect.ValueOf(item).FieldByName("Id")
             if idField.IsValid() && idField.String() == id {
-                (*inMemoryDB)[i] = updatedItem
+                (*db.data)[i] = updatedItem
                 SendSuccess(c, updatedItem)
                 return
             }
@@ -80,22 +96,46 @@ func Put[T any](inMemoryDB *[]T) gin.HandlerFunc {
     }
 }
 
-// Update the Router function
+// Delete returns a handler that deletes an item by ID
+func Delete[T any](db *DBWrapper[T]) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        id := c.Param("id")
+
+        db.mu.Lock() // Write lock
+        defer db.mu.Unlock()
+
+        for i, item := range *db.data {
+            idField := reflect.ValueOf(item).FieldByName("Id")
+            if idField.IsValid() && idField.String() == id {
+                *db.data = append((*db.data)[:i], (*db.data)[i+1:]...)
+                SendSuccess(c, gin.H{"message": "Item deleted successfully"})
+                return
+            }
+        }
+        SendError(c, 404, "Item not found")
+    }
+}
+
+// Router sets up the standard CRUD routes for a given database
 func Router[T any](router *gin.Engine, inMemoryDB *[]T, basePath string) *gin.Engine {
+    // Wrap the database with thread-safe wrapper
+    db := NewDBWrapper(inMemoryDB)
+    
+    // Generate module name from type if basePath is empty
     r := []rune(reflect.TypeOf(*inMemoryDB).Elem().Name())
     r[0] = r[0] + 32
     moduleName := string(r)
-    
+
     if basePath == "" {
         basePath = "/" + moduleName
     }
-    
-    router.GET(basePath, Get(inMemoryDB))
-	router.GET(basePath+"/:id", GetById(inMemoryDB))
-    router.POST(basePath, Post(inMemoryDB))
-    router.PUT(basePath+"/:id", Put(inMemoryDB))
-    router.DELETE(basePath+"/:id", Delete(inMemoryDB))
-    
+
+    router.GET(basePath, Get(db))
+    router.GET(basePath+"/:id", GetById(db))
+    router.POST(basePath, Post(db))
+    router.PUT(basePath+"/:id", Put(db))
+    router.DELETE(basePath+"/:id", Delete(db))
+
     return router
 }
 
