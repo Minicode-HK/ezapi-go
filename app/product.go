@@ -1,9 +1,10 @@
-package route
+package app
 
 import (
     "strings"
     
     "github.com/gin-gonic/gin"
+    "ezapi-go/core"
 )
 
 type Product struct {
@@ -22,15 +23,15 @@ func GetProductDB() *[]Product {
 func init() {
 
     // Initialize the in-memory database
-    ProductDB = ResetableDatabase(&ProductDB, []Product{
+    ProductDB = core.ResetableDatabase(&ProductDB, []Product{
         {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
     })
 
     // Standard CRUD operations
-    RegisterRouter(&ProductDB, "/api/products")
+    core.RegisterRouter(&ProductDB, "/api/products")
     
     // Custom endpoints
-    RegisterRouterWith(func(router *gin.Engine) {
+    core.RegisterRouterWith(func(router *gin.Engine) {
         // Get products by category
         router.GET("/api/products/category/:category", func(c *gin.Context) {
             category := c.Param("category")
@@ -42,7 +43,7 @@ func init() {
                 }
             }
             
-            SendSuccess(c, filtered)
+            core.SendSuccess(c, filtered)
         })
         
         // Search products
@@ -56,7 +57,7 @@ func init() {
                 }
             }
             
-            SendSuccess(c, results)
+            core.SendSuccess(c, results)
         })
     })
 }

@@ -5,9 +5,9 @@ import (
     "time"
 
     "github.com/gin-gonic/gin"
-    "simple_backend_go/cms/models"
-    "simple_backend_go/cms/scheduler"
-    "simple_backend_go/cms/snapshot"
+    "ezapi-go/cms/backend/models"
+    "ezapi-go/cms/backend/scheduler"
+    "ezapi-go/cms/backend/snapshot"
 )
 
 type SnapshotHandler struct {

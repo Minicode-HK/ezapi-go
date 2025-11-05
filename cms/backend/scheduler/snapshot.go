@@ -6,7 +6,7 @@ import (
     "sync"
     "time"
 
-    "simple_backend_go/cms/snapshot"
+    "ezapi-go/cms/backend/snapshot"
 )
 
 type Scheduler struct {

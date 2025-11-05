@@ -1,4 +1,9 @@
-package route 
+package app
+
+import (
+    "ezapi-go/core"
+)
+
 
 type Music struct {
 	Id              string `json:"id"`
@@ -17,11 +22,11 @@ func GetMusicDB() *[]Music {
 func init() {
 	
 	// Initialize the in-memory database
-	MusicDB = ResetableDatabase(&MusicDB, []Music{
+	MusicDB = core.ResetableDatabase(&MusicDB, []Music{
 		{Id: "1", Title: "童話", Artist: "光良", MusicSheetUrl: "https://example.com/music-sheets/fairy-town.pdf"},
 		{Id: "2", Title: "前世", Artist: "ヨルシカ", MusicSheetUrl: "https://example.com/music-sheets/love-confession.pdf"},
 	})
 
 	// Standard CRUD operations
-	RegisterRouter(&MusicDB, "/api/music")
+	core.RegisterRouter(&MusicDB, "/api/music")
 }

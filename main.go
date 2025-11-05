@@ -8,9 +8,10 @@ import (
     "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
 
-    "simple_backend_go/route"
-    "simple_backend_go/cms"
-    "simple_backend_go/cms/handlers"
+    "ezapi-go/core"
+    "ezapi-go/cms/backend"
+    "ezapi-go/cms/backend/handlers"
+    _ "ezapi-go/app" // Import to trigger init()
 )
 
 func main() {
@@ -33,10 +34,10 @@ func main() {
     router.Use(handlers.LoggingMiddleware())  // This logs EVERYTHING including /api/*
 
     // Add more resource routers here
-    route.SetupAllRouters(router)
+    core.SetupAllRouters(router)
 
     // Register CMS routes
-    cms.RegisterCMSRoutes(router)
+    backend.RegisterCMSRoutes(router)
     
     // Get port from env or use default
     port := os.Getenv("PORT")

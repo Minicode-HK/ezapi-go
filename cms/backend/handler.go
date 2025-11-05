@@ -1,4 +1,4 @@
-package cms
+package backend
 
 import (
     "strings"
@@ -6,9 +6,9 @@ import (
 
     "github.com/gin-gonic/gin"
 
-    "simple_backend_go/cms/auth"
-    "simple_backend_go/cms/handlers"
-    "simple_backend_go/route"
+    "ezapi-go/cms/backend/auth"
+    "ezapi-go/cms/backend/handlers"
+    "ezapi-go/core"
     
 )
 
@@ -114,7 +114,7 @@ func RegisterCMSRoutes(router *gin.Engine) {
             var routeList []map[string]interface{}
             
             // Get module registry for additional info
-            modules := route.GetModuleRegistry()
+            modules := core.GetModuleRegistry()
             moduleMap := make(map[string]string)
             for _, mod := range modules {
                 moduleMap[mod.BasePath] = mod.TypeName.Name()
@@ -197,8 +197,8 @@ func RegisterCMSRoutes(router *gin.Engine) {
     cms.POST("/login", authHandler.Login)
     cms.GET("/login", authHandler.ServeLoginPage)
 
-    router.LoadHTMLGlob("cms/static/private/content/dynamic/*.html")
+    router.LoadHTMLGlob("cms/frontend/private/content/dynamic/*.html")
     // Serve static files
-    router.Static("/cms/static", "./cms/static")
+    router.Static("/cms/static", "./cms/frontend/public")
     router.Static("/snapshots", cfg.SnapshotDir)
 }

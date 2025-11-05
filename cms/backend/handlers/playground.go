@@ -14,7 +14,7 @@ import (
     "github.com/gin-gonic/gin"
     "golang.org/x/time/rate"
 
-    "simple_backend_go/route"
+    // "ezapi-go/core"
 )
 
 type PlaygroundHandler struct {
@@ -113,13 +113,13 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
     }
 
     // Create snapshot before request if mock mode is enabled and it's a modifying method
-    var snapshot map[string]interface{}
+    // var snapshot map[string]interface{}
     shouldRollback := false
 
-    if req.MockMode && isModifyingMethod(req.Method) {
-        snapshot = route.CreateSnapshot()
-        shouldRollback = true
-    }
+    // if req.MockMode && isModifyingMethod(req.Method) {
+    //     snapshot = core.CreateSnapshot()
+    //     shouldRollback = true
+    // }
 
     // Start timing
     startTime := time.Now()
@@ -180,9 +180,9 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
     resp, err := client.Do(httpReq)
     if err != nil {
         // Rollback before returning error
-        if shouldRollback && snapshot != nil {
-            route.RestoreSnapshot(snapshot)
-        }
+        // if shouldRollback && snapshot != nil {
+        //     core.RestoreSnapshot(snapshot)
+        // }
 
         c.JSON(http.StatusOK, gin.H{
             "success": false,
@@ -197,9 +197,9 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
     bodyBytes, err := io.ReadAll(limitedReader)
     if err != nil {
         // Rollback before returning error
-        if shouldRollback && snapshot != nil {
-            route.RestoreSnapshot(snapshot)
-        }
+        // if shouldRollback && snapshot != nil {
+        //     core.RestoreSnapshot(snapshot)
+        // }
 
         c.JSON(http.StatusOK, gin.H{
             "success": false,
@@ -209,9 +209,9 @@ func (h *PlaygroundHandler) ExecuteRequest(c *gin.Context) {
     }
 
     // Rollback if mock mode was enabled
-    if shouldRollback && snapshot != nil {
-        route.RestoreSnapshot(snapshot)
-    }
+    // if shouldRollback && snapshot != nil {
+    //     core.RestoreSnapshot(snapshot)
+    // }
 
     // Calculate time taken
     duration := time.Since(startTime).Milliseconds()

@@ -1,8 +1,8 @@
 package handlers
 
 import (
-    "simple_backend_go/cms/auth"
-    "simple_backend_go/cms/models"
+    "ezapi-go/cms/backend/auth"
+    "ezapi-go/cms/backend/models"
     
     "github.com/gin-gonic/gin"
 )
@@ -18,7 +18,7 @@ func NewAuthHandler(authService *auth.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) ServeLoginPage(c *gin.Context) {
-    c.File("./cms/static/private/login.html")
+    c.File("./cms/frontend/private/login.html")
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {

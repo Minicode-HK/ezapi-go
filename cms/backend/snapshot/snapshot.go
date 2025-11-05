@@ -8,7 +8,7 @@ import (
     "reflect"
     "time"
 
-    "simple_backend_go/route"
+    "ezapi-go/core"
 )
 
 // Metadata contains snapshot information
@@ -48,7 +48,7 @@ func (m *Manager) Create(modules []string) (*Snapshot, error) {
         Data: make(map[string]interface{}),
     }
 
-    registry := route.GetModuleRegistry()
+    registry := core.GetModuleRegistry()
     
     // If no modules specified, snapshot all
     if len(modules) == 0 {
@@ -147,7 +147,7 @@ func (m *Manager) Restore(snapshot *Snapshot, modules []string) error {
         modules = snapshot.Metadata.Modules
     }
 
-    registry := route.GetModuleRegistry()
+    registry := core.GetModuleRegistry()
 
     for _, moduleName := range modules {
         snapshotData, exists := snapshot.Data[moduleName]
@@ -255,7 +255,7 @@ func (m *Manager) Delete(filename string) error {
 func GetModuleInfo() []map[string]interface{} {
     modules := []map[string]interface{}{}
 
-    for _, module := range route.GetModuleRegistry() {
+    for _, module := range core.GetModuleRegistry() {
         db := module.Data
         count := reflect.ValueOf(db).Elem().Len()
 

@@ -7,7 +7,7 @@ import (
 
     "github.com/gin-gonic/gin"
     
-    "simple_backend_go/route"
+    "ezapi-go/core"
 )
 
 type FieldDefinition struct {
@@ -33,7 +33,7 @@ func NewSchemaHandler() *SchemaHandler {
 func (h *SchemaHandler) GetSchemas(w http.ResponseWriter, r *http.Request) {
     schemas := []SchemaDefinition{}
     
-    for _, module := range route.GetModuleRegistry() {
+    for _, module := range core.GetModuleRegistry() {
         schema := h.reflectSchema(module)
         schemas = append(schemas, schema)
     }
@@ -46,7 +46,7 @@ func (h *SchemaHandler) GetSchema(c *gin.Context) {
     name := c.Param("name")
     var foundSchema *SchemaDefinition
     
-    for _, module := range route.GetModuleRegistry() {
+    for _, module := range core.GetModuleRegistry() {
         schema := h.reflectSchema(module)
         if schema.Name == name {
             foundSchema = &schema
@@ -68,7 +68,7 @@ func (h *SchemaHandler) GetSchema(c *gin.Context) {
     })
 }
 
-func (h *SchemaHandler) reflectSchema(module route.ModuleInfo) SchemaDefinition {
+func (h *SchemaHandler) reflectSchema(module core.ModuleInfo) SchemaDefinition {
     t := module.TypeName
     if t.Kind() == reflect.Ptr {
         t = t.Elem()

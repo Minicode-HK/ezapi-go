@@ -8,8 +8,8 @@ import (
     
     "github.com/gin-gonic/gin"
     
-    "simple_backend_go/cms/mock"
-    "simple_backend_go/route"
+    "ezapi-go/cms/backend/mock"
+    "ezapi-go/core"
 )
 
 type MockDataHandler struct {
@@ -28,8 +28,8 @@ type GenerateRequest struct {
 }
 
 // Helper function to find module by name
-func findModuleByName(moduleName string) *route.ModuleInfo {
-    modules := route.GetModuleRegistry()
+func findModuleByName(moduleName string) *core.ModuleInfo {
+    modules := core.GetModuleRegistry()
     for _, m := range modules {
         if m.TypeName.Name() == moduleName {
             return &m
