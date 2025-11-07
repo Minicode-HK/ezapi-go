@@ -12,7 +12,6 @@ type Music struct {
 	MusicSheetUrl   string `json:"music_sheet_url"`
 }
 
-
 var MusicDB []Music
 
 func GetMusicDB() *[]Music {
@@ -28,5 +27,5 @@ func init() {
 	})
 
 	// Standard CRUD operations
-	core.RegisterRouter(&MusicDB, "/api/music")
+	core.RegisterRouter(&MusicDB, "/api/music", &core.IncrementalGenerator{})
 }
