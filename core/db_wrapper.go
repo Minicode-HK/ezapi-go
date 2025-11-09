@@ -2,44 +2,19 @@ package core
 
 import (
     "sync"
-    "fmt"
     "reflect"
     "math"
 
-    "github.com/google/uuid"
+    "ezapi-go/core/feature"
 )
 
 type DBWrapper[T any] struct {
     data      *[]T
-    generator IDGenerator
+    generator feature.IDGenerator
     mu        sync.RWMutex
 }
 
-type Identifiable interface {
-    GetId() string
-    SetId(id string)
-}
-
-type IDGenerator interface {
-    GenerateNewId() string
-}
-
-type UUIDGenerator struct{}
-
-func (g *UUIDGenerator) GenerateNewId() string {
-    return uuid.New().String()
-}
-
-type IncrementalGenerator struct {
-    counter int
-}
-
-func (g *IncrementalGenerator) GenerateNewId() string {
-    g.counter++
-    return fmt.Sprintf("%d", g.counter)
-}
-
-func NewDBWrapper[T any](data *[]T, generator IDGenerator) *DBWrapper[T] {
+func NewDBWrapper[T any](data *[]T, generator feature.IDGenerator) *DBWrapper[T] {
     return &DBWrapper[T]{
         data:      data,
         generator: generator,
@@ -205,7 +180,7 @@ func (db *DBWrapper[T]) Delete(id string) bool {
 }
 
 func getItemId(item any) string {
-    if identifiable, ok := item.(Identifiable); ok {
+    if identifiable, ok := item.(feature.Identifiable); ok {
         return identifiable.GetId()
     }
     
@@ -217,7 +192,7 @@ func getItemId(item any) string {
 }
 
 func setItemId(item any, id string) {
-    if identifiable, ok := item.(Identifiable); ok {
+    if identifiable, ok := item.(feature.Identifiable); ok {
         identifiable.SetId(id)
         return
     }

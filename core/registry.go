@@ -4,6 +4,8 @@ import (
 	"reflect"
 
 	"github.com/gin-gonic/gin"
+
+    "ezapi-go/core/feature"
 )
 
 var routerRegistry []func(*gin.Engine)
@@ -23,14 +25,14 @@ func GetModuleRegistry() []ModuleInfo {
 }
 
 // Register a router setup function
-func RegisterRouter[T any](inMemoryDB *[]T, basePath string, generator ... IDGenerator) {
+func RegisterRouter[T any](inMemoryDB *[]T, basePath string, generator ... feature.IDGenerator) {
 
     if len(generator) == 0 {
-        generator = append(generator, &UUIDGenerator{})
+        generator = append(generator, &feature.UUIDGenerator{})
     }
-    
-    if incremental, ok := generator[0].(*IncrementalGenerator); ok {
-        incremental.counter = len(*inMemoryDB)
+
+    if incremental, ok := generator[0].(*feature.IncrementalGenerator); ok {
+        incremental.Counter = len(*inMemoryDB)
     }
 
 	moduleRegistry = append(moduleRegistry, ModuleInfo{
@@ -50,7 +52,7 @@ func RegisterRouterWith(setup func(*gin.Engine)) {
 }
 
 // Router sets up the standard CRUD routes for a given database
-func CRUDRouter[T any](router *gin.Engine, inMemoryDB *[]T, basePath string, generator IDGenerator) *gin.Engine {
+func CRUDRouter[T any](router *gin.Engine, inMemoryDB *[]T, basePath string, generator feature.IDGenerator) *gin.Engine {
     // Wrap the database with thread-safe wrapper
     db := NewDBWrapper(inMemoryDB, generator)
     
@@ -78,5 +80,5 @@ func SetupAllRouters(router *gin.Engine) {
         setup(router)
     }
 
-    ResetableRoute(router)
+    feature.ResetableRoute(router)
 }

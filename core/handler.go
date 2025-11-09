@@ -6,6 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
     "github.com/go-playground/validator/v10"
+
+    "ezapi-go/core/http"
 )
 
 
@@ -18,7 +20,7 @@ func Get[T any](db *DBWrapper[T]) gin.HandlerFunc {
 		pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
 		paginateRes := db.PaginateWith(&res, page, pageSize)
 
-		SendSuccess(c, paginateRes.Data, gin.H{
+		http.SendSuccess(c, paginateRes.Data, gin.H{
             "pagination": gin.H{
                 "total":       paginateRes.Total,
                 "page":        paginateRes.Page,
@@ -37,11 +39,11 @@ func GetById[T any](db *DBWrapper[T]) gin.HandlerFunc {
 		item := db.GetById(id)
 
 		if item == nil {
-			SendError(c, 404, "Item not found")
+			http.SendError(c, 404, "Item not found")
 			return
 		}
 		
-		SendSuccess(c, item)
+		http.SendSuccess(c, item)
     }
 }
 
@@ -51,12 +53,12 @@ func Post[T any](db *DBWrapper[T]) gin.HandlerFunc {
         var newItem T
 
         if !ValidateBind(c, &newItem) {
-            return
+            return 
         }
 
         db.Add(&newItem)
 
-		SendSuccess(c, newItem)
+		http.SendSuccess(c, newItem)
     }
 }
 
@@ -72,11 +74,11 @@ func Put[T any](db *DBWrapper[T]) gin.HandlerFunc {
 
 		success := db.Update(id, &updatedItem)
 		if !success {
-			SendError(c, 404, "Item not found")
+			http.SendError(c, 404, "Item not found")
 			return
 		}
 		
-		SendSuccess(c, updatedItem)
+		http.SendSuccess(c, updatedItem)
     }
 }
 
@@ -92,11 +94,11 @@ func Delete[T any](db *DBWrapper[T]) gin.HandlerFunc {
             idField := reflect.ValueOf(item).FieldByName("Id")
             if idField.IsValid() && idField.String() == id {
                 *db.data = append((*db.data)[:i], (*db.data)[i+1:]...)
-                SendSuccess(c, gin.H{"message": "Item deleted successfully"})
+                http.SendSuccess(c, gin.H{"message": "Item deleted successfully"})
                 return
             }
         }
-        SendError(c, 404, "Item not found")
+        http.SendError(c, 404, "Item not found")
     }
 }
 
@@ -112,7 +114,7 @@ func ValidateBind(c *gin.Context, obj interface{}) bool {
             errorMessages = append(errorMessages, "Invalid request format")
         }
         
-        SendErrorWithDetails(c, 400, "Validation failed", errorMessages)
+        http.SendErrorWithDetails(c, 400, "Validation failed", errorMessages)
         return false
     }
     return true

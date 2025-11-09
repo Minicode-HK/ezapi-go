@@ -1,9 +1,11 @@
-package core 
+package feature 
 
 import (
 	"reflect"
 
 	"github.com/gin-gonic/gin"
+
+    "ezapi-go/core/http"
 )
 
 var (
@@ -39,6 +41,6 @@ func ResetableRoute(router *gin.Engine) {
 
             dbSlice.Set(newSlice)
         }
-	    SendSuccess(c, gin.H{"message": "All databases have been reset"})
+	    http.SendSuccess(c, gin.H{"message": "All databases have been reset"})
 	})
 }

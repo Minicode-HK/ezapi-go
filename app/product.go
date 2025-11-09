@@ -4,7 +4,10 @@ import (
     "strings"
     
     "github.com/gin-gonic/gin"
+    
     "ezapi-go/core"
+    "ezapi-go/core/feature"
+    "ezapi-go/core/http"
 )
 
 type Product struct {
@@ -23,7 +26,7 @@ func GetProductDB() *[]Product {
 func init() {
 
     // Initialize the in-memory database
-    ProductDB = core.ResetableDatabase(&ProductDB, []Product{
+    ProductDB = feature.ResetableDatabase(&ProductDB, []Product{
         {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
     })
 
@@ -43,7 +46,7 @@ func init() {
                 }
             }
             
-            core.SendSuccess(c, filtered)
+            http.SendSuccess(c, filtered)
         })
         
         // Search products
@@ -57,7 +60,7 @@ func init() {
                 }
             }
             
-            core.SendSuccess(c, results)
+            http.SendSuccess(c, results)
         })
     })
 }
