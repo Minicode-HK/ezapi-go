@@ -5,11 +5,22 @@ import (
 )
 
 // Helper function to standardize success responses
-func SendSuccess(c *gin.Context, data interface{}) {
-    c.JSON(200, gin.H{
+func SendSuccess(c *gin.Context, data interface{}, extra ...interface{}) {
+    response := gin.H{
         "success": true,
         "data":    data,
-    })
+    }
+    
+    // If extra data is provided, merge it into the response
+    if len(extra) > 0 {
+        if extraInfo, ok := extra[0].(gin.H); ok {
+            for key, value := range extraInfo {
+                response[key] = value
+            }
+        }
+    }
+
+    c.JSON(200, response)
 }
 
 func SendError(c *gin.Context, code int, message string) {

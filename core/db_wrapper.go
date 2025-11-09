@@ -4,6 +4,7 @@ import (
     "sync"
     "fmt"
     "reflect"
+    "math"
 
     "github.com/google/uuid"
 )
@@ -73,20 +74,80 @@ func (db *DBWrapper[T]) GetById(id string) *T {
     return nil
 }
 
-func (db *DBWrapper[T]) PaginateWith(data *[] T, offset, limit int) []T {
-
-	if offset > len(*data) {
-		return []T{}
-	}
-
-	end := offset + limit
-	if end > len(*data) {
-		end = len(*data)
-	}
-
-	return (*data)[offset:end]
+type PaginateRes[T any] struct {
+    Data  []T    `json:"data"`  
+    Total uint   `json:"total"`  
+    
+    Page       uint `json:"page"`       
+    PageSize   uint `json:"page_size"`   
+    TotalPages uint `json:"total_pages"` 
+    HasMore    bool `json:"has_more"`    
 }
 
+// paginates itself
+func (db *DBWrapper[T]) Paginate(page, pageSize int) PaginateRes[T] {
+    db.mu.RLock()
+    defer db.mu.RUnlock()
+    
+    total := uint(len(*db.data))
+    offset := (page - 1) * pageSize
+
+    if offset > len(*db.data) {
+        return PaginateRes[T]{
+            Data:       []T{},
+            Total:      total,
+            Page:       uint(page),
+            PageSize:   uint(pageSize),
+            TotalPages: uint(math.Ceil(float64(total) / float64(pageSize))),
+            HasMore:    false,
+        }
+    }
+
+    end := offset + pageSize
+    if end > len(*db.data) {
+        end = len(*db.data)
+    }
+
+    return PaginateRes[T]{
+        Data:       (*db.data)[offset:end],
+        Total:      total,
+        Page:       uint(page),
+        PageSize:   uint(pageSize),
+        TotalPages: uint(math.Ceil(float64(total) / float64(pageSize))),
+        HasMore:    end < len(*db.data),
+    }
+}
+
+// helper function that paginates with given data slice pointer
+func (db *DBWrapper[T]) PaginateWith(data *[]T, page, pageSize int) PaginateRes[T] {
+    total := uint(len(*data))
+    offset := (page - 1) * pageSize
+    
+    if offset > len(*data) {
+        return PaginateRes[T]{
+            Data:       []T{},
+            Total:      total,
+            Page:       uint(page),
+            PageSize:   uint(pageSize),
+            TotalPages: uint(math.Ceil(float64(total) / float64(pageSize))),
+            HasMore:    false,
+        }
+    }
+
+    end := offset + pageSize
+    if end > len(*data) {
+        end = len(*data)
+    }
+
+    return PaginateRes[T]{
+        Data:       (*data)[offset:end],
+        Total:      total,
+        Page:       uint(page),
+        PageSize:   uint(pageSize),
+        TotalPages: uint(math.Ceil(float64(total) / float64(pageSize))),
+        HasMore:    end < len(*data),
+    }
+}
 
 func (db *DBWrapper[T]) Add(item *T) bool {
     db.mu.Lock()

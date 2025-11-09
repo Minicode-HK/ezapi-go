@@ -16,9 +16,17 @@ func Get[T any](db *DBWrapper[T]) gin.HandlerFunc {
 		
 		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 		pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
-		res = db.PaginateWith(&res, page, pageSize)
+		paginateRes := db.PaginateWith(&res, page, pageSize)
 
-		SendSuccess(c, res)
+		SendSuccess(c, paginateRes.Data, gin.H{
+            "pagination": gin.H{
+                "total":       paginateRes.Total,
+                "page":        paginateRes.Page,
+                "page_size":   paginateRes.PageSize,
+                "total_pages": paginateRes.TotalPages,
+                "has_more":    paginateRes.HasMore,
+            },
+        })
     }
 }
 
