@@ -1,7 +1,7 @@
 package app
 
 import (
-    "ezapi-go/ez"
+	"ezapi-go/ez"
 )
 
 

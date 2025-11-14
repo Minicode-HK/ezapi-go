@@ -1,11 +1,11 @@
 package core
 
 import (
-    "sync"
-    "reflect"
-    "math"
+	"math"
+	"reflect"
+	"sync"
 
-    "ezapi-go/core/feature"
+	"ezapi-go/core/feature"
 )
 
 type DBWrapper[T any] struct {

@@ -1,10 +1,11 @@
 package ez
 
 import (
-    "github.com/gin-gonic/gin"
-    "ezapi-go/core"
-    "ezapi-go/core/feature"
-    "ezapi-go/core/http"
+	"ezapi-go/core"
+	"ezapi-go/core/feature"
+	"ezapi-go/core/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type App[T any] struct {
@@ -39,3 +40,7 @@ var (
     SendError           = http.SendError
     SendErrorWithDetails = http.SendErrorWithDetails
 )
+
+func Query[T any](data []T) *feature.QueryBuilder[T] {
+    return feature.NewQueryBuilder[T](data)
+}

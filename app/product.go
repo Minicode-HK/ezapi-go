@@ -1,9 +1,9 @@
 package app
 
 import (
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 
-    "ezapi-go/ez"
+	"ezapi-go/ez"
 )
 
 type Product struct {
@@ -31,14 +31,7 @@ func init() {
         CustomRoutes(func(router *gin.Engine) {
         // Get products by category
         router.GET("/api/products/category/:category", func(c *gin.Context) {
-            category := c.Param("category")
-            var filtered []Product
-            for _, product := range ProductDB {
-                if product.Category == category {
-                    filtered = append(filtered, product)
-                }
-            }
-            
+            filtered := ez.Query(ProductDB).Where("Category", "==", c.Param("category")).OrderBy("Price", false).Limit(2).Get()
             ez.SendSuccess(c, filtered)
         })
     })
