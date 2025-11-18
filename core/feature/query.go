@@ -191,3 +191,38 @@ func (qb *QueryBuilder[T]) OrderBy(fieldName string, ascending ...bool) *QueryBu
 
 	return qb
 }
+
+func (qb *QueryBuilder[T]) Select(fields ...string) *QueryBuilder[map[string]any] {
+	qb.mu.Lock()
+	defer qb.mu.Unlock()
+
+	var selected []map[string]any
+
+	for i := range qb.workSet {
+		item := &qb.workSet[i]
+		record := make(map[string]any)
+		val := reflect.ValueOf(*item)
+		for _, fieldName := range fields {
+			fieldVal := val.FieldByName(fieldName)
+			if fieldVal.IsValid() {
+				structField, ok := reflect.TypeOf(*item).FieldByName(fieldName)
+				if ok {
+					tag := structField.Tag.Get("json")
+					if tag != "" {
+						record[tag] = fieldVal.Interface()
+					} else {
+						record[fieldName] = fieldVal.Interface()
+					}
+				} else {
+					record[fieldName] = fieldVal.Interface()
+				}
+			}
+		}
+		selected = append(selected, record)
+	}
+	
+	return &QueryBuilder[map[string]any]{
+		workSet: selected,
+		mu:      sync.RWMutex{},
+	}
+}
