@@ -1,11 +1,11 @@
-package core 
+package core
 
 import (
 	"reflect"
 
 	"github.com/gin-gonic/gin"
 
-    "ezapi-go/core/feature"
+	"ezapi-go/core/feature"
 )
 
 var routerRegistry []func(*gin.Engine)
@@ -65,11 +65,13 @@ func CRUDRouter[T any](router *gin.Engine, inMemoryDB *[]T, basePath string, gen
         basePath = "/" + moduleName
     }
 
-    router.GET(basePath, Get(db))
-    router.GET(basePath+"/:id", GetById(db))
-    router.POST(basePath, Post(db))
-    router.PUT(basePath+"/:id", Put(db))
-    router.DELETE(basePath+"/:id", Delete(db))
+    group := router.Group(basePath)
+
+    group.GET("", Get(db))
+    group.GET("/:id", GetById(db))
+    group.POST("", Post(db))
+    group.PUT("/:id", Put(db))
+    group.DELETE("/:id", Delete(db))
 
     return router
 }
