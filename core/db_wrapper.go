@@ -124,19 +124,6 @@ func (db *DBWrapper[T]) PaginateWith(data *[]T, page, pageSize int) PaginateRes[
     }
 }
 
-func (db *DBWrapper[T]) Filter(predicate func(*T) bool) []T {
-    db.mu.RLock()
-    defer db.mu.RUnlock()
-
-    var result []T
-    for i := range *db.data {
-        if predicate(&(*db.data)[i]) {
-            result = append(result, (*db.data)[i])
-        }
-    }
-    return result
-}
-
 func (db *DBWrapper[T]) Add(item *T) bool {
     db.mu.Lock()
     defer db.mu.Unlock()
