@@ -158,10 +158,14 @@ func compareValues(a, b reflect.Value) int {
 	}
 }		
 
-func (qb *QueryBuilder[T]) OrderBy(fieldName string, ascending bool) *QueryBuilder[T] {
+func (qb *QueryBuilder[T]) OrderBy(fieldName string, ascending ...bool) *QueryBuilder[T] {
 	qb.mu.Lock()
 	defer qb.mu.Unlock()
 
+	asc := true
+	if len(ascending) > 0 {
+		asc = ascending[0]
+	}
 
 	less := func(i, j int) bool {
 		itemI := &qb.workSet[i]
@@ -169,7 +173,7 @@ func (qb *QueryBuilder[T]) OrderBy(fieldName string, ascending bool) *QueryBuild
 		fieldValueI := reflect.ValueOf(*itemI).FieldByName(fieldName)
 		fieldValueJ := reflect.ValueOf(*itemJ).FieldByName(fieldName)
 
-		if ascending {
+		if asc {
 			return compareValues(fieldValueI, fieldValueJ) < 0
 		} else {
 			return compareValues(fieldValueI, fieldValueJ) > 0

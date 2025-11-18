@@ -31,7 +31,7 @@ func init() {
         CustomRoutes(func(router *gin.Engine) {
         // Get products by category
         router.GET("/api/products/category/:category", func(c *gin.Context) {
-            filtered := ez.Query(ProductDB).Where("Category", "=", c.Param("category")).OrderBy("ID", true).Limit(2).Get()
+            filtered := ez.Query(ProductDB).Where("Category", "=", c.Param("category")).OrderBy("Price", false).Limit(2).Get()
             ez.SendSuccess(c, filtered)
         })
     })
