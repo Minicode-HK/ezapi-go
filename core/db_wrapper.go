@@ -171,7 +171,11 @@ func getItemId(item any) string {
         return identifiable.GetId()
     }
     
-    idField := reflect.ValueOf(item).Elem().FieldByName("Id")
+    v := reflect.ValueOf(item)
+    if v.Kind() == reflect.Ptr {
+        v = v.Elem()
+    }
+    idField := v.FieldByName("Id")
     if idField.IsValid() {
         return idField.String()
     }
