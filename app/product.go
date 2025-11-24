@@ -1,6 +1,8 @@
 package app
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 
 	"ezapi-go/ez"
@@ -15,9 +17,6 @@ type Product struct {
 
 var ProductDB []Product 
 
-func GetProductDB() *[]Product {
-    return &ProductDB
-}
 
 func init() {
 
@@ -29,11 +28,14 @@ func init() {
         }).
         CRUDRoutes("/api/products").
         CustomRoutes(func(router *gin.Engine) {
-        // Get products by category
-        router.GET("/api/products/category/:category", func(c *gin.Context) {
-            filtered := ez.Query(ProductDB).Where("Category", "=", c.Param("category")).OrderBy("Price", false).Limit(2).Select("Category","Name").Get()
-            ez.SendSuccess(c, filtered)
+            // Get products by category
+            router.GET("/api/products/category/:category", func(c *gin.Context) {
+                filtered := ez.Query(ProductDB).Where("Category", "=", c.Param("category")).OrderBy("Price", false).Limit(2).Select("Category","Name").Get()
+                ez.SendSuccess(c, filtered)
+            })
+        }).
+        BeforeCreate(func(newProduct *Product) error {
+            log.Println("New product created:", newProduct.Name)
+            return nil
         })
-    })
-
 }

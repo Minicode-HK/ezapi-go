@@ -1,15 +1,16 @@
-package core 
+package core
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-    "github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator/v10"
 
-    "ezapi-go/core/http"
+	"ezapi-go/core/feature"
+	"ezapi-go/core/http"
 )
-
 
 // Get returns a handler that retrieves all items from the database
 func Get[T any](db *DBWrapper[T]) gin.HandlerFunc {
@@ -56,7 +57,28 @@ func Post[T any](db *DBWrapper[T]) gin.HandlerFunc {
             return 
         }
 
+        if hooks, exists := feature.GetHooksForType(reflect.TypeOf(newItem)) ; exists {
+            fmt.Println("Found hooks for type")
+            for _, hook := range hooks.BeforeCreateHooks {
+                var item any = &newItem;
+                if err := hook(&item); err != nil {
+                    http.SendError(c, 400, err.Error())
+                    return
+                }
+            }
+        }
+
         db.Add(&newItem)
+
+        if hooks, exists := feature.GetHooksForType(reflect.TypeOf(newItem)) ; exists {
+            for _, hook := range hooks.AfterCreateHooks {
+                var item any = &newItem;
+                if err := hook(&item); err != nil {
+                    http.SendError(c, 400, err.Error())
+                    return
+                }
+            }
+        }
 
 		http.SendSuccess(c, newItem)
     }
@@ -67,16 +89,40 @@ func Put[T any](db *DBWrapper[T]) gin.HandlerFunc {
     return func(c *gin.Context) {
         id := c.Param("id")
         var updatedItem T
+        existingItem := db.GetById(id)
+
 
 		if !ValidateBind(c, &updatedItem) {
 			return
 		}
 
+        if hooks, exists := feature.GetHooksForType(reflect.TypeOf(updatedItem)) ; exists {
+            for _, hook := range hooks.BeforeUpdateHooks {
+                var exist any = existingItem;
+                var update any = &updatedItem;
+                if err := hook(&exist, &update); err != nil {
+                    http.SendError(c, 400, err.Error())
+                    return
+                }
+            }
+
+        }
 		success := db.Update(id, &updatedItem)
+
 		if !success {
 			http.SendError(c, 404, "Item not found")
 			return
 		}
+
+        if hooks, exists := feature.GetHooksForType(reflect.TypeOf(updatedItem)) ; exists {
+            for _, hook := range hooks.AfterUpdateHooks {
+                var item any = &updatedItem;
+                if err := hook(&item); err != nil {
+                    http.SendError(c, 400, err.Error())
+                    return
+                }
+            }
+        }
 		
 		http.SendSuccess(c, updatedItem)
     }
@@ -93,7 +139,27 @@ func Delete[T any](db *DBWrapper[T]) gin.HandlerFunc {
         for i, item := range *db.data {
             idField := reflect.ValueOf(item).FieldByName("Id")
             if idField.IsValid() && idField.String() == id {
+                if hooks, exists := feature.GetHooksForType(reflect.TypeOf(item)) ; exists {
+                    for _, hook := range hooks.BeforeDeleteHooks {
+                        var it any = &item
+                        if err := hook(&it); err != nil {
+                            http.SendError(c, 400, err.Error())
+                            return
+                        }
+                    }
+                }
                 *db.data = append((*db.data)[:i], (*db.data)[i+1:]...)
+
+                if hooks, exists := feature.GetHooksForType(reflect.TypeOf(item)) ; exists {
+                    for _, hook := range hooks.AfterDeleteHooks {
+                        var it any = &item
+                        if err := hook(&it); err != nil {
+                            http.SendError(c, 400, err.Error())
+                            return
+                        }
+                    }
+                }
+
                 http.SendSuccess(c, gin.H{"message": "Item deleted successfully"})
                 return
             }
