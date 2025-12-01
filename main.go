@@ -34,6 +34,9 @@ func main() {
 
     router.Use(handlers.LoggingMiddleware())  // This logs EVERYTHING including /api/*
 
+    // TODO: currently auth is globally enforced except for specified routes.
+    //       However, I think many routes / modules / earily development does not need auth at all.
+    //       Therefore, we need to think a better way to solve this type of problem
     ez.SetupAuthProvider(router, ez.NewJWTProvider("your-secret-key"), "/login", "/ping")
 
     // Add more resource routers here
