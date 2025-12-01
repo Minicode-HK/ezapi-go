@@ -1,5 +1,6 @@
 /*
  *  This file is used for re-exporting core functionalities of the ezapi-go framework.
+ *  They are grouped by feature for better organization and usability. (should be)
  */
 
 package ez
@@ -11,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"ezapi-go/core"
+	"ezapi-go/core/auth"
 	"ezapi-go/core/feature"
 	"ezapi-go/core/http"
 )
@@ -20,6 +22,7 @@ type App[T any] struct {
     db     *[]T
 }
 
+/////////////////////////////////////// routes setup ///////////////////////////////////////
 func New[T any](db *[]T) *App[T] {
     return &App[T]{
         router: gin.Default(),
@@ -42,17 +45,19 @@ func (a *App[T]) CustomRoutes(fn func(*gin.Engine)) *App[T] {
 	return a
 }
 
+/////////////////////////////////////// helper functions ///////////////////////////////////////
 var (
     SendSuccess          = http.SendSuccess
     SendError           = http.SendError
     SendErrorWithDetails = http.SendErrorWithDetails
 )
 
+////////////////////////////////////// query builder ///////////////////////////////////////
 func Query[T any](data []T) *feature.QueryBuilder[T] {
     return feature.NewQueryBuilder[T](data)
 }
 
-
+/////////////////////////////////////// hook functions ///////////////////////////////////////
 func (a *App[T]) BeforeCreate(hook feature.BeforeCreateFunc[T]) *App[T] {
     t := reflect.TypeOf((*T)(nil)).Elem()
     feature.AddBeforeCreateHook(t, func(obj *any) error {
@@ -99,9 +104,21 @@ func (a *App[T]) AfterDelete(hook feature.AfterDeleteFunc[T]) *App[T] {
         return hook((*obj).(*T))
     })
     return a
- }
+}
 
- func (ez *App[T]) AutoTimestamp() *App[T] {
+////////////////////////////////////// authentication ///////////////////////////////////////
+var (
+    SetupAuthProvider = auth.SetupAuthProvider
+
+    // JWT 
+    NewJWTProvider = auth.NewJWTProvider
+
+    SetAuthProvider = auth.SetGlobalAuthProvider
+    GetAuthProvider = auth.GetGlobalAuthProvider
+)
+
+////////////////////////////////////// help function ///////////////////////////////////////
+func (ez *App[T]) AutoTimestamp() *App[T] {
 
     convertTimeToVariable := func(field reflect.Value, now time.Time) {
         if field.Type().String() == "string" {
@@ -141,4 +158,4 @@ func (a *App[T]) AfterDelete(hook feature.AfterDeleteFunc[T]) *App[T] {
             }
             return nil
         })
- }
+}

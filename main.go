@@ -1,17 +1,18 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "os"
+	"log"
+	"net/http"
+	"os"
 
-    "github.com/gin-contrib/cors"
-    "github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 
-    "ezapi-go/core"
-    "ezapi-go/cms/backend"
-    "ezapi-go/cms/backend/handlers"
-    _ "ezapi-go/app" // Import to trigger init()
+	_ "ezapi-go/app" // Import to trigger init()
+	"ezapi-go/cms/backend"
+	"ezapi-go/cms/backend/handlers"
+	"ezapi-go/core"
+	"ezapi-go/ez"
 )
 
 func main() {
@@ -32,6 +33,8 @@ func main() {
     })
 
     router.Use(handlers.LoggingMiddleware())  // This logs EVERYTHING including /api/*
+
+    ez.SetupAuthProvider(router, ez.NewJWTProvider("your-secret-key"), "/login", "/ping")
 
     // Add more resource routers here
     core.SetupAllRouters(router)
