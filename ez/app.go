@@ -1,12 +1,18 @@
+/*
+ *  This file is used for re-exporting core functionalities of the ezapi-go framework.
+ */
+
 package ez
 
 import (
+	"reflect"
+	"time"
+
+	"github.com/gin-gonic/gin"
+
 	"ezapi-go/core"
 	"ezapi-go/core/feature"
 	"ezapi-go/core/http"
-	"reflect"
-
-	"github.com/gin-gonic/gin"
 )
 
 type App[T any] struct {
@@ -93,4 +99,46 @@ func (a *App[T]) AfterDelete(hook feature.AfterDeleteFunc[T]) *App[T] {
         return hook((*obj).(*T))
     })
     return a
+ }
+
+ func (ez *App[T]) AutoTimestamp() *App[T] {
+
+    convertTimeToVariable := func(field reflect.Value, now time.Time) {
+        if field.Type().String() == "string" {
+            field.SetString(now.Format(time.RFC3339))
+        } else if field.Type().String() == "time.Time" {
+            field.Set(reflect.ValueOf(now))
+        } else if field.Type().String() == "int64" {
+            field.SetInt(now.Unix())
+        }
+    }
+
+    return ez.
+        BeforeCreate(func (obj *T) error {
+            // find 'created_at' and 'updated_at' fields and set to current time
+            v := reflect.ValueOf(obj)
+            if v.Kind() == reflect.Ptr {
+                v = v.Elem()
+            }
+            now := time.Now()
+            if createdAtField := v.FieldByName("CreatedAt"); createdAtField.IsValid() && createdAtField.CanSet() {
+                // check field type
+                convertTimeToVariable(createdAtField, now)
+            }
+            if updatedAtField := v.FieldByName("UpdatedAt"); updatedAtField.IsValid() && updatedAtField.CanSet() {
+                convertTimeToVariable(updatedAtField, now)
+            }
+            return nil
+        }). 
+        BeforeUpdate(func(obj *T, requestObj *T) error {
+            v := reflect.ValueOf(requestObj)
+            if v.Kind() == reflect.Ptr {
+                v = v.Elem()
+            }
+            now := time.Now()
+            if updatedAtField := v.FieldByName("UpdatedAt"); updatedAtField.IsValid() && updatedAtField.CanSet() {
+                convertTimeToVariable(updatedAtField, now)
+            }
+            return nil
+        })
  }

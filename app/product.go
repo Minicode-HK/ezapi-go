@@ -13,6 +13,9 @@ type Product struct {
     Name        string  `json:"name" binding:"required"`
     Price       float64 `json:"price" binding:"required,gt=0"`
     Category    string  `json:"category"`
+
+    CreatedAt   string  `json:"created_at"`
+    UpdatedAt   string  `json:"updated_at"`
 }
 
 var ProductDB []Product 
@@ -34,8 +37,9 @@ func init() {
                 ez.SendSuccess(c, filtered)
             })
         }).
-        BeforeCreate(func(newProduct *Product) error {
+        AfterCreate(func(newProduct *Product) error {
             log.Println("New product created:", newProduct.Name)
             return nil
-        })
+        }).
+        AutoTimestamp()
 }
