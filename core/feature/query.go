@@ -26,6 +26,16 @@ func (qb *QueryBuilder[T]) Get() []T {
 	return qb.workSet
 }
 
+func (qb *QueryBuilder[T]) First() *T {
+	qb.mu.RLock()
+	defer qb.mu.RUnlock()
+
+	if len(qb.workSet) == 0 {
+		return nil
+	}
+	return &qb.workSet[0]
+}
+
 func (qb *QueryBuilder[T]) Filter(filterFunc func(*T) bool) *QueryBuilder[T] {
 	qb.mu.Lock()
 	defer qb.mu.Unlock()
