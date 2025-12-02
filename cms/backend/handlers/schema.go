@@ -1,13 +1,13 @@
 package handlers
 
 import (
-    "encoding/json"
-    "net/http"
-    "reflect"
+	"encoding/json"
+	"net/http"
+	"reflect"
 
-    "github.com/gin-gonic/gin"
-    
-    "ezapi-go/core"
+	"github.com/gin-gonic/gin"
+
+	"github.com/Minicode-HK/ezapi-go/core"
 )
 
 type FieldDefinition struct {

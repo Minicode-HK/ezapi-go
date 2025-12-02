@@ -1,13 +1,13 @@
 package handlers
 
 import (
-    "net/http"
-    "time"
+	"net/http"
+	"time"
 
-    "github.com/gin-gonic/gin"
-    "ezapi-go/cms/backend/models"
-    "ezapi-go/cms/backend/scheduler"
-    "ezapi-go/cms/backend/snapshot"
+	"github.com/Minicode-HK/ezapi-go/cms/backend/models"
+	"github.com/Minicode-HK/ezapi-go/cms/backend/scheduler"
+	"github.com/Minicode-HK/ezapi-go/cms/backend/snapshot"
+	"github.com/gin-gonic/gin"
 )
 
 type SnapshotHandler struct {

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"sync"
 
-	"ezapi-go/core/feature"
+	"github.com/Minicode-HK/ezapi-go/core/feature"
 )
 
 type DBWrapper[T any] struct {

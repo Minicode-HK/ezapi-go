@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"ezapi-go/core"
-	"ezapi-go/core/feature"
-	"ezapi-go/core/http"
+	"github.com/Minicode-HK/ezapi-go/core"
+	"github.com/Minicode-HK/ezapi-go/core/feature"
+	"github.com/Minicode-HK/ezapi-go/core/http"
 
 	"github.com/gin-gonic/gin"
 )

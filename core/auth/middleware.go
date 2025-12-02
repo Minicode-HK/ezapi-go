@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"ezapi-go/core/http"
+	"github.com/Minicode-HK/ezapi-go/core/http"
 
 	"github.com/gin-gonic/gin"
 )

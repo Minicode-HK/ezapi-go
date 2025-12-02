@@ -1,15 +1,14 @@
 package backend
 
 import (
-    "strings"
-    "time"
+	"strings"
+	"time"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 
-    "ezapi-go/cms/backend/auth"
-    "ezapi-go/cms/backend/handlers"
-    "ezapi-go/core"
-    
+	"github.com/Minicode-HK/ezapi-go/cms/backend/auth"
+	"github.com/Minicode-HK/ezapi-go/cms/backend/handlers"
+	"github.com/Minicode-HK/ezapi-go/core"
 )
 
 func RegisterCMSRoutes(router *gin.Engine) {

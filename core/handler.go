@@ -1,15 +1,14 @@
 package core
 
 import (
-	"fmt"
 	"reflect"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
-	"ezapi-go/core/feature"
-	"ezapi-go/core/http"
+	"github.com/Minicode-HK/ezapi-go/core/feature"
+	"github.com/Minicode-HK/ezapi-go/core/http"
 )
 
 // Get returns a handler that retrieves all items from the database
@@ -58,7 +57,6 @@ func Post[T any](db *DBWrapper[T]) gin.HandlerFunc {
         }
 
         if hooks, exists := feature.GetHooksForType(reflect.TypeOf(newItem)) ; exists {
-            fmt.Println("Found hooks for type")
             for _, hook := range hooks.BeforeCreateHooks {
                 var item any = &newItem;
                 if err := hook(&item); err != nil {

@@ -1,15 +1,15 @@
 package handlers
 
 import (
-    "encoding/json"
-    "fmt"
-    "net/http"
-    "reflect"
-    
-    "github.com/gin-gonic/gin"
-    
-    "ezapi-go/cms/backend/mock"
-    "ezapi-go/core"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"reflect"
+
+	"github.com/gin-gonic/gin"
+
+	mockdata "github.com/Minicode-HK/ezapi-go/cms/backend/mock"
+	"github.com/Minicode-HK/ezapi-go/core"
 )
 
 type MockDataHandler struct {

@@ -1,10 +1,10 @@
 package handlers
 
 import (
-    "ezapi-go/cms/backend/auth"
-    "ezapi-go/cms/backend/models"
-    
-    "github.com/gin-gonic/gin"
+	"github.com/Minicode-HK/ezapi-go/cms/backend/auth"
+	"github.com/Minicode-HK/ezapi-go/cms/backend/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {

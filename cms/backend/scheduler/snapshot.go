@@ -1,12 +1,12 @@
 package scheduler
 
 import (
-    "fmt"
-    "log"
-    "sync"
-    "time"
+	"fmt"
+	"log"
+	"sync"
+	"time"
 
-    "ezapi-go/cms/backend/snapshot"
+	"github.com/Minicode-HK/ezapi-go/cms/backend/snapshot"
 )
 
 type Scheduler struct {

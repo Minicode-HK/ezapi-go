@@ -1,14 +1,14 @@
 package snapshot
 
 import (
-    "encoding/json"
-    "fmt"
-    "os"
-    "path/filepath"
-    "reflect"
-    "time"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"reflect"
+	"time"
 
-    "ezapi-go/core"
+	"github.com/Minicode-HK/ezapi-go/core"
 )
 
 // Metadata contains snapshot information

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"ezapi-go/core/feature"
+	"github.com/Minicode-HK/ezapi-go/core/feature"
 )
 
 var routerRegistry []func(*gin.Engine)

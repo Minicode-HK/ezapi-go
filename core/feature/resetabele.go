@@ -1,11 +1,11 @@
-package feature 
+package feature
 
 import (
 	"reflect"
 
 	"github.com/gin-gonic/gin"
 
-    "ezapi-go/core/http"
+	"github.com/Minicode-HK/ezapi-go/core/http"
 )
 
 var (

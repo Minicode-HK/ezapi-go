@@ -11,10 +11,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"ezapi-go/core"
-	"ezapi-go/core/auth"
-	"ezapi-go/core/feature"
-	"ezapi-go/core/http"
+	"github.com/Minicode-HK/ezapi-go/core"
+	"github.com/Minicode-HK/ezapi-go/core/auth"
+	"github.com/Minicode-HK/ezapi-go/core/feature"
+	"github.com/Minicode-HK/ezapi-go/core/http"
 )
 
 type App[T any] struct {

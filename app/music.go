@@ -1,7 +1,7 @@
 package app
 
 import (
-	"ezapi-go/ez"
+	"github.com/Minicode-HK/ezapi-go/ez"
 )
 
 
@@ -14,12 +14,9 @@ type Music struct {
 
 var MusicDB []Music
 
-func GetMusicDB() *[]Music {
-	return &MusicDB
-}
 
 func init() {
-	ez.New[Music](&MusicDB).
+	ez.New(&MusicDB).
 		ResetableDB([]Music{
 			{Id: "1", Title: "童話", Artist: "光良", MusicSheetUrl: "https://example.com/music-sheets/fairy-town.pdf"},
 			{Id: "2", Title: "前世", Artist: "ヨルシカ", MusicSheetUrl: "https://example.com/music-sheets/love-confession.pdf"},

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"ezapi-go/ez"
+	"github.com/Minicode-HK/ezapi-go/ez"
 )
 
 type Product struct {
