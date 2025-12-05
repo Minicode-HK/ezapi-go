@@ -1,0 +1,85 @@
+   
+<div x-data="systemStats" class="space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">System Status</h2>
+            <p class="text-sm text-gray-500 mt-1">Real-time application performance monitoring.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="loading loading-spinner loading-xs text-primary"></span>
+            <span class="text-xs text-gray-500 font-mono">Live Stream</span>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Current Memory Usage -->
+        <div class="stats shadow bg-white border border-gray-200">
+            <div class="stat">
+                <div class="stat-figure text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="stat-title">Current Memory</div>
+                <div class="stat-value text-primary" x-text="formatBytes(stats.alloc)">0 B</div>
+                <div class="stat-desc">Active Heap Objects</div>
+            </div>
+        </div>
+
+        <!-- Total System Memory -->
+        <div class="stats shadow bg-white border border-gray-200">
+            <div class="stat">
+                <div class="stat-figure text-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                </div>
+                <div class="stat-title">OS Memory Reserved</div>
+                <div class="stat-value text-secondary" x-text="formatBytes(stats.sys)">0 B</div>
+                <div class="stat-desc">Total System Memory</div>
+            </div>
+        </div>
+
+        <!-- Goroutines -->
+        <div class="stats shadow bg-white border border-gray-200">
+            <div class="stat">
+                <div class="stat-figure text-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                </div>
+                <div class="stat-title">Goroutines</div>
+                <div class="stat-value text-accent" x-text="stats.goroutines">0</div>
+                <div class="stat-desc">Active Threads</div>
+            </div>
+        </div>
+
+        <!-- GC Cycles -->
+        <div class="stats shadow bg-white border border-gray-200">
+            <div class="stat">
+                <div class="stat-figure text-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </div>
+                <div class="stat-title">GC Cycles</div>
+                <div class="stat-value text-info" x-text="stats.num_gc">0</div>
+                <div class="stat-desc">Garbage Collections</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Info -->
+    <div class="card bg-white shadow-sm border border-gray-200">
+        <div class="card-body">
+            <h3 class="card-title text-sm text-gray-500 uppercase">Cumulative Stats</h3>
+            <div class="flex items-center gap-4 mt-2">
+                <div class="flex-1">
+                    <div class="text-xs text-gray-500 mb-1">Total Allocated (Lifetime)</div>
+                    <div class="text-xl font-mono font-bold" x-text="formatBytes(stats.total_alloc)"></div>
+                    <progress class="progress progress-primary w-full mt-2" value="100" max="100"></progress>
+                </div>
+                <div class="flex-1 border-l pl-4">
+                    <div class="text-xs text-gray-500 mb-1">Last Update</div>
+                    <div class="text-xl font-mono font-bold" x-text="stats.timestamp"></div>
+                    <div class="text-xs text-gray-400 mt-2">Live Stream (SSE)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

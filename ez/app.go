@@ -11,6 +11,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	cms_backend "github.com/Minicode-HK/ezapi-go/cms/backend"
+	cms_frontend "github.com/Minicode-HK/ezapi-go/cms/frontend"
 	"github.com/Minicode-HK/ezapi-go/core"
 	"github.com/Minicode-HK/ezapi-go/core/auth"
 	"github.com/Minicode-HK/ezapi-go/core/feature"
@@ -121,7 +123,19 @@ var (
     GetAuthProvider = auth.GetGlobalAuthProvider
 )
 
-////////////////////////////////////// help function ///////////////////////////////////////
+////////////////////////////////////// cms ///////////////////////////////////////
+var (
+    RegisterCMSBackend  = cms_backend.RegisterCMSBackend
+    RegisterCMSFrontend = cms_frontend.RegisterCMSFrontend
+)
+
+func RegisterCMS(router *gin.Engine) {
+    cms_backend.RegisterCMSBackend(router)
+    cms_frontend.RegisterCMSFrontend(router)
+}
+
+
+////////////////////////////////////// helper function ///////////////////////////////////////
 func (ez *App[T]) AutoTimestamp() *App[T] {
 
     convertTimeToVariable := func(field reflect.Value, now time.Time) {

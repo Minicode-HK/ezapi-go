@@ -8,9 +8,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/Minicode-HK/ezapi-go/app" // Import to trigger init()
-	"github.com/Minicode-HK/ezapi-go/cms/backend"
-	"github.com/Minicode-HK/ezapi-go/cms/backend/handlers"
+	_ "github.com/Minicode-HK/ezapi-go/app"
 	"github.com/Minicode-HK/ezapi-go/ez"
 )
 
@@ -31,18 +29,23 @@ func main() {
         c.String(http.StatusOK, "pong")
     })
 
-    router.Use(handlers.LoggingMiddleware())  // This logs EVERYTHING including /api/*
+    // router.Use(handlers.LoggingMiddleware())  // This logs EVERYTHING including /api/*
 
     // TODO: currently auth is globally enforced except for specified routes.
     //       However, I think many routes / modules / earily development does not need auth at all.
     //       Therefore, we need to think a better way to solve this type of problem
     ez.SetupAuthProvider(router, ez.NewJWTProvider("your-secret-key"))
 
+    router.GET("/", func(c *gin.Context) {
+        c.String(200, "Hello World")
+    })
+
+
     // Add more resource routers here
     ez.SetupAllRouters(router)
 
     // Register CMS routes
-    backend.RegisterCMSRoutes(router)
+    ez.RegisterCMS(router)  
     
     // Get port from env or use default
     port := os.Getenv("PORT")
