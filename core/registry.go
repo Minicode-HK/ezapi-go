@@ -12,17 +12,21 @@ var routerRegistry []func(*gin.Engine)
 
 // store module information
 type ModuleInfo struct {
-	TypeName reflect.Type
     BasePath string
     Data    interface{}
 }
 
 // TODO: currently only RegisterRouter have this info
-var moduleRegistry []ModuleInfo
+var moduleRegistry map[reflect.Type]ModuleInfo = make(map[reflect.Type]ModuleInfo)
 
-func GetModuleRegistry() []ModuleInfo {
+func GetAllModuleRegistry() map[reflect.Type]ModuleInfo {
     return moduleRegistry
 }
+
+func GetModuleRegistryFor(t reflect.Type) ModuleInfo {
+    return moduleRegistry[t]
+}
+
 
 // Register a router setup function
 func RegisterRouter[T any](inMemoryDB *[]T, basePath string, generator ... feature.IDGenerator) {
@@ -35,11 +39,10 @@ func RegisterRouter[T any](inMemoryDB *[]T, basePath string, generator ... featu
         incremental.Counter = len(*inMemoryDB)
     }
 
-	moduleRegistry = append(moduleRegistry, ModuleInfo{
-        TypeName: reflect.TypeOf(*inMemoryDB).Elem(),
+	moduleRegistry[reflect.TypeOf(*inMemoryDB).Elem()] = ModuleInfo{
         BasePath: basePath,
         Data:    inMemoryDB,
-    })
+    }
 
 	routerRegistry = append(routerRegistry, func(router *gin.Engine) {
 		CRUDRouter(router, inMemoryDB, basePath, generator[0])
