@@ -53,6 +53,7 @@ func init() {
 
 				http.SendSuccess(c, gin.H{
 					"token": token,
+					"username": authenticatedUser.Username,
 				})
 			} else {
 				http.SendError(c, 500, "Currently only JWTProvider is supported")
