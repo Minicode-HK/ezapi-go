@@ -35,7 +35,14 @@
                             <template x-for="field in visibleFields()" :key="field.key">
                                 <td class="max-w-xs truncate text-gray-700">
                                     <span x-show="field.type === 'checkbox'"><input type="checkbox" class="checkbox checkbox-xs checkbox-primary" :checked="item[field.key]" disabled /></span>
-                                    <span x-show="field.type !== 'checkbox'" x-text="typeof item[field.key] === 'object' ? JSON.stringify(item[field.key]) : item[field.key]"></span>
+                                    <span x-show="field.type !== 'checkbox'">
+                                        <template x-if="typeof item[field.key] === 'object' && item[field.key] !== null">
+                                            <button class="btn btn-xs btn-outline btn-primary" @click="viewJson(item[field.key])">View JSON</button>
+                                        </template>
+                                        <template x-if="typeof item[field.key] !== 'object' || item[field.key] === null">
+                                            <span x-text="item[field.key]"></span>
+                                        </template>
+                                    </span>
                                 </td>
                             </template>
                             <td class="text-right space-x-2">
@@ -69,7 +76,18 @@
                                 <label class="label cursor-pointer justify-start gap-3"><input type="checkbox" x-model="formData[field.key]" class="checkbox checkbox-primary" /><span class="label-text">Enabled</span></label>
                             </div>
                             <input x-show="!field.read_only && field.type === 'number'" type="number" x-model.number="formData[field.key]" class="input input-bordered w-full" />
-                            <input x-show="!field.read_only && field.type !== 'checkbox' && field.type !== 'number'" type="text" x-model="formData[field.key]" class="input input-bordered w-full" />
+                            
+                            <template x-if="!field.read_only && field.type !== 'checkbox' && field.type !== 'number'">
+                                <div>
+                                    <textarea x-show="typeof formData[field.key] === 'string' && (formData[field.key].trim().startsWith('{') || formData[field.key].trim().startsWith('['))" 
+                                            x-model="formData[field.key]" 
+                                            class="textarea textarea-bordered w-full h-32 font-mono text-sm"></textarea>
+                                    <input x-show="!(typeof formData[field.key] === 'string' && (formData[field.key].trim().startsWith('{') || formData[field.key].trim().startsWith('[')))" 
+                                        type="text" 
+                                        x-model="formData[field.key]" 
+                                        class="input input-bordered w-full" />
+                                </div>
+                            </template>
                         </div>
                     </template>
                 </div>
@@ -87,6 +105,19 @@
             <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
                 <form method="dialog"><button class="btn btn-ghost">Cancel</button></form>
                 <button class="btn btn-error text-white" @click="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- JSON View Modal -->
+    <dialog id="json_view_modal" class="modal">
+        <div class="modal-box w-11/12 max-w-3xl bg-white">
+            <h3 class="font-bold text-lg mb-4">JSON Data</h3>
+            <div class="bg-gray-900 text-gray-100 p-4 rounded-md overflow-auto max-h-[60vh]">
+                <pre x-text="jsonViewData" class="text-sm font-mono"></pre>
+            </div>
+            <div class="modal-action">
+                <form method="dialog"><button class="btn">Close</button></form>
             </div>
         </div>
     </dialog>

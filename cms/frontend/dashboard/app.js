@@ -93,6 +93,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('resourceController', () => ({
         items: [],
         formData: {},
+        jsonViewData: '',
         isEditing: false,
         loading: false,
         pendingDeleteItem: null,
@@ -138,8 +139,20 @@ document.addEventListener('alpine:init', () => {
             document.getElementById('res_editor_modal').showModal()
         },
 
+        viewJson(data) {
+            this.jsonViewData = JSON.stringify(data, null, 2);
+            document.getElementById('json_view_modal').showModal();
+        },
+
         editItem(item) {
             this.isEditing = true; this.formData = { ...item };
+            // Stringify objects for editing
+            this.$store.cms.currentResource.fields.forEach(f => {
+                const val = this.formData[f.key];
+                if (typeof val === 'object' && val !== null) {
+                    this.formData[f.key] = JSON.stringify(val, null, 2);
+                }
+            });
             document.getElementById('res_editor_modal').showModal()
         },
 
@@ -150,12 +163,24 @@ document.addEventListener('alpine:init', () => {
                 const method = this.isEditing ? 'PUT' : 'POST'
                 const url = this.isEditing ? `${res.endpoint}/${this.formData.id}` : res.endpoint
                 
+                const payload = { ...this.formData };
+
                 res.fields.forEach(f => {
-                    if(f.type === 'number' && this.formData[f.key]) 
-                        this.formData[f.key] = Number(this.formData[f.key])
+                    let val = payload[f.key];
+                    if(f.type === 'number' && val) 
+                        payload[f.key] = Number(val)
+                    
+                    // Try to parse JSON strings
+                    if (typeof val === 'string' && (val.trim().startsWith('{') || val.trim().startsWith('['))) {
+                        try {
+                            payload[f.key] = JSON.parse(val);
+                        } catch (e) {
+                            // Ignore parse error, send as string
+                        }
+                    }
                 })
 
-                await api.call(url, { method, body: JSON.stringify(this.formData) })
+                await api.call(url, { method, body: JSON.stringify(payload) })
                 document.getElementById('res_editor_modal').close()
                 this.notify('Saved successfully')
                 await this.fetchItems()
