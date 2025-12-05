@@ -51,6 +51,10 @@ func GetById[T any](db *DBWrapper[T]) gin.HandlerFunc {
 func Post[T any](db *DBWrapper[T]) gin.HandlerFunc {
     return func(c *gin.Context) {
         var newItem T
+        
+        if !ValidateBind(c, &newItem) {
+            return 
+        }
 
         if hooks, exists := feature.GetHooksForType(reflect.TypeOf(newItem)) ; exists {
             for _, hook := range hooks.BeforeCreateHooks {
@@ -60,10 +64,6 @@ func Post[T any](db *DBWrapper[T]) gin.HandlerFunc {
                     return
                 }
             }
-        }
-
-        if !ValidateBind(c, &newItem) {
-            return 
         }
 
         db.Add(&newItem)
@@ -89,6 +89,10 @@ func Put[T any](db *DBWrapper[T]) gin.HandlerFunc {
         var updatedItem T
         existingItem := db.GetById(id)
 
+        if !ValidateBind(c, &updatedItem) {
+			return
+		}
+
         if hooks, exists := feature.GetHooksForType(reflect.TypeOf(updatedItem)) ; exists {
             for _, hook := range hooks.BeforeUpdateHooks {
                 var exist any = existingItem;
@@ -99,10 +103,6 @@ func Put[T any](db *DBWrapper[T]) gin.HandlerFunc {
                 }
             }
         }
-
-        if !ValidateBind(c, &updatedItem) {
-			return
-		}
         
 		success := db.Update(id, &updatedItem)
 
