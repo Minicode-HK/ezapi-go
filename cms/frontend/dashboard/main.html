@@ -34,16 +34,47 @@
         [x-cloak] { display: none !important; }
         .htmx-indicator { opacity: 0; transition: opacity 200ms ease-in; pointer-events: none; }
         .htmx-request .htmx-indicator { opacity: 1; pointer-events: all; }
+
+        /* Mobile Responsive */
+        @media (max-width: 767px) {
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 30;
+            }
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 40;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                position: relative;
+                transform: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen font-sans text-gray-800" >
     
     <div x-data="globalApp" x-cloak>
         
-        <!-- Login Overlay -->
-        <div x-show="!token" class="fixed inset-0 z-50 bg-gray-800 flex items-center justify-center">
-            <div class="card w-96 bg-white shadow-2xl">
+        <!-- Login Overlay (only shown if auth is required) -->
+        <div x-show="!token && authRequired" class="fixed inset-0 z-50 bg-gray-800 flex items-center justify-center">
+            <div class="card w-96 max-w-[90vw] bg-white shadow-2xl">
                 <div class="card-body p-8">
+                    <div class="flex justify-center mb-4">
+                        <img src="https://temp.r2.minicodehk.com/minicodehk_light_no_bg.png" alt="Minicode" class="h-10" />
+                    </div>
                     <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">CMS Login</h2>
                     <div class="form-control w-full">
                         <label class="label"><span class="label-text font-semibold">Username</span></label>
@@ -66,11 +97,25 @@
         </div>
 
         <!-- Main Layout -->
-        <div x-show="token" class="flex h-screen overflow-hidden">
+        <div x-show="token || !authRequired" class="flex h-screen overflow-hidden">
+            <!-- Sidebar Overlay (mobile) -->
+            <div x-show="sidebarOpen" @click="sidebarOpen = false" class="sidebar-overlay md:hidden" x-transition:enter="transition-opacity ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
             
             <!-- Sidebar -->
-            <div class="w-64 bg-gray-900 text-gray-400 flex flex-col shadow-xl z-20 dark-sidebar">
-                <div class="h-16 flex items-center px-6 bg-gray-900 font-bold text-xl text-white border-b border-gray-800">EZAPI CMS</div>
+            <div :class="sidebarOpen ? 'open' : ''" class="sidebar w-64 bg-gray-900 text-gray-400 flex flex-col shadow-xl dark-sidebar">
+                <div class="h-16 flex items-center justify-between px-4 bg-gray-900 font-bold text-xl text-white border-b border-gray-800">
+                    <div class="flex items-center gap-2">
+                        <img src="https://temp.r2.minicodehk.com/minicodehk_dark_no_bg.png" alt="Minicode" class="h-8" />
+                        <div class="border-l border-gray-700 pl-2">
+                        </div>
+                        <span>EZAPI</span>
+                    </div>
+                    <button @click="sidebarOpen = false" class="md:hidden btn btn-ghost btn-sm text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
                 
                 <div class="flex-1 overflow-y-auto py-4">
                     
@@ -82,13 +127,13 @@
                                hx-target="#main-content" 
                                hx-swap="innerHTML"
                                hx-indicator="#global-loader"
-                               @click="$store.cms.selectSystemView('snapshots')"
+                               @click="$store.cms.selectSystemView('snapshots'); sidebarOpen = false"
                                :class="$store.cms.activeView === 'snapshots' ? 'active' : ''">
                                 📷 Snapshots
                             </a>
                         </li>
                         <li>
-                            <a hx-get="/dashboard/views/system.html" hx-target="#main-content" class="flex gap-3">
+                            <a hx-get="/dashboard/views/system.html" hx-target="#main-content" @click="sidebarOpen = false" class="flex gap-3">
                                 <span>📊</span> System Status
                             </a>
                         </li>
@@ -103,7 +148,7 @@
                                    hx-target="#main-content" 
                                    hx-swap="innerHTML"
                                    hx-indicator="#global-loader"
-                                   @click="$store.cms.selectResource(res)"
+                                   @click="$store.cms.selectResource(res); sidebarOpen = false"
                                    :class="$store.cms.currentResource?.name === res.name ? 'active' : ''">
                                     <span x-text="res.name"></span>
                                 </a>
@@ -113,20 +158,31 @@
                 </div>
                 
                 <div class="p-4 bg-gray-800 border-t border-gray-700">
-                    <button class="btn btn-outline btn-sm btn-error w-full" @click="logout">Logout</button>
+                    <button x-show="authRequired" class="btn btn-outline btn-sm btn-error w-full" @click="logout">Logout</button>
+                    <div x-show="!authRequired" class="text-xs text-gray-500 text-center">No Auth Mode</div>
                 </div>
             </div>
 
             <!-- Content Area -->
             <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-100 relative">
                 
+                <!-- Mobile Header -->
+                <div class="md:hidden h-14 bg-white shadow-sm flex items-center px-4 border-b border-gray-200 shrink-0">
+                    <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <span class="ml-3 font-semibold text-gray-800">EZAPI CMS</span>
+                </div>
+
                 <!-- Global Loader -->
                 <div id="global-loader" class="htmx-indicator absolute inset-0 bg-white/80 z-50 flex items-center justify-center">
                     <span class="loading loading-spinner loading-lg text-primary"></span>
                 </div>
 
                 <!-- Dynamic Content -->
-                <main id="main-content" class="flex-1 overflow-auto p-8">
+                <main id="main-content" class="flex-1 overflow-auto p-4 md:p-8">
                     <!-- Default State -->
                     <div class="flex flex-col items-center justify-center h-full text-gray-400">
                         <div class="text-6xl mb-4 opacity-25">📦</div>

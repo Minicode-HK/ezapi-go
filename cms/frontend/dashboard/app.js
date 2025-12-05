@@ -45,21 +45,42 @@ document.addEventListener('alpine:init', () => {
     // --- Global Controller (Shell) ---
     Alpine.data('globalApp', () => ({
         token: api.token(),
+        authRequired: true,
+        sidebarOpen: false,
         toast: { show: false, message: '', type: 'success' },
         loginForm: { username: '', password: '' },
         loading: false,
         error: '',
 
-        init() {
-            window.addEventListener('auth-error', () => this.logout())
+        async init() {
+            window.addEventListener('auth-error', () => {
+                if (this.authRequired) this.logout()
+            })
             window.addEventListener('show-toast', (e) => {
                 this.toast = { show: true, message: e.detail.msg, type: e.detail.type || 'success' }
                 setTimeout(() => this.toast.show = false, 3000)
             })
 
-            // Load schema if logged in
-            if (this.token) {
+            // Check if auth is required
+            await this.checkAuthRequired()
+
+            // Load schema if logged in or no auth required
+            if (this.token || !this.authRequired) {
                 this.$store.cms.loadSchema()
+            }
+        },
+
+        async checkAuthRequired() {
+            try {
+                const res = await fetch('/cms/api/auth-status')
+                const data = await res.json()
+                this.authRequired = data.data?.auth_required !== false
+                if (!this.authRequired) {
+                    this.token = 'no-auth-mode' // Set a dummy token
+                }
+            } catch (e) {
+                // Default to requiring auth if check fails
+                this.authRequired = true
             }
         },
 
