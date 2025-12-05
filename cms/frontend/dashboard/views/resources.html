@@ -35,7 +35,7 @@
                             <template x-for="field in visibleFields()" :key="field.key">
                                 <td class="max-w-xs truncate text-gray-700">
                                     <span x-show="field.type === 'checkbox'"><input type="checkbox" class="checkbox checkbox-xs checkbox-primary" :checked="item[field.key]" disabled /></span>
-                                    <span x-show="field.type !== 'checkbox'" x-text="item[field.key]"></span>
+                                    <span x-show="field.type !== 'checkbox'" x-text="typeof item[field.key] === 'object' ? JSON.stringify(item[field.key]) : item[field.key]"></span>
                                 </td>
                             </template>
                             <td class="text-right space-x-2">
@@ -64,7 +64,7 @@
                     <template x-for="field in $store.cms.currentResource?.fields || []" :key="field.key">
                         <div class="form-control">
                             <label class="label px-0 pt-0 mb-1"><span class="label-text font-medium text-gray-700" x-text="field.name"></span></label>
-                            <input x-show="field.read_only" :value="formData[field.key]" disabled class="input input-bordered w-full bg-gray-100" />
+                            <input x-show="field.read_only" :value="typeof formData[field.key] === 'object' ? JSON.stringify(formData[field.key]) : formData[field.key]" disabled class="input input-bordered w-full bg-gray-100" />
                             <div x-show="!field.read_only && field.type === 'checkbox'" class="flex items-center h-12">
                                 <label class="label cursor-pointer justify-start gap-3"><input type="checkbox" x-model="formData[field.key]" class="checkbox checkbox-primary" /><span class="label-text">Enabled</span></label>
                             </div>
