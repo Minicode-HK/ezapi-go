@@ -45,6 +45,10 @@ func (a *App[T]) CustomRoutes(fn func(*gin.Engine)) *App[T] {
 	return a
 }
 
+func SetupAllRouters(router *gin.Engine) {
+    core.SetupAllRouters(router)
+}
+
 /////////////////////////////////////// helper functions ///////////////////////////////////////
 var (
     SendSuccess          = http.SendSuccess

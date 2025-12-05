@@ -11,7 +11,6 @@ import (
 	_ "github.com/Minicode-HK/ezapi-go/app" // Import to trigger init()
 	"github.com/Minicode-HK/ezapi-go/cms/backend"
 	"github.com/Minicode-HK/ezapi-go/cms/backend/handlers"
-	"github.com/Minicode-HK/ezapi-go/core"
 	"github.com/Minicode-HK/ezapi-go/ez"
 )
 
@@ -40,7 +39,7 @@ func main() {
     ez.SetupAuthProvider(router, ez.NewJWTProvider("your-secret-key"))
 
     // Add more resource routers here
-    core.SetupAllRouters(router)
+    ez.SetupAllRouters(router)
 
     // Register CMS routes
     backend.RegisterCMSRoutes(router)
