@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Minicode-HK/ezapi-go/core/feature"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -38,7 +37,6 @@ func (p *JWTProvider) Authenticate(c *gin.Context) (*User, error) {
 
     return &User{
         ID:   claims["sub"].(string),
-        Username: feature.NewQueryBuilder(GetUserDB()).Where("ID", "=", claims["sub"].(string)).First().Username,
         Role: claims["role"].(string),
     }, nil
 }
