@@ -123,6 +123,10 @@ var (
     GetAuthProvider = auth.GetGlobalAuthProvider
 )
 
+func SetUserDB(users []auth.User) {
+    auth.SetUserDB(users)
+}
+
 ////////////////////////////////////// cms ///////////////////////////////////////
 var (
     RegisterCMSBackend  = cms_backend.RegisterCMSBackend

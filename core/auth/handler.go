@@ -10,11 +10,16 @@ import (
 
 var userDB []User
 
+func SetUserDB(users []User) {
+	userDB = users
+}
+
 func init() {
-	userDB = feature.ResetableDatabase(&userDB, []User{
+	// default credentials
+	userDB = []User{
 		{ID: "1", Username: "superadmin", Password: "superadmin", Role: "admin"},
 		{ID: "2", Username: "user", Password: "user", Role: "user"},
-	})
+	}
 
 	// currently only support login function
 	core.RegisterRouterWith(func(router *gin.Engine) {
