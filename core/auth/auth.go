@@ -19,7 +19,7 @@ var GlobalAuthProvider Provider
 
 // you can specify excluded paths that do not require authentication
 func SetupAuthProvider(router *gin.Engine, provider Provider, excludedPaths ...string) {
-	excludedPaths = append(excludedPaths, "/login") 
+	excludedPaths = append(excludedPaths, "/login", "/logout",  "/dashboard", "/dashboard/*")
 	router.Use(func(c *gin.Context) {
 		// Check if the current path is in the excluded paths
 		for _, path := range excludedPaths {
