@@ -14,6 +14,10 @@ func SetUserDB(users []User) {
 	userDB = users
 }
 
+func GetUserDB() []User {
+	return userDB
+}
+
 func init() {
 	// default credentials
 	userDB = []User{
