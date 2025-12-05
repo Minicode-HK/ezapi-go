@@ -29,7 +29,7 @@ func init() {
             {Id: "2", Name: "Smartphone", Price: 499.99, Category: "Electronics"},
             {Id: "3", Name: "Desk Chair", Price: 89.99, Category: "Furniture"},
         }).
-        CRUDRoutes("/api/products").
+        CRUD("/api/products").
         CustomRoutes(func(router *gin.Engine) {
             // Get products by category
             router.GET("/api/products/category/:category", func(c *gin.Context) {

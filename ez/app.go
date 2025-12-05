@@ -35,7 +35,7 @@ func (a *App[T]) Seed(initialData []T) *App[T] {
 	return a
 }
 
-func (a *App[T]) CRUDRoutes(path string) *App[T] {
+func (a *App[T]) CRUD(path string) *App[T] {
     core.RegisterRouter(a.db, path)
 	return a
 }
