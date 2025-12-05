@@ -30,7 +30,7 @@ func New[T any](db *[]T) *App[T] {
     }
 }
 
-func (a *App[T]) ResetableDB(initialData []T) *App[T] {
+func (a *App[T]) Seed(initialData []T) *App[T] {
     *a.db = feature.ResetableDatabase(a.db, initialData)
 	return a
 }

@@ -24,7 +24,7 @@ var ProductDB []Product
 func init() {
 
     ez.New(&ProductDB).
-        ResetableDB([]Product{
+        Seed([]Product{
             {Id: "1", Name: "Laptop", Price: 999.99, Category: "Electronics"},
             {Id: "2", Name: "Smartphone", Price: 499.99, Category: "Electronics"},
             {Id: "3", Name: "Desk Chair", Price: 89.99, Category: "Furniture"},
