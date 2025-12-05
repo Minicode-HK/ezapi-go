@@ -179,7 +179,8 @@ func getItemId(item any) string {
     if idField.IsValid() {
         return idField.String()
     }
-    return ""
+    
+    panic("Item does not have an Id field or does not implement Identifiable interface")
 }
 
 func setItemId(item any, id string) {
