@@ -50,10 +50,32 @@ func GenerateSchema() []ResourceDef {
             // Map Go types to html input types
             uiType := "text"
             switch field.Type.Kind() {
-            case reflect.Int, reflect.Int64, reflect.Float64:
+            case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+                reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+                reflect.Float32, reflect.Float64:
                 uiType = "number"
             case reflect.Bool:
                 uiType = "checkbox"
+            case reflect.Slice, reflect.Array:
+                // TODO: maybe display a table
+                uiType = "text"
+            case reflect.Struct, reflect.Map, reflect.Interface:
+                // TODO: recursive schema generation?
+                if field.Type.String() == "time.Time" {
+                    uiType = "datetime-local"
+                } else {
+                    uiType = "textarea"
+                }
+            case reflect.String:
+                if field.Type.Name() == "string" && strings.Contains(strings.ToLower(field.Name), "email") {
+                    uiType = "email"
+                }
+            }
+
+            // or based on `cms:"{type}"` tag
+            cmsTag := field.Tag.Get("cms")
+            if cmsTag != "" {
+                uiType = cmsTag
             }
             
             fields = append(fields, FieldDef{
