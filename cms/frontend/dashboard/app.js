@@ -235,6 +235,7 @@ document.addEventListener('alpine:init', () => {
         snapshots: [],
         loading: false,
         viewData: null,
+        selectedModule: null,
 
         async init() { await this.fetchSnapshots() },
 

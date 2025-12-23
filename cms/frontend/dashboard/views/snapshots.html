@@ -62,7 +62,13 @@
         <div class="modal-box w-11/12 max-w-6xl h-5/6 flex flex-col p-0 overflow-hidden">
             <!-- Modal Header -->
             <div class="bg-gray-100 px-6 py-4 border-b flex justify-between items-center">
-                <h3 class="font-bold text-lg">Snapshot Content</h3>
+                <h3 class="font-bold text-lg">
+                    <span x-show="!selectedModule">Snapshot Content</span>
+                    <span x-show="selectedModule" class="flex items-center gap-2">
+                        <button @click="selectedModule = null" class="btn btn-xs btn-ghost">←</button>
+                        <span x-text="selectedModule"></span>
+                    </span>
+                </h3>
                 <form method="dialog">
                     <button class="btn btn-sm btn-circle btn-ghost">✕</button>
                 </form>
@@ -71,18 +77,23 @@
             <!-- Modal Body -->
             <div class="flex-1 overflow-hidden flex flex-col p-6 gap-4">
                 <!-- Module Summary -->
-                <div x-show="viewData">
+                <div x-show="viewData && !selectedModule">
                     <div class="text-xs font-bold text-gray-500 uppercase mb-2">Included Modules</div>
                     <div class="flex flex-wrap gap-2">
                         <template x-for="key in Object.keys(viewData || {})">
-                            <span class="badge badge-neutral badge-lg" x-text="key"></span>
+                            <button @click="selectedModule = key" class="badge badge-neutral badge-lg cursor-pointer hover:badge-primary" x-text="key"></button>
                         </template>
                     </div>
                 </div>
 
-                <!-- JSON Content -->
-                <div class="flex-1 bg-gray-900 rounded-lg overflow-auto p-4 shadow-inner">
-                    <pre class="text-xs font-mono text-green-400 leading-relaxed" x-text="JSON.stringify(viewData, null, 2)"></pre>
+                <!-- Module Content -->
+                <div x-show="selectedModule" class="flex-1 bg-gray-900 rounded-lg overflow-auto p-4 shadow-inner">
+                    <pre class="text-xs font-mono text-green-400 leading-relaxed" x-text="JSON.stringify((viewData ?? {})[selectedModule], null, 2)"></pre>
+                </div>
+
+                <!-- JSON Content (Full View) -->
+                <div x-show="viewData && !selectedModule" class="flex-1 bg-gray-900 rounded-lg overflow-auto p-4 shadow-inner">
+                    <pre class="text-xs font-mono text-green-400 leading-relaxed" x-text="JSON.stringify((viewData ?? {}), null, 2)"></pre>
                 </div>
             </div>
         </div>
