@@ -7,6 +7,7 @@ Here are all the functions exported from app.go:
 - **`New[T any](db *[]T) *App[T]`** - Creates a new ez instance for a module
 - **`(a *App[T]) Seed(initialData []T) *App[T]`** - Seeds the database with initial data. If /api/reset is called, it will reset to this data.
 - **`(a *App[T]) CRUD(path string) *App[T]`** - Registers CRUD endpoints for the resource
+  - the returned data will be have this type of format: `{ "data": [...] , "success": ... }`
 - **`(a *App[T]) CustomRoutes(fn func(*gin.Engine)) *App[T]`** - Adds custom route handlers
 
 
@@ -15,10 +16,36 @@ Here are all the functions exported from app.go:
 
 ## Helper Functions (HTTP Response)
 
-- **`SendSuccess`** - Sends a successful JSON response
-- **`SendError`** - Sends an error JSON response
-- **`SendErrorWithDetails`** - Sends an error response with detailed information
+- **`SendSuccess(c *gin.Context, data any)`** - Sends a successful JSON response
+  - **Response Format:**
+    ```json
+    {
+      "success": true,
+      "data": <your_data>,
+      "message": "Success"
+    }
+    ```
 
+- **`SendError(c *gin.Context, statusCode int, message string)`** - Sends an error JSON response
+  - **Response Format:**
+    ```json
+    {
+      "success": false,
+      "error": "<error_message>",
+      "statusCode": <http_status_code>
+    }
+    ```
+
+- **`SendErrorWithDetails(c *gin.Context, statusCode int, message string, details any)`** - Sends an error response with detailed information
+  - **Response Format:**
+    ```json
+    {
+      "success": false,
+      "error": "<error_message>",
+      "statusCode": <http_status_code>,
+      "details": <detailed_error_info>
+    }
+    ```
 ## Query Builder
 
 - **`Query[T any](data []T) *feature.QueryBuilder[T]`** - Creates a query builder for filtering/sorting data
