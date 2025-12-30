@@ -8,19 +8,24 @@ import (
 
 
 type QueryBuilder[T any] struct {
-	workSet []T
+	workSet []*T
 	mu sync.RWMutex
 }
 
 
 func NewQueryBuilder[T any](data []T) *QueryBuilder[T] {
+	// Convert slice to pointers
+	pointers := make([]*T, len(data))
+	for i := range data {
+		pointers[i] = &data[i]
+	}
 	return &QueryBuilder[T]{
-		workSet: data,
+		workSet: pointers,
 		mu:      sync.RWMutex{},
 	}
 }
 
-func (qb *QueryBuilder[T]) Get() []T {
+func (qb *QueryBuilder[T]) Get() []*T {
 	qb.mu.RLock()
 	defer qb.mu.RUnlock()
 	return qb.workSet
@@ -33,16 +38,16 @@ func (qb *QueryBuilder[T]) First() *T {
 	if len(qb.workSet) == 0 {
 		return nil
 	}
-	return &qb.workSet[0]
+	return qb.workSet[0]
 }
 
 func (qb *QueryBuilder[T]) Filter(filterFunc func(*T) bool) *QueryBuilder[T] {
 	qb.mu.Lock()
 	defer qb.mu.Unlock()
 
-	var filtered []T
+	var filtered []*T
 	for i := range qb.workSet {
-		if filterFunc(&qb.workSet[i]) {
+		if filterFunc(qb.workSet[i]) {
 			filtered = append(filtered, qb.workSet[i])
 		}
 	}
@@ -67,7 +72,7 @@ func (qb *QueryBuilder[T]) Offset(n int) *QueryBuilder[T] {
 	if n < len(qb.workSet) {
 		qb.workSet = qb.workSet[n:]
 	} else {
-		qb.workSet = []T{}
+		qb.workSet = []*T{}
 	}
 	return qb
 }
@@ -76,9 +81,9 @@ func (qb *QueryBuilder[T]) WhereWith(predicate func(*T) bool) *QueryBuilder[T] {
 	qb.mu.Lock()
 	defer qb.mu.Unlock()
 	
-	var filtered []T
+	var filtered []*T
 	for i := range qb.workSet {
-		if predicate(&qb.workSet[i]) {
+		if predicate(qb.workSet[i]) {
 			filtered = append(filtered, qb.workSet[i])
 		}
 	}
@@ -90,9 +95,9 @@ func (qb *QueryBuilder[T]) Where(fieldName string, operator string, value any) *
 	qb.mu.Lock()
 	defer qb.mu.Unlock()
 
-	var filtered []T
+	var filtered []*T
 	for i := range qb.workSet {
-		item := &qb.workSet[i]
+		item := qb.workSet[i]
 		for j := 0; j < reflect.TypeOf(*item).NumField(); j++ {
 			field := reflect.TypeOf(*item).Field(j)
 			if field.Name == fieldName {
@@ -115,7 +120,7 @@ func (qb *QueryBuilder[T]) Where(fieldName string, operator string, value any) *
 					match = reflect.ValueOf(fieldValue).Float() <= reflect.ValueOf(value).Float()
 				}
 				if match {
-					filtered = append(filtered, *item)
+					filtered = append(filtered, item)
 				}
 				break
 			}
@@ -178,8 +183,8 @@ func (qb *QueryBuilder[T]) OrderBy(fieldName string, ascending ...bool) *QueryBu
 	}
 
 	less := func(i, j int) bool {
-		itemI := &qb.workSet[i]
-		itemJ := &qb.workSet[j]
+		itemI := qb.workSet[i]
+		itemJ := qb.workSet[j]
 		fieldValueI := reflect.ValueOf(*itemI).FieldByName(fieldName)
 		fieldValueJ := reflect.ValueOf(*itemJ).FieldByName(fieldName)
 
@@ -209,7 +214,7 @@ func (qb *QueryBuilder[T]) Select(fields ...string) *QueryBuilder[map[string]any
 	var selected []map[string]any
 
 	for i := range qb.workSet {
-		item := &qb.workSet[i]
+		item := qb.workSet[i]
 		record := make(map[string]any)
 		val := reflect.ValueOf(*item)
 		for _, fieldName := range fields {
@@ -232,7 +237,16 @@ func (qb *QueryBuilder[T]) Select(fields ...string) *QueryBuilder[map[string]any
 	}
 	
 	return &QueryBuilder[map[string]any]{
-		workSet: selected,
+		workSet: convertToPointers(selected),
 		mu:      sync.RWMutex{},
 	}
+}
+
+// Helper function for Select
+func convertToPointers[T any](slice []T) []*T {
+	result := make([]*T, len(slice))
+	for i := range slice {
+		result[i] = &slice[i]
+	}
+	return result
 }
