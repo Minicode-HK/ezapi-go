@@ -59,7 +59,7 @@ var (
 )
 
 ////////////////////////////////////// query builder ///////////////////////////////////////
-func Query[T any](data []T) *feature.QueryBuilder[T] {
+func Query[T any](data *[]T) *feature.QueryBuilder[T] {
     return feature.NewQueryBuilder[T](data)
 }
 

@@ -37,7 +37,7 @@ func init() {
 				return
 			}
 
-			var authenticatedUser *User = feature.NewQueryBuilder(userDB).Where("Username", "=", loginData.Username).
+			var authenticatedUser *User = feature.NewQueryBuilder(&userDB).Where("Username", "=", loginData.Username).
 				Where("Password", "=", loginData.Password).
 				First();
 

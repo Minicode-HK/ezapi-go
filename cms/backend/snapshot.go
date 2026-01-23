@@ -233,7 +233,7 @@ func SetupSnapshots(router *gin.Engine) {
     // Delete snapshot
     router.DELETE("/cms/api/snapshots/:id", func(c *gin.Context) {
         id := c.Param("id")
-        snap := feature.NewQueryBuilder(snapshotResponseDB).Where("Id", "=", id).First()
+        snap := feature.NewQueryBuilder(&snapshotResponseDB).Where("Id", "=", id).First()
         if snap == nil {
             core_http.SendError(c, 404, "Snapshot not found")
             return

@@ -8,27 +8,58 @@ import (
 
 
 type QueryBuilder[T any] struct {
+	originalSlice *[]T // a pointer to the original slice
+
 	workSet []*T
 	mu sync.RWMutex
 }
 
 
-func NewQueryBuilder[T any](data []T) *QueryBuilder[T] {
-	// Convert slice to pointers
-	pointers := make([]*T, len(data))
-	for i := range data {
-		pointers[i] = &data[i]
-	}
-	return &QueryBuilder[T]{
-		workSet: pointers,
-		mu:      sync.RWMutex{},
-	}
+func NewQueryBuilder[T any](data *[]T) *QueryBuilder[T] {
+    pointers := make([]*T, len(*data))
+    for i := range *data {
+        pointers[i] = &(*data)[i]
+    }
+
+    return &QueryBuilder[T]{
+        originalSlice: data,  
+        workSet: pointers,
+        mu:      sync.RWMutex{},
+    }
 }
 
 func (qb *QueryBuilder[T]) Get() []*T {
 	qb.mu.RLock()
 	defer qb.mu.RUnlock()
 	return qb.workSet
+}
+
+func (qb *QueryBuilder[T]) Delete() []*T  {
+    qb.mu.Lock()
+    defer qb.mu.Unlock()
+
+    workSetMap := make(map[uintptr]bool)
+    for _, item := range qb.workSet {
+        workSetMap[reflect.ValueOf(item).Pointer()] = true
+    }
+    
+    var deleted []*T
+    var remaining []T  
+    
+    for i := range *qb.originalSlice {
+		item := &(*qb.originalSlice)[i]
+
+        if workSetMap[reflect.ValueOf(item).Pointer()] {
+            deleted = append(deleted, item)
+        } else {
+            remaining = append(remaining, *item)  
+        }
+    }
+    
+    *qb.originalSlice = remaining 
+    qb.workSet = []*T{}
+    
+    return deleted
 }
 
 func (qb *QueryBuilder[T]) First() *T {
