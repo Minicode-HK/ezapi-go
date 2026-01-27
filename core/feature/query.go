@@ -62,6 +62,33 @@ func (qb *QueryBuilder[T]) Delete() []*T  {
     return deleted
 }
 
+func (qb *QueryBuilder[T]) Update(fieldName string, value any) *QueryBuilder[T] {
+	qb.mu.Lock()
+	defer qb.mu.Unlock()
+
+	for i := range qb.workSet {
+		item := qb.workSet[i]
+		val := reflect.ValueOf(item).Elem()
+		field := val.FieldByName(fieldName)
+		if field.IsValid() && field.CanSet() {
+			field.Set(reflect.ValueOf(value))
+		}
+	}
+
+	return qb
+}
+
+func (qb *QueryBuilder[T]) UpdateWith(updateFunc func(*T)) *QueryBuilder[T] {
+	qb.mu.Lock()
+	defer qb.mu.Unlock()
+
+	for i := range qb.workSet {
+		updateFunc(qb.workSet[i])
+	}
+
+	return qb
+}
+
 func (qb *QueryBuilder[T]) First() *T {
 	qb.mu.RLock()
 	defer qb.mu.RUnlock()

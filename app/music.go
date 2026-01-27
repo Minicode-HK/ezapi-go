@@ -25,7 +25,7 @@ func init() {
 		CRUD("/api/music").
 		CustomRoutes(func(e *gin.Engine) {
 			e.GET("/test", func(c *gin.Context) {
-				item := ez.Query(&MusicDB).Where("Id", "=", ez.Query(&MusicDB).OrderBy("Title").First().Id).Delete()
+				item := ez.Query(&MusicDB).Where("Id", "=", ez.Query(&MusicDB).OrderBy("Title").First().Id).Update("Artist", "Updated Artist").Get()
 				c.JSON(200, gin.H{"message": "Deleted music with ID " + item[0].Id})
 			})
 		})
