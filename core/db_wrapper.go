@@ -14,6 +14,10 @@ type DBWrapper[T any] struct {
     mu        sync.RWMutex
 }
 
+// DB Wrapper are thread-safe wrappers around in-memory database slices
+// used primarily just in CRUDRouter to provide thread-safe simple operations like GetAll, GetById, Add, Update, Delete.
+// for other modules, QueryBuilder might are the one you want to use.
+// each module should only have one instance of DBWrapper per in-memory slice.
 func NewDBWrapper[T any](data *[]T, generator feature.IDGenerator) *DBWrapper[T] {
     return &DBWrapper[T]{
         data:      data,

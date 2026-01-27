@@ -6,12 +6,37 @@ import (
 	"sync"
 )
 
+// global map to hold the mutex for each &data slice
+var (
+	sliceMuxtes = make(map[uintptr]*sync.RWMutex)
+	sliceMuxtesMu sync.RWMutex
+)
+
+func getSharedMutexForSlice(slicePtr uintptr) *sync.RWMutex {
+	sliceMuxtesMu.RLock()
+	if mu, exists := sliceMuxtes[slicePtr]; exists {
+		sliceMuxtesMu.RUnlock()
+		return mu
+	}
+	sliceMuxtesMu.RUnlock()
+
+	sliceMuxtesMu.Lock()
+	defer sliceMuxtesMu.Unlock()
+
+	if mu, exists := sliceMuxtes[slicePtr]; exists {
+		return mu
+	}
+
+	mu := &sync.RWMutex{}
+	sliceMuxtes[slicePtr] = mu
+	return mu
+}
 
 type QueryBuilder[T any] struct {
 	originalSlice *[]T // a pointer to the original slice
 
 	workSet []*T
-	mu sync.RWMutex
+	mu *sync.RWMutex
 }
 
 
@@ -24,7 +49,7 @@ func NewQueryBuilder[T any](data *[]T) *QueryBuilder[T] {
     return &QueryBuilder[T]{
         originalSlice: data,  
         workSet: pointers,
-        mu:      sync.RWMutex{},
+        mu:      getSharedMutexForSlice(reflect.ValueOf(data).Pointer()),
     }
 }
 
@@ -296,7 +321,7 @@ func (qb *QueryBuilder[T]) Select(fields ...string) *QueryBuilder[map[string]any
 	
 	return &QueryBuilder[map[string]any]{
 		workSet: convertToPointers(selected),
-		mu:      sync.RWMutex{},
+		mu:      &sync.RWMutex{},
 	}
 }
 
