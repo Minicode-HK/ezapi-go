@@ -59,8 +59,33 @@ var (
 )
 
 ////////////////////////////////////// query builder ///////////////////////////////////////
+
+/*
+IMPORTANT: Thread-Safety Contract
+
+Thread-safe are implemented within QueryBuilder to allow safe concurrent access to the underlying data slice.
+However, we can not enforce thread-safety if the underlying slice is modified outside of QueryBuilder methods.
+All modifications MUST go through QueryBuilder methods in order to ensure thread-safety.
+
+Violations will cause:
+- Race conditions
+- Data corruption
+- Memory access violations (CRASH)
+
+SAFE usage:
+  data := []MyStruct{{ID: 1}}
+  ez.Query(&data).Filter(...).Update("ID", 999).Delete()
+  // External code must NOT touch 'data' during or after this
+
+UNSAFE usage:
+  data := []MyStruct{{ID: 1}}
+  go func() {
+    ez.Query(&data).Filter(...).Delete()
+  }()
+  data[0].ID = 999  // ❌ CRASH! Race condition!
+*/
 func Query[T any](data *[]T) *feature.QueryBuilder[T] {
-    return feature.NewQueryBuilder[T](data)
+    return feature.NewQueryBuilder(data)
 }
 
 /////////////////////////////////////// hook functions ///////////////////////////////////////

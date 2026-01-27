@@ -39,34 +39,7 @@ type QueryBuilder[T any] struct {
 	mu *sync.RWMutex
 }
 
-/*
-IMPORTANT: Thread-Safety Contract
 
-When you call ez.Query(&data), you MUST NOT:
-1. Modify the slice directly: data[0].ID = 999
-2. Reallocate the slice: data = append(data, ...)
-3. Reassign the slice pointer: data = newSlice
-
-All modifications MUST go through QueryBuilder methods:
-- Query(&data).Filter(...).Update(...).Delete()
-
-Violations will cause:
-- Race conditions
-- Data corruption
-- Memory access violations (CRASH)
-
-SAFE usage:
-  data := []MyStruct{{ID: 1}}
-  ez.Query(&data).Filter(...).Update("ID", 999).Delete()
-  // External code must NOT touch 'data' during or after this
-
-UNSAFE usage:
-  data := []MyStruct{{ID: 1}}
-  go func() {
-    ez.Query(&data).Filter(...).Delete()
-  }()
-  data[0].ID = 999  // ❌ CRASH! Race condition!
-*/
 func NewQueryBuilder[T any](data *[]T) *QueryBuilder[T] {
     pointers := make([]*T, len(*data))
     for i := range *data {
@@ -83,7 +56,13 @@ func NewQueryBuilder[T any](data *[]T) *QueryBuilder[T] {
 func (qb *QueryBuilder[T]) Get() []*T {
 	qb.mu.RLock()
 	defer qb.mu.RUnlock()
-	return qb.workSet
+	if len(qb.workSet) == 0 {
+		return []*T{}
+	}
+	
+	result := make([]*T, len(qb.workSet))
+	copy(result, qb.workSet)
+	return result
 }
 
 func (qb *QueryBuilder[T]) Delete() []*T  {
@@ -125,6 +104,18 @@ func (qb *QueryBuilder[T]) Update(fieldName string, value any) *QueryBuilder[T] 
 		if field.IsValid() && field.CanSet() {
 			field.Set(reflect.ValueOf(value))
 		}
+	}
+
+	return qb
+}
+
+func (qb *QueryBuilder[T]) Add(newItems ...*T) *QueryBuilder[T] {
+	qb.mu.Lock()
+	defer qb.mu.Unlock()
+
+	for i := range newItems {
+		*qb.originalSlice = append(*qb.originalSlice, *newItems[i])
+		qb.workSet = append(qb.workSet, newItems[i])
 	}
 
 	return qb

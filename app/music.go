@@ -1,6 +1,8 @@
 package app
 
 import (
+	"sync"
+
 	"github.com/Minicode-HK/ezapi-go/ez"
 	"github.com/gin-gonic/gin"
 )
@@ -21,12 +23,43 @@ func init() {
 		Seed([]Music{
 			{Id: "1", Title: "童話", Artist: "光良", MusicSheetUrl: "https://example.com/music-sheets/fairy-town.pdf"},
 			{Id: "2", Title: "前世", Artist: "ヨルシカ", MusicSheetUrl: "https://example.com/music-sheets/love-confession.pdf"},
+			{Id: "3", Title: "Shape of You", Artist: "Ed Sheeran", MusicSheetUrl: "https://example.com/music-sheets/shape-of-you.pdf"},
 		}).
 		CRUD("/api/music").
 		CustomRoutes(func(e *gin.Engine) {
 			e.GET("/test", func(c *gin.Context) {
-				item := ez.Query(&MusicDB).Where("Id", "=", ez.Query(&MusicDB).OrderBy("Title").First().Id).Update("Artist", "Updated Artist").Get()
-				c.JSON(200, gin.H{"message": "Deleted music with ID " + item[0].Id})
+
+				var wg sync.WaitGroup
+				wg.Add(3)
+				// test the thread-safety 
+				query := ez.Query(&MusicDB)
+				go func() {
+					defer wg.Done()
+					// remove record with Id 1 with golang only
+					ele := query.Where("Id", "=", "1").First()
+					// remove ele from MusicDB
+					if ele != nil {
+						music := *ele
+						MusicDB = append(MusicDB[:0], MusicDB[1:]...)
+						_ = music  // to avoid unused variable warning
+					}
+				}()
+				go func() {
+					defer wg.Done()
+					query.Where("Id", "=", "1").Delete()
+				}()
+
+				go func() {
+					defer wg.Done()
+					query.Add(&Music{Id: "4", Title: "New Song", Artist: "New Artist", MusicSheetUrl: "https://example.com/music-sheets/new-song.pdf"})
+				}()
+				wg.Wait()
+				result1 := query.Get();
+
+				ez.SendSuccess(c, gin.H{
+					"result1": result1,
+					"finalDB": MusicDB,
+				})
 			})
 		})
 }
