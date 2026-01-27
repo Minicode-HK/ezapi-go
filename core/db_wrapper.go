@@ -175,7 +175,16 @@ func getItemId(item any) string {
     if v.Kind() == reflect.Ptr {
         v = v.Elem()
     }
+
+    // try both "Id" and "ID", "id"
     idField := v.FieldByName("Id")
+    if !idField.IsValid() {
+        idField = v.FieldByName("ID")
+    }
+    if !idField.IsValid() {
+        idField = v.FieldByName("id")
+    }
+    
     if idField.IsValid() {
         return idField.String()
     }
