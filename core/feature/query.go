@@ -39,7 +39,34 @@ type QueryBuilder[T any] struct {
 	mu *sync.RWMutex
 }
 
+/*
+IMPORTANT: Thread-Safety Contract
 
+When you call ez.Query(&data), you MUST NOT:
+1. Modify the slice directly: data[0].ID = 999
+2. Reallocate the slice: data = append(data, ...)
+3. Reassign the slice pointer: data = newSlice
+
+All modifications MUST go through QueryBuilder methods:
+- Query(&data).Filter(...).Update(...).Delete()
+
+Violations will cause:
+- Race conditions
+- Data corruption
+- Memory access violations (CRASH)
+
+SAFE usage:
+  data := []MyStruct{{ID: 1}}
+  ez.Query(&data).Filter(...).Update("ID", 999).Delete()
+  // External code must NOT touch 'data' during or after this
+
+UNSAFE usage:
+  data := []MyStruct{{ID: 1}}
+  go func() {
+    ez.Query(&data).Filter(...).Delete()
+  }()
+  data[0].ID = 999  // ❌ CRASH! Race condition!
+*/
 func NewQueryBuilder[T any](data *[]T) *QueryBuilder[T] {
     pointers := make([]*T, len(*data))
     for i := range *data {
