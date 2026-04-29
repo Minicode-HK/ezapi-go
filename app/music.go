@@ -7,16 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 type Music struct {
-	Id              string `json:"id"`
-	Title           string `json:"title" binding:"required"`
-	Artist          string `json:"artist" binding:"required"`
-	MusicSheetUrl   string `json:"music_sheet_url"`
+	Id            string `json:"id"`
+	Title         string `json:"title" binding:"required"`
+	Artist        string `json:"artist" binding:"required"`
+	MusicSheetUrl string `json:"music_sheet_url"`
 }
 
 var MusicDB []Music
-
 
 func init() {
 	ez.New(&MusicDB).
@@ -31,7 +29,7 @@ func init() {
 
 				var wg sync.WaitGroup
 				wg.Add(3)
-				// test the thread-safety 
+				// test the thread-safety
 				query := ez.Query(&MusicDB)
 				go func() {
 					defer wg.Done()
@@ -41,7 +39,7 @@ func init() {
 					if ele != nil {
 						music := *ele
 						MusicDB = append(MusicDB[:0], MusicDB[1:]...)
-						_ = music  // to avoid unused variable warning
+						_ = music // to avoid unused variable warning
 					}
 				}()
 				go func() {
@@ -51,10 +49,10 @@ func init() {
 
 				go func() {
 					defer wg.Done()
-					query.Add(&Music{Id: "4", Title: "New Song", Artist: "New Artist", MusicSheetUrl: "https://example.com/music-sheets/new-song.pdf"})
+					query.Insert(&Music{Id: "4", Title: "New Song", Artist: "New Artist", MusicSheetUrl: "https://example.com/music-sheets/new-song.pdf"})
 				}()
 				wg.Wait()
-				result1 := query.Get();
+				result1 := query.Get()
 
 				ez.SendSuccess(c, gin.H{
 					"result1": result1,
