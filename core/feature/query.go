@@ -8,7 +8,7 @@ import (
 
 // global map to hold the mutex for each &data slice
 var (
-	sliceMuxtes = make(map[uintptr]*sync.RWMutex)
+	sliceMuxtes   = make(map[uintptr]*sync.RWMutex)
 	sliceMuxtesMu sync.RWMutex
 )
 
@@ -36,21 +36,20 @@ type QueryBuilder[T any] struct {
 	originalSlice *[]T // a pointer to the original slice
 
 	workSet []*T
-	mu *sync.RWMutex
+	mu      *sync.RWMutex
 }
 
-
 func NewQueryBuilder[T any](data *[]T) *QueryBuilder[T] {
-    pointers := make([]*T, len(*data))
-    for i := range *data {
-        pointers[i] = &(*data)[i]
-    }
+	pointers := make([]*T, len(*data))
+	for i := range *data {
+		pointers[i] = &(*data)[i]
+	}
 
-    return &QueryBuilder[T]{
-        originalSlice: data,  
-        workSet: pointers,
-        mu:      getSharedMutexForSlice(reflect.ValueOf(data).Pointer()),
-    }
+	return &QueryBuilder[T]{
+		originalSlice: data,
+		workSet:       pointers,
+		mu:            getSharedMutexForSlice(reflect.ValueOf(data).Pointer()),
+	}
 }
 
 func (qb *QueryBuilder[T]) Get() []*T {
@@ -59,38 +58,38 @@ func (qb *QueryBuilder[T]) Get() []*T {
 	if len(qb.workSet) == 0 {
 		return []*T{}
 	}
-	
+
 	result := make([]*T, len(qb.workSet))
 	copy(result, qb.workSet)
 	return result
 }
 
-func (qb *QueryBuilder[T]) Delete() []*T  {
-    qb.mu.Lock()
-    defer qb.mu.Unlock()
+func (qb *QueryBuilder[T]) Delete() []*T {
+	qb.mu.Lock()
+	defer qb.mu.Unlock()
 
-    workSetMap := make(map[uintptr]bool)
-    for _, item := range qb.workSet {
-        workSetMap[reflect.ValueOf(item).Pointer()] = true
-    }
-    
-    var deleted []*T
-    var remaining []T  
-    
-    for i := range *qb.originalSlice {
+	workSetMap := make(map[uintptr]bool)
+	for _, item := range qb.workSet {
+		workSetMap[reflect.ValueOf(item).Pointer()] = true
+	}
+
+	var deleted []*T
+	var remaining []T
+
+	for i := range *qb.originalSlice {
 		item := &(*qb.originalSlice)[i]
 
-        if workSetMap[reflect.ValueOf(item).Pointer()] {
-            deleted = append(deleted, item)
-        } else {
-            remaining = append(remaining, *item)  
-        }
-    }
-    
-    *qb.originalSlice = remaining 
-    qb.workSet = []*T{}
-    
-    return deleted
+		if workSetMap[reflect.ValueOf(item).Pointer()] {
+			deleted = append(deleted, item)
+		} else {
+			remaining = append(remaining, *item)
+		}
+	}
+
+	*qb.originalSlice = remaining
+	qb.workSet = []*T{}
+
+	return deleted
 }
 
 func (qb *QueryBuilder[T]) Update(fieldName string, value any) *QueryBuilder[T] {
@@ -109,7 +108,7 @@ func (qb *QueryBuilder[T]) Update(fieldName string, value any) *QueryBuilder[T] 
 	return qb
 }
 
-func (qb *QueryBuilder[T]) Add(newItems ...*T) *QueryBuilder[T] {
+func (qb *QueryBuilder[T]) Insert(newItems ...*T) *QueryBuilder[T] {
 	qb.mu.Lock()
 	defer qb.mu.Unlock()
 
@@ -181,7 +180,7 @@ func (qb *QueryBuilder[T]) Offset(n int) *QueryBuilder[T] {
 func (qb *QueryBuilder[T]) WhereWith(predicate func(*T) bool) *QueryBuilder[T] {
 	qb.mu.Lock()
 	defer qb.mu.Unlock()
-	
+
 	var filtered []*T
 	for i := range qb.workSet {
 		if predicate(qb.workSet[i]) {
@@ -272,7 +271,7 @@ func compareValues(a, b reflect.Value) int {
 	default:
 		return 0
 	}
-}		
+}
 
 func (qb *QueryBuilder[T]) OrderBy(fieldName string, ascending ...bool) *QueryBuilder[T] {
 	qb.mu.Lock()
@@ -336,7 +335,7 @@ func (qb *QueryBuilder[T]) Select(fields ...string) *QueryBuilder[map[string]any
 		}
 		selected = append(selected, record)
 	}
-	
+
 	return &QueryBuilder[map[string]any]{
 		workSet: convertToPointers(selected),
 		mu:      &sync.RWMutex{},
