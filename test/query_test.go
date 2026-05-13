@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/Minicode-HK/ezapi-go/ez"
+	"github.com/Minicode-HK/ezapi-go/core"
 )
 
 // Test models for query builder
@@ -600,7 +600,7 @@ func TestQuery_Pagination_Scenario(t *testing.T) {
 // ============================================
 
 func TestQuery_EmptyCollection(t *testing.T) {
-	collection := ez.NewCollection[int, Employee]()
+	collection := core.NewCollection[int, Employee]()
 
 	results := collection.Query().
 		Where("Age", ">", 20).
@@ -662,8 +662,8 @@ func TestQuery_BooleanField(t *testing.T) {
 // ============================================
 
 // setupEmployeeCollection creates a test collection with sample data
-func setupEmployeeCollection() *ez.Collection[int, Employee] {
-	collection := ez.NewCollection[int, Employee]()
+func setupEmployeeCollection() *core.Collection[int, Employee] {
+	collection := core.NewCollection[int, Employee]()
 
 	employees := []*Employee{
 		{Name: "John Smith", Age: 35, Department: "Engineering", Salary: 90000, Active: true},

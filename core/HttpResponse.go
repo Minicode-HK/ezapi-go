@@ -1,4 +1,4 @@
-package ez
+package core
 
 import (
 	"github.com/gin-gonic/gin"

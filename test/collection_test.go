@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Minicode-HK/ezapi-go/ez"
+	"github.com/Minicode-HK/ezapi-go/core"
 )
 
 // Model with UUID-based ID
@@ -50,7 +50,7 @@ type BlogPost struct {
 // ============================================
 
 func TestAdd_Single_UUID(t *testing.T) {
-	collection := ez.NewCollection[string, Model]()
+	collection := core.NewCollection[string, Model]()
 
 	model := &Model{
 		FirstName: "John",
@@ -77,7 +77,7 @@ func TestAdd_Single_UUID(t *testing.T) {
 }
 
 func TestAdd_Multiple_AutoIncrement(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	users := []*User{
 		{Email: "user1@example.com", Name: "User 1"},
@@ -113,7 +113,7 @@ func TestAdd_Multiple_AutoIncrement(t *testing.T) {
 }
 
 func TestAdd_MultipleTypes(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	products := []*Product{
 		{Name: "Laptop", Price: 999.99, InStock: true, Description: "High-performance laptop"},
@@ -135,7 +135,7 @@ func TestAdd_MultipleTypes(t *testing.T) {
 // ============================================
 
 func TestGetById_Success(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	user := &User{Email: "test@example.com", Name: "Test User"}
 	collection.Add(user)
 
@@ -155,7 +155,7 @@ func TestGetById_Success(t *testing.T) {
 }
 
 func TestGetById_NotFound(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	_, err := collection.GetById(999)
 	if err == nil {
@@ -164,7 +164,7 @@ func TestGetById_NotFound(t *testing.T) {
 }
 
 func TestGetByIdWithPointer_Success(t *testing.T) {
-	collection := ez.NewCollection[string, Model]()
+	collection := core.NewCollection[string, Model]()
 	model := &Model{FirstName: "Jane", LastName: "Smith", Age: 25}
 	collection.Add(model)
 
@@ -179,7 +179,7 @@ func TestGetByIdWithPointer_Success(t *testing.T) {
 }
 
 func TestGetByIdWithCopy_Success(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	user := &User{Email: "copy@example.com", Name: "Copy User"}
 	collection.Add(user)
 
@@ -203,7 +203,7 @@ func TestGetByIdWithCopy_Success(t *testing.T) {
 }
 
 func TestGetByIdWithCopy_NotFound(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	_, err := collection.GetByIdWithCopy(999)
 	if err == nil {
@@ -216,7 +216,7 @@ func TestGetByIdWithCopy_NotFound(t *testing.T) {
 // ============================================
 
 func TestUpdate_EntireElement_Success(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	user := &User{Email: "old@example.com", Name: "Old Name"}
 	collection.Add(user)
 
@@ -248,7 +248,7 @@ func TestUpdate_EntireElement_Success(t *testing.T) {
 }
 
 func TestUpdate_NotFound(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	err := collection.Update(999, User{Email: "test@example.com", Name: "Test"})
 	if err == nil {
@@ -257,7 +257,7 @@ func TestUpdate_NotFound(t *testing.T) {
 }
 
 func TestUpdateWithAttributes_PartialUpdate_Success(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 	product := &Product{
 		Name:        "Original",
 		Price:       100.0,
@@ -298,7 +298,7 @@ func TestUpdateWithAttributes_PartialUpdate_Success(t *testing.T) {
 }
 
 func TestUpdateWithAttributes_NotFound(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	err := collection.UpdateWithAttributes(999, map[string]any{"Name": "Test"})
 	if err == nil {
@@ -307,7 +307,7 @@ func TestUpdateWithAttributes_NotFound(t *testing.T) {
 }
 
 func TestUpdateWithAttributes_InvalidFieldName(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	user := &User{Email: "test@example.com", Name: "Test"}
 	collection.Add(user)
 
@@ -321,7 +321,7 @@ func TestUpdateWithAttributes_InvalidFieldName(t *testing.T) {
 }
 
 func TestUpdateWithAttributes_TypeMismatch(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 	product := &Product{Name: "Test", Price: 100.0}
 	collection.Add(product)
 
@@ -336,7 +336,7 @@ func TestUpdateWithAttributes_TypeMismatch(t *testing.T) {
 }
 
 func TestUpdateWithAttributes_IDField_Error(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	user := &User{Email: "test@example.com", Name: "Test"}
 	collection.Add(user)
 	originalId := user.Id
@@ -361,7 +361,7 @@ func TestUpdateWithAttributes_IDField_Error(t *testing.T) {
 }
 
 func TestUpdateWithAttributes_SkipsIDButUpdatesOthers(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	user := &User{Email: "test@example.com", Name: "Test"}
 	collection.Add(user)
 	originalId := user.Id
@@ -395,7 +395,7 @@ func TestUpdateWithAttributes_SkipsIDButUpdatesOthers(t *testing.T) {
 // ============================================
 
 func TestRemove_Success(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	user := &User{Email: "delete@example.com", Name: "Delete Me"}
 	collection.Add(user)
 
@@ -414,7 +414,7 @@ func TestRemove_Success(t *testing.T) {
 }
 
 func TestRemove_NotFound(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	// Should not panic when removing non-existent element
 	collection.Remove(999)
@@ -428,7 +428,7 @@ func TestRemove_NotFound(t *testing.T) {
 }
 
 func TestRemove_Multiple(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	users := []*User{
 		{Email: "user1@example.com", Name: "User 1"},
@@ -462,7 +462,7 @@ func TestRemove_Multiple(t *testing.T) {
 // ============================================
 
 func TestCount_Empty(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	if collection.Count() != 0 {
 		t.Errorf("Expected count 0, got %d", collection.Count())
@@ -470,7 +470,7 @@ func TestCount_Empty(t *testing.T) {
 }
 
 func TestCount_AfterAdds(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	for i := 0; i < 5; i++ {
 		collection.Add(&User{Email: "test@example.com", Name: "Test"})
@@ -486,7 +486,7 @@ func TestCount_AfterAdds(t *testing.T) {
 // ============================================
 
 func TestConcurrentAdd(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	var wg sync.WaitGroup
 	numGoroutines := 100
@@ -511,7 +511,7 @@ func TestConcurrentAdd(t *testing.T) {
 }
 
 func TestConcurrentReadWrite(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	// Add initial data
 	for i := 0; i < 10; i++ {
@@ -549,7 +549,7 @@ func TestConcurrentReadWrite(t *testing.T) {
 // ============================================
 
 func TestEdgeCase_EmptyStrings(t *testing.T) {
-	collection := ez.NewCollection[string, Model]()
+	collection := core.NewCollection[string, Model]()
 
 	model := &Model{FirstName: "", LastName: "", Age: 0}
 	collection.Add(model)
@@ -565,7 +565,7 @@ func TestEdgeCase_EmptyStrings(t *testing.T) {
 }
 
 func TestEdgeCase_ZeroValues(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	product := &Product{Name: "Free Item", Price: 0.0, InStock: false}
 	collection.Add(product)
@@ -581,7 +581,7 @@ func TestEdgeCase_ZeroValues(t *testing.T) {
 }
 
 func TestEdgeCase_UpdateToZeroValues(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 	product := &Product{Name: "Item", Price: 100.0, InStock: true}
 	collection.Add(product)
 
@@ -613,7 +613,7 @@ func TestUpdate_DeepCopyWithSlices(t *testing.T) {
 		Tags []string
 	}
 
-	collection := ez.NewCollection[int, ArticleWithTags]()
+	collection := core.NewCollection[int, ArticleWithTags]()
 	article := &ArticleWithTags{Name: "Original", Tags: []string{"go", "db"}}
 	collection.Add(article)
 
@@ -649,7 +649,7 @@ func TestUpdate_DeepCopyWithMaps(t *testing.T) {
 		Props map[string]string
 	}
 
-	collection := ez.NewCollection[int, Config]()
+	collection := core.NewCollection[int, Config]()
 	config := &Config{Name: "Config1", Props: map[string]string{"env": "prod"}}
 	collection.Add(config)
 
@@ -685,7 +685,7 @@ func TestGetByIdWithCopy_DeepCopyWithSlices(t *testing.T) {
 		Tags []string
 	}
 
-	collection := ez.NewCollection[int, ArticleWithTags]()
+	collection := core.NewCollection[int, ArticleWithTags]()
 	article := &ArticleWithTags{Name: "Original", Tags: []string{"go", "db"}}
 	collection.Add(article)
 
@@ -716,7 +716,7 @@ func TestGetByIdWithCopy_DeepCopyWithMaps(t *testing.T) {
 		Props map[string]string
 	}
 
-	collection := ez.NewCollection[int, ConfigWithProps]()
+	collection := core.NewCollection[int, ConfigWithProps]()
 	config := &ConfigWithProps{
 		Name:  "Config1",
 		Props: map[string]string{"env": "prod", "version": "1.0"},
@@ -748,7 +748,7 @@ func TestGetByIdWithCopy_DeepCopyWithMaps(t *testing.T) {
 // ============================================
 
 func TestSnapshot_BasicSnapshot(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	user1 := &User{Email: "user1@example.com", Name: "User 1"}
 	user2 := &User{Email: "user2@example.com", Name: "User 2"}
@@ -771,7 +771,7 @@ func TestSnapshot_BasicSnapshot(t *testing.T) {
 }
 
 func TestSnapshot_SnapshotIsolation(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	user1 := &User{Email: "user1@example.com", Name: "User 1"}
 	collection.Add(user1)
@@ -795,7 +795,7 @@ func TestSnapshot_SnapshotIsolation(t *testing.T) {
 }
 
 func TestSnapshot_RestoreBasic(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	user1 := &User{Email: "user1@example.com", Name: "User 1"}
 	user2 := &User{Email: "user2@example.com", Name: "User 2"}
@@ -839,7 +839,7 @@ func TestSnapshot_RestoreWithSlices(t *testing.T) {
 		Tags []string
 	}
 
-	collection := ez.NewCollection[int, ArticleWithTags]()
+	collection := core.NewCollection[int, ArticleWithTags]()
 
 	article := &ArticleWithTags{Name: "Original", Tags: []string{"go", "db"}}
 	collection.Add(article)
@@ -876,7 +876,7 @@ func TestSnapshot_RestoreWithMaps(t *testing.T) {
 		Props map[string]string
 	}
 
-	collection := ez.NewCollection[int, Config]()
+	collection := core.NewCollection[int, Config]()
 
 	config := &Config{
 		Name:  "Config1",
@@ -907,7 +907,7 @@ func TestSnapshot_RestoreWithMaps(t *testing.T) {
 }
 
 func TestSnapshot_MultipleSnapshots(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	user1 := &User{Email: "user1@example.com", Name: "User 1"}
 	collection.Add(user1)
@@ -941,7 +941,7 @@ func TestSnapshot_MultipleSnapshots(t *testing.T) {
 }
 
 func TestSnapshot_SnapshotPreservesData(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	product := &Product{
 		Name:        "Laptop",
@@ -982,7 +982,7 @@ func TestSnapshot_SnapshotPreservesData(t *testing.T) {
 }
 
 func TestSnapshot_RestoreNilSnapshot(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 	collection.Add(&User{Email: "test@example.com", Name: "Test"})
 
 	// Restore with nil snapshot - should handle gracefully
@@ -995,7 +995,7 @@ func TestSnapshot_RestoreNilSnapshot(t *testing.T) {
 }
 
 func TestSnapshot_SnapshotAfterRemoval(t *testing.T) {
-	collection := ez.NewCollection[int, User]()
+	collection := core.NewCollection[int, User]()
 
 	user1 := &User{Email: "user1@example.com", Name: "User 1"}
 	user2 := &User{Email: "user2@example.com", Name: "User 2"}
@@ -1039,7 +1039,7 @@ func TestSnapshot_DeepCopyIsolation(t *testing.T) {
 		Tags []string
 	}
 
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	article := &Article{Name: "Original", Tags: []string{"go", "db"}}
 	collection.Add(article)
@@ -1089,7 +1089,7 @@ func TestSnapshot_SaveAsJson(t *testing.T) {
 		Tags []string
 	}
 
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Add test data
 	article1 := &Article{Name: "First Article", Tags: []string{"golang", "testing"}}
@@ -1184,7 +1184,7 @@ func TestSnapshot_LoadFromJson(t *testing.T) {
 		Tags []string
 	}
 
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Add test data
 	article1 := &Article{Name: "First Article", Tags: []string{"golang", "testing"}}
@@ -1219,7 +1219,7 @@ func TestSnapshot_LoadFromJson(t *testing.T) {
 	}
 
 	// Load snapshot from JSON into a new snapshot
-	loadedSnapshot := &ez.SnapShot[int, Article]{}
+	loadedSnapshot := &core.SnapShot[int, Article]{}
 	err = loadedSnapshot.LoadFromJson(tempFile)
 	if err != nil {
 		t.Fatalf("Failed to load snapshot from JSON: %v", err)
@@ -1270,7 +1270,7 @@ func TestSnapshot_LoadFromJson(t *testing.T) {
 // ============================================
 
 func TestTimestamp_CreatedAtOnAdd(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{
 		Title:   "Test Post",
@@ -1297,7 +1297,7 @@ func TestTimestamp_CreatedAtOnAdd(t *testing.T) {
 }
 
 func TestTimestamp_UpdatedAtOnAdd(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{
 		Title:   "Test Post",
@@ -1325,7 +1325,7 @@ func TestTimestamp_UpdatedAtOnAdd(t *testing.T) {
 }
 
 func TestTimestamp_UpdatedAtOnUpdate(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{
 		Title:   "Test Post",
@@ -1385,7 +1385,7 @@ func TestTimestamp_UpdatedAtOnUpdate(t *testing.T) {
 }
 
 func TestTimestamp_MultiplePosts(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post1 := &BlogPost{Title: "Post 1", Content: "Content 1"}
 	post2 := &BlogPost{Title: "Post 2", Content: "Content 2"}
@@ -1422,7 +1422,7 @@ func TestTimestamp_MultiplePosts(t *testing.T) {
 }
 
 func TestTimestamp_UpdateWithAttributes(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{
 		Title:   "Original Title",
@@ -1478,7 +1478,7 @@ func TestTimestamp_UpdateWithAttributes(t *testing.T) {
 // ============================================
 
 func TestSoftDelete_SoftRemoveMarksAsDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{Title: "Test Post", Content: "Content"}
 	collection.Add(post)
@@ -1506,7 +1506,7 @@ func TestSoftDelete_SoftRemoveMarksAsDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_GetByIdExcludesDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{Title: "Test Post", Content: "Content"}
 	collection.Add(post)
@@ -1540,7 +1540,7 @@ func TestSoftDelete_GetByIdExcludesDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_QueryExcludesDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post1 := &BlogPost{Title: "Post 1", Content: "Content 1"}
 	post2 := &BlogPost{Title: "Post 2", Content: "Content 2"}
@@ -1573,7 +1573,7 @@ func TestSoftDelete_QueryExcludesDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_ListExcludesDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post1 := &BlogPost{Title: "Post 1", Content: "C1"}
 	post2 := &BlogPost{Title: "Post 2", Content: "C2"}
@@ -1599,7 +1599,7 @@ func TestSoftDelete_ListExcludesDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_CountExcludesDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post1 := &BlogPost{Title: "Post 1", Content: "C1"}
 	post2 := &BlogPost{Title: "Post 2", Content: "C2"}
@@ -1627,7 +1627,7 @@ func TestSoftDelete_CountExcludesDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_ContainsExcludesDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{Title: "Post", Content: "Content"}
 	collection.Add(post)
@@ -1651,7 +1651,7 @@ func TestSoftDelete_ContainsExcludesDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_UpdateFailsOnDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{Title: "Original", Content: "Content"}
 	collection.Add(post)
@@ -1672,7 +1672,7 @@ func TestSoftDelete_UpdateFailsOnDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_UpdateWithAttributesFailsOnDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{Title: "Original", Content: "Content"}
 	collection.Add(post)
@@ -1693,7 +1693,7 @@ func TestSoftDelete_UpdateWithAttributesFailsOnDeleted(t *testing.T) {
 }
 
 func TestSoftDelete_HardDeleteRemovesCompletely(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post := &BlogPost{Title: "Post", Content: "Content"}
 	collection.Add(post)
@@ -1721,7 +1721,7 @@ func TestSoftDelete_HardDeleteRemovesCompletely(t *testing.T) {
 }
 
 func TestSoftDelete_SnapshotPreservesSoftDeleteState(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	post1 := &BlogPost{Title: "Post 1", Content: "C1"}
 	post2 := &BlogPost{Title: "Post 2", Content: "C2"}
@@ -1772,7 +1772,7 @@ func TestSoftDelete_SnapshotPreservesSoftDeleteState(t *testing.T) {
 }
 
 func TestSoftDelete_QueryWithFilter(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	// Add multiple posts
 	for i := 1; i <= 5; i++ {
@@ -1808,7 +1808,7 @@ func TestSoftDelete_QueryWithFilter(t *testing.T) {
 }
 
 func TestSoftDelete_ConcurrentOperations(t *testing.T) {
-	collection := ez.NewCollection[int, BlogPost]()
+	collection := core.NewCollection[int, BlogPost]()
 
 	for i := 1; i <= 10; i++ {
 		post := &BlogPost{
@@ -1856,7 +1856,7 @@ func TestSoftDelete_ConcurrentOperations(t *testing.T) {
 // ============================================
 
 func TestQuery_In_SingleValue(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	products := []*Product{
 		{Name: "Laptop", Price: 999.99},
@@ -1893,7 +1893,7 @@ func TestQuery_In_SingleValue(t *testing.T) {
 }
 
 func TestQuery_In_WithPrices(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	prices := []float64{99.99, 199.99, 299.99, 399.99, 499.99}
 	for i, p := range prices {
@@ -1921,7 +1921,7 @@ func TestQuery_In_WithPrices(t *testing.T) {
 }
 
 func TestQuery_NotIn(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	products := []*Product{
 		{Name: "Laptop", Price: 999.99},
@@ -1961,7 +1961,7 @@ func TestQuery_NotIn(t *testing.T) {
 }
 
 func TestQuery_Between(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	products := []*Product{
 		{Name: "Budget Item", Price: 50.0},
@@ -1993,7 +1993,7 @@ func TestQuery_Between(t *testing.T) {
 }
 
 func TestQuery_Between_Boundaries(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	products := []*Product{
 		{Name: "Item 1", Price: 100.0},
@@ -2037,7 +2037,7 @@ func TestQuery_Between_Boundaries(t *testing.T) {
 }
 
 func TestQuery_In_NotIn_Combined(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	for i := 1; i <= 10; i++ {
 		product := &Product{
@@ -2071,7 +2071,7 @@ func TestQuery_In_NotIn_Combined(t *testing.T) {
 }
 
 func TestQuery_In_Where_Between_Combined(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	products := []*Product{
 		{Name: "Laptop", Price: 999.99, InStock: true},
@@ -2112,7 +2112,7 @@ func TestQuery_In_Where_Between_Combined(t *testing.T) {
 }
 
 func TestQuery_In_EmptyList(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	for i := 1; i <= 5; i++ {
 		product := &Product{
@@ -2133,7 +2133,7 @@ func TestQuery_In_EmptyList(t *testing.T) {
 }
 
 func TestQuery_NotIn_EmptyList(t *testing.T) {
-	collection := ez.NewCollection[int, Product]()
+	collection := core.NewCollection[int, Product]()
 
 	for i := 1; i <= 5; i++ {
 		product := &Product{

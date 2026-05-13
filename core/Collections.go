@@ -1,4 +1,4 @@
-package ez
+package core
 
 import (
 	"encoding/json"
@@ -45,6 +45,9 @@ type Collection[PrimaryKeyT comparable, StructT any] struct {
 	// GenIdFunc should tell how to generate a new id. And this is call when a model being `Added` into the collection.
 	GenIdFunc func(*StructT) PrimaryKeyT
 }
+
+type UUIDCollection[T any] = Collection[string, T]
+type AutoIncrementCollection[T any] = Collection[int, T]
 
 // QueryBuilder follows the builder pattern to build a query with chained conditions, and finally execute the query to get the result.
 type QueryBuilder[PrimaryKeyT comparable, StructT any] struct {
@@ -232,6 +235,10 @@ func NewCollection[PrimaryKeyT comparable, StructT any]() *Collection[PrimaryKey
 	})
 
 	return c
+}
+
+func NewUUIDCollection[StructT any]() *UUIDCollection[StructT] {
+	return NewCollection[string, StructT]()
 }
 
 // Add adds the value to the collection immediately. *Always* Gen a new id instead of using defined id.

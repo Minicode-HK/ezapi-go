@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Minicode-HK/ezapi-go/ez"
+	"github.com/Minicode-HK/ezapi-go/core"
 )
 
 // Test model for hooks
@@ -21,7 +21,7 @@ type Article struct {
 // ============================================
 
 func TestHook_BeforeCreate_Success(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Register hook that sets default status
 	collection.RegisterBeforeCreateHook(func(article *Article) error {
@@ -40,7 +40,7 @@ func TestHook_BeforeCreate_Success(t *testing.T) {
 }
 
 func TestHook_BeforeCreate_Error(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Register hook that rejects articles without title
 	collection.RegisterBeforeCreateHook(func(article *Article) error {
@@ -65,7 +65,7 @@ func TestHook_BeforeCreate_Error(t *testing.T) {
 }
 
 func TestHook_BeforeCreate_Multiple(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	executionOrder := []string{}
 
@@ -111,7 +111,7 @@ func TestHook_BeforeCreate_Multiple(t *testing.T) {
 }
 
 func TestHook_BeforeCreate_ErrorStopsChain(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	hook1Executed := false
 	hook2Executed := false
@@ -155,7 +155,7 @@ func TestHook_BeforeCreate_ErrorStopsChain(t *testing.T) {
 // ============================================
 
 func TestHook_AfterCreate_Success(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	hookCalled := false
 	var capturedId int
@@ -183,7 +183,7 @@ func TestHook_AfterCreate_Success(t *testing.T) {
 }
 
 func TestHook_AfterCreate_Error(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	collection.RegisterAfterCreateHook(func(article *Article) error {
 		return errors.New("after create error")
@@ -205,7 +205,7 @@ func TestHook_AfterCreate_Error(t *testing.T) {
 // ============================================
 
 func TestHook_BeforeUpdate_Success(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Register hook that increments views
 	collection.RegisterBeforeUpdateHook(func(existing *Article, incoming *Article, _ map[string]any) error {
@@ -232,7 +232,7 @@ func TestHook_BeforeUpdate_Success(t *testing.T) {
 }
 
 func TestHook_BeforeUpdate_Error(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Register hook that prevents status changes
 	collection.RegisterBeforeUpdateHook(func(existing *Article, incoming *Article, _ map[string]any) error {
@@ -266,7 +266,7 @@ func TestHook_BeforeUpdate_Error(t *testing.T) {
 }
 
 func TestHook_BeforeUpdate_CanModifyIncoming(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Hook that sanitizes incoming data
 	collection.RegisterBeforeUpdateHook(func(existing *Article, incoming *Article, _ map[string]any) error {
@@ -300,7 +300,7 @@ func TestHook_BeforeUpdate_CanModifyIncoming(t *testing.T) {
 // ============================================
 
 func TestHook_AfterUpdate_Success(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	hookCalled := false
 	var capturedTitle string
@@ -329,7 +329,7 @@ func TestHook_AfterUpdate_Success(t *testing.T) {
 }
 
 func TestHook_AfterUpdate_WithUpdateAttributes(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	hookCallCount := 0
 
@@ -364,7 +364,7 @@ func TestHook_AfterUpdate_WithUpdateAttributes(t *testing.T) {
 // ============================================
 
 func TestHook_BeforeRemove_Success(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	removedTitle := ""
 
@@ -391,7 +391,7 @@ func TestHook_BeforeRemove_Success(t *testing.T) {
 }
 
 func TestHook_BeforeRemove_Error(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Prevent deletion of published articles
 	collection.RegisterBeforeRemoveHook(func(article *Article) error {
@@ -425,7 +425,7 @@ func TestHook_BeforeRemove_Error(t *testing.T) {
 // ============================================
 
 func TestHook_AfterRemove_Success(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	hookCalled := false
 	var removedId int
@@ -455,7 +455,7 @@ func TestHook_AfterRemove_Success(t *testing.T) {
 }
 
 func TestHook_AfterRemove_ElementAlreadyDeleted(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	var capturedId int
 	wasDeleted := false
@@ -497,7 +497,7 @@ func TestHook_AfterRemove_ElementAlreadyDeleted(t *testing.T) {
 // ============================================
 
 func TestHook_MultipleHooksAllTypes(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	eventLog := []string{}
 
@@ -561,7 +561,7 @@ func TestHook_MultipleHooksAllTypes(t *testing.T) {
 }
 
 func TestHook_ValidationChain(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Hook 1: Validate title
 	collection.RegisterBeforeCreateHook(func(article *Article) error {
@@ -621,7 +621,7 @@ func TestHook_ValidationChain(t *testing.T) {
 // ============================================
 
 func TestHook_EmptyHooks(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// No hooks registered - should work normally
 	article := &Article{Title: "Test"}
@@ -643,7 +643,7 @@ func TestHook_EmptyHooks(t *testing.T) {
 }
 
 func TestHook_NilPointerHandling(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	collection.RegisterBeforeCreateHook(func(article *Article) error {
 		// Hook should receive valid pointer
@@ -666,7 +666,7 @@ func TestHook_NilPointerHandling(t *testing.T) {
 // ============================================
 
 func TestHook_BeforeUpdate_WithUpdateAttributes_ReceivesAttributes(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	var capturedAttributes map[string]any
 	var capturedRequestObj *Article
@@ -708,7 +708,7 @@ func TestHook_BeforeUpdate_WithUpdateAttributes_ReceivesAttributes(t *testing.T)
 }
 
 func TestHook_BeforeUpdate_WithUpdate_ReceivesRequestObj(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	var capturedAttributes map[string]any
 	var capturedRequestObj *Article
@@ -746,7 +746,7 @@ func TestHook_BeforeUpdate_WithUpdate_ReceivesRequestObj(t *testing.T) {
 }
 
 func TestHook_BeforeUpdate_CanDistinguishUpdateTypes(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	updateTypeCalled := ""
 
@@ -780,7 +780,7 @@ func TestHook_BeforeUpdate_CanDistinguishUpdateTypes(t *testing.T) {
 }
 
 func TestHook_BeforeUpdate_ValidateAttributes(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Hook that validates Views attribute
 	collection.RegisterBeforeUpdateHook(func(existing *Article, requestObj *Article, attrs map[string]any) error {
@@ -821,7 +821,7 @@ func TestHook_BeforeUpdate_ValidateAttributes(t *testing.T) {
 }
 
 func TestHook_BeforeUpdate_ModifyAttributesNotSupported(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Note: Modifying the attrs map in the hook WILL affect the update
 	// because maps are passed by reference
@@ -854,7 +854,7 @@ func TestHook_BeforeUpdate_ModifyAttributesNotSupported(t *testing.T) {
 }
 
 func TestHook_BeforeUpdate_BothValidation(t *testing.T) {
-	collection := ez.NewCollection[int, Article]()
+	collection := core.NewCollection[int, Article]()
 
 	// Hook that validates both Update and UpdateWithAttributes
 	collection.RegisterBeforeUpdateHook(func(existing *Article, requestObj *Article, attrs map[string]any) error {
