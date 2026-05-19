@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -156,15 +157,25 @@ func NewCollection[PrimaryKeyT comparable, StructT any]() *Collection[PrimaryKey
 				switch kind {
 				case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
 					reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
-					reflect.Float32, reflect.Float64:
+					reflect.Float32, reflect.Float64, reflect.String:
 				default:
 					panic("PrimaryKeyT should be an incremental type when using auto_increment tag")
 				}
 
 				// in here, we assume that PrimaryKeyT is incremental-able
-				c.GenIdFunc = func(s *StructT) PrimaryKeyT {
-					c.counter++
-					return any(c.counter).(PrimaryKeyT)
+				// Decide conversion strategy once during initialization
+				if kind == reflect.String {
+					// String-specific GenIdFunc (no runtime check needed)
+					c.GenIdFunc = func(s *StructT) PrimaryKeyT {
+						c.counter++
+						return any(strconv.Itoa(c.counter)).(PrimaryKeyT)
+					}
+				} else {
+					// Numeric-specific GenIdFunc (no runtime check needed)
+					c.GenIdFunc = func(s *StructT) PrimaryKeyT {
+						c.counter++
+						return any(c.counter).(PrimaryKeyT)
+					}
 				}
 			}
 			if strings.Contains(tag, "uuid") {
