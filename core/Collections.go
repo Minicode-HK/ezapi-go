@@ -643,6 +643,59 @@ func (collection *Collection[PrimaryKeyT, StructT]) Restore(snapShot *SnapShot[P
 	collection.activeElement = snapShot.ActiveElement
 }
 
+// ParseId is a helper function to convert string id to PrimaryKeyT type.
+// It is useful when the PrimaryKeyT is not string, but we want to use string as id in the API layer.
+// ParseId is a helper function to convert string id to PrimaryKeyT type.
+// It is useful when the PrimaryKeyT is not string, but we want to use string as id in the API layer.
+func (collection *Collection[PrimaryKeyT, StructT]) ParseId(id string) PrimaryKeyT {
+	var zero PrimaryKeyT
+	kind := reflect.TypeOf(zero).Kind()
+
+	switch kind {
+	case reflect.String:
+		return any(id).(PrimaryKeyT)
+	case reflect.Int:
+		val, _ := strconv.Atoi(id)
+		return any(val).(PrimaryKeyT)
+	case reflect.Int8:
+		val, _ := strconv.ParseInt(id, 10, 8)
+		return any(int8(val)).(PrimaryKeyT)
+	case reflect.Int16:
+		val, _ := strconv.ParseInt(id, 10, 16)
+		return any(int16(val)).(PrimaryKeyT)
+	case reflect.Int32:
+		val, _ := strconv.ParseInt(id, 10, 32)
+		return any(int32(val)).(PrimaryKeyT)
+	case reflect.Int64:
+		val, _ := strconv.ParseInt(id, 10, 64)
+		return any(val).(PrimaryKeyT)
+	case reflect.Uint:
+		val, _ := strconv.ParseUint(id, 10, 0)
+		return any(uint(val)).(PrimaryKeyT)
+	case reflect.Uint8:
+		val, _ := strconv.ParseUint(id, 10, 8)
+		return any(uint8(val)).(PrimaryKeyT)
+	case reflect.Uint16:
+		val, _ := strconv.ParseUint(id, 10, 16)
+		return any(uint16(val)).(PrimaryKeyT)
+	case reflect.Uint32:
+		val, _ := strconv.ParseUint(id, 10, 32)
+		return any(uint32(val)).(PrimaryKeyT)
+	case reflect.Uint64:
+		val, _ := strconv.ParseUint(id, 10, 64)
+		return any(val).(PrimaryKeyT)
+	case reflect.Float32:
+		val, _ := strconv.ParseFloat(id, 32)
+		return any(float32(val)).(PrimaryKeyT)
+	case reflect.Float64:
+		val, _ := strconv.ParseFloat(id, 64)
+		return any(val).(PrimaryKeyT)
+	default:
+		// Fallback: try to return as string and hope it works
+		return any(id).(PrimaryKeyT)
+	}
+}
+
 type filterCondition struct {
 	field    string
 	operator string // expecting "=", "!=", ">", "<", ">=", "<=", "contains"
